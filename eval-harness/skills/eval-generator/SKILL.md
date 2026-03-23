@@ -1,34 +1,70 @@
 ---
 name: eval-generator
-description: Generates eval scenarios (dataset cases) from a plain-English agent task description
+description: Generates eval test cases from an eval suite plan (output of /eval-suite-planner) or a plain-English agent description. Outputs a Copilot Studio test set table and valid JSON for the Camp AIR eval harness.
 ---
 
 ## Purpose
 
-Given a plain-English description of what an agent does and what success looks like, generate a diverse set of eval scenarios covering happy-path, edge, and adversarial cases. Output is formatted as valid JSON ready to paste directly into a `datasets/my-eval-dataset.json` file and run with the Camp AIR eval harness — no modification required.
+This skill generates concrete eval test cases — with realistic inputs, expected outputs, and evaluation method configurations. It is the second step in the eval lifecycle: plan → **generate** → run → interpret.
+
+**Primary mode**: If the conversation already contains output from `/eval-suite-planner`, use that plan's scenario table, evaluation methods, quality signals, and tags as the blueprint. Generate one test case per row in the plan.
+
+**Fallback mode**: If no plan exists in the conversation, accept a plain-English agent description and generate test cases from scratch (6-8 cases minimum).
 
 ## Instructions
 
-When invoked as `/eval-generator <description>`, generate a complete set of eval scenarios for that agent. Follow these rules exactly:
+When invoked as `/eval-generator` (with or without additional input):
 
-**Before generating:**
-- If the description is fewer than two sentences or does not mention what a good response looks like, ask exactly one clarifying question: "What does a successful response look like for this agent — is there a specific format, length limit, policy, or topic it must address?" Then wait for the answer before generating.
-- If the description is clear enough to proceed, generate immediately without asking questions.
+### Step 1 — Detect input mode
 
-**Output format — generate in this exact order:**
+Check the conversation history for output from `/eval-suite-planner`. Look for the scenario plan table (a markdown table with columns: #, Scenario Name, Scenario ID, Category, Tag, Evaluation Methods).
 
-1. A one-line summary: "Generating eval scenarios for: [agent task in your own words]"
-2. The full JSON array of cases (see schema below) — this must be valid, copy-pasteable JSON
-3. A "Reviewer notes" section after the JSON (plain text, not inside the JSON)
+- **Plan found**: Use it as the blueprint. Say: "Generating test cases from your eval suite plan (X scenarios)." Generate one test case per row.
+- **No plan, but user provides an agent description**: Generate from scratch. Say: "Generating eval scenarios for: [agent task in your own words]." If the description is fewer than two sentences or doesn't mention success criteria, ask exactly one clarifying question, then wait.
+- **No plan and no description**: Say: "I need either an agent description or a plan from `/eval-suite-planner`. Run `/eval-suite-planner <your agent description>` first for the best results, or give me a description and I'll generate directly."
 
-**Scenario count and mix — always follow this minimum:**
-- 6–8 total scenarios by default
-- At least 2 happy-path cases (realistic, well-formed inputs that should produce a good response)
-- At least 2 edge cases (empty input, very long input, ambiguous input, malformed input, or unusual but plausible inputs)
-- At least 1 adversarial case (input designed to produce wrong behavior: out-of-scope request, prompt injection attempt, contradictory instructions, or a trap question)
-- Fill remaining slots with whatever scenario type gives the most signal for this specific agent
+### Step 2 — Generate test cases
 
-**JSON schema — every case must match this structure exactly:**
+**When generating from a plan:** Match each scenario row exactly — use its Scenario Name, Tag, and Evaluation Methods. Translate the evaluation methods into the right expected fields and test configurations.
+
+**When generating from scratch (no plan):**
+- 6-8 total scenarios
+- At least 2 happy-path / core business cases
+- At least 2 edge cases (empty input, long input, ambiguous input, malformed input)
+- At least 1 adversarial case (prompt injection, out-of-scope request, policy violation attempt)
+- Fill remaining with whatever gives the most signal for this agent
+
+### Output — produce both formats
+
+**Format A — Copilot Studio Test Set Table**
+
+This is the primary output. Produce a markdown table matching the Copilot Studio test set format:
+
+| # | Question | Expected Response | Test Method | Pass Score |
+|---|---|---|---|---|
+| 1 | [realistic user input] | [expected answer, or leave blank for General Quality] | General Quality | — |
+| 2 | [realistic user input] | [expected answer for comparison] | Compare Meaning | 50 |
+| 3 | [realistic user input] | [keywords to check] | Keyword Match (All) | — |
+
+Map the evaluation methods from the plan (or from your analysis) to Copilot Studio's 7 test methods:
+- **General Quality** — use when testing response quality, tone, completeness (no expected response needed)
+- **Compare Meaning** — use when the meaning matters but exact wording doesn't (set pass score, default 50)
+- **Tool Use** — use when testing if specific tools/topics fired (list expected tools)
+- **Keyword Match** — use for must-include or must-not-include checks (list keywords, specify All or Any)
+- **Text Similarity** — use when phrasing matters (set pass score)
+- **Exact Match** — use for classification labels or structured outputs
+- **Custom** — use for domain-specific criteria (write evaluation instructions and labels)
+
+Rules for inputs:
+- Every `Question` must be a realistic input the agent would receive in production — specific, not a placeholder
+- Every `Expected Response` must be concrete and testable — never vague
+- For General Quality, leave Expected Response blank (the LLM judge evaluates without one)
+- For Keyword Match, put the required keywords in Expected Response
+- For adversarial cases, the Expected Response should describe what the agent should NOT do
+
+**Format B — Camp AIR Harness JSON**
+
+After the Copilot Studio table, output a valid JSON array for the Camp AIR eval harness:
 
 ```json
 [
@@ -36,7 +72,6 @@ When invoked as `/eval-generator <description>`, generate a complete set of eval
     "id": "case-001",
     "input": { "text": "..." },
     "expected": {
-      "max_length": 300,
       "must_include_topic": "..."
     },
     "tags": ["happy-path"]
@@ -44,38 +79,52 @@ When invoked as `/eval-generator <description>`, generate a complete set of eval
 ]
 ```
 
-Rules for the JSON:
-- `id` values: `"case-001"` through `"case-008"` (zero-padded, sequential)
-- `input.text`: A realistic sample input the agent would actually receive in production. Make it specific, not a placeholder.
-- `expected`: Include only fields that are testable by the harness. Use concrete values — never vague strings. Appropriate fields:
-  - `max_length` (integer, character count) — use when response length is a quality signal
-  - `must_include_topic` (string) — a topic, keyword, or phrase the response must address
-  - `must_not_contain` (string) — a phrase that should never appear (use for policy violations, hallucinations, forbidden content)
-  - `format` (string, e.g., `"json"`, `"bullet-list"`, `"plain-text"`) — use when output structure is required
-  - `classification` (string) — use for agents that output a label or category
-  - `min_items` (integer) — use when the agent should return a list with a minimum number of entries
-- `tags`: Use one or more of: `"happy-path"`, `"edge-case"`, `"adversarial"`, `"long-input"`, `"empty-input"`, `"policy"`, `"format"`, `"classification"`. Add a descriptive custom tag if none of these fit.
+Rules for JSON:
+- `id`: `"case-001"` through `"case-0XX"` (zero-padded, sequential)
+- `input.text`: Same as the Question from the Copilot Studio table
+- `expected`: Map evaluation methods to harness fields:
+  - Keyword Match → `must_include_topic` and/or `must_not_contain`
+  - Compare Meaning → include reference text via `must_include_topic`
+  - General Quality → use `max_length` or let the `modelGradedGrader` handle it
+  - Exact Match → `classification`
+  - Tool Use → note in tags (harness doesn't have native tool-use grading)
+- `tags`: Use tags from the plan if available. Otherwise: `"happy-path"`, `"edge-case"`, `"adversarial"`, `"capability"`, `"safety"`.
 
-**After the JSON, write a "Reviewer notes" section with exactly three items:**
+**Scenario ID preservation:** When generating from a plan, use the Scenario ID from the plan as the Camp AIR JSON `id` field (e.g., `"id": "BP-IR-01"` instead of `"case-001"`). This preserves traceability back to the Eval Scenario Library.
 
-1. **Most likely to fail:** Name the specific case ID and explain in one sentence why it is the hardest case in this set.
-2. **One more scenario to consider:** Describe one additional scenario the user should add manually — something that did not fit in the generated set but is realistic for this agent.
-3. **Mandatory reminder:** Always include this exact text as the third item: "Delete any scenario that would not actually occur in production. AI-generated scenarios need human review before use in CI."
+**Important — save your plan before running evals:** Copilot Studio CSV exports do not include scenario categories, tags, or IDs. Before running evals in Copilot Studio, save the scenario plan table from `/eval-suite-planner` as a reference document. You will need it when interpreting results with `/eval-result-interpreter`.
 
-**Tone and format notes:**
+### Step 3 — Reviewer notes
+
+After both formats, write exactly three items:
+
+1. **Most likely to fail:** Name the case number and explain why it's the hardest case in this set.
+2. **One more scenario to consider:** Describe an additional scenario worth adding manually — something that didn't fit but is realistic.
+3. **Mandatory reminder:** "Review every generated scenario. Delete any that would not occur in production. AI-generated test cases need human review before use."
+
+---
+
+### Behavior rules
+
 - Each case must be independently understandable — no references to "the previous case"
-- The JSON must be syntactically valid. Double-check bracket matching and trailing commas before outputting.
-- Do not include comments inside the JSON (JSON does not support comments)
-- The "Reviewer notes" section is plain text and lives outside the JSON code block
+- JSON must be syntactically valid (no trailing commas, no comments)
+- When using a plan, generate exactly the scenarios listed — do not add or remove scenarios without saying why
+- The Copilot Studio table is the primary output (users will copy it into Copilot Studio); the Camp AIR JSON is secondary (for workshop participants using the harness)
+- Make inputs realistic and specific: use names, dates, product references, and context that a real user would provide
+
+---
 
 ## Example invocations
 
 ```
-/eval-generator I am building a customer support agent that handles refund requests. It should be polite, follow the refund policy, and not make promises the policy does not allow.
+/eval-suite-planner I am building a customer support agent that handles refund requests...
+[planner outputs scenario plan table]
+/eval-generator
+← generates from the plan above, one case per scenario row
 
-/eval-generator I am building a meeting notes agent. It takes a raw meeting transcript and produces a structured summary with action items listed separately from decisions.
+/eval-generator I am building a meeting notes agent that takes a raw transcript and produces a structured summary with action items.
+← generates from scratch, 6-8 cases
 
-/eval-generator I am building an email triage agent that reads incoming emails and labels each one as urgent, not-urgent, or spam. It should never label a real customer email as spam.
-
-/eval-generator I am building a code review agent that reviews Python pull requests and flags potential bugs, style violations, and missing tests.
+/eval-generator
+← no plan in conversation, no description provided — asks user to provide input
 ```
