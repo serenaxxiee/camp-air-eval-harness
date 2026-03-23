@@ -93,7 +93,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p>Participants must complete these steps before arriving. Send this list in the pre-session email at least 24 hours in advance.</p>
 <p><strong>Required:</strong>
 - Claude Code CLI installed and authenticated (<code>claude --version</code> to confirm)
-- The eval harness repository cloned locally (for skills):
+- The eval skills repository cloned locally:
   <code>git clone https://github.com/serenaxxiee/camp-air-eval-harness</code>
 - Claude Code slash command skills installed:
   - <code>/eval-faq</code> — answers eval methodology questions
@@ -113,7 +113,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <ul>
 <li>Project Claude Code on screen, ready to run slash commands</li>
 <li>Have the <code>/eval-faq</code>, <code>/eval-suite-planner</code>, <code>/eval-generator</code>, and <code>/eval-result-interpreter</code> slash commands pre-installed in your demo environment</li>
-<li>Have <code>synthetic-eval-results.csv</code> ready to share with participants (distribute via shared drive, chat, or USB)</li>
+<li>Have <code>docs/synthetic-eval-results.csv</code> ready to share with participants (distribute via shared drive, chat, or USB)</li>
 <li>Prepare a working example of a generated eval test set for the demo</li>
 <li>Have a shared doc or whiteboard ready for the debrief — participants will paste results into it</li>
 </ul>
@@ -153,7 +153,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <hr />
 <h2 id="segment-2-core-concepts">Segment 2: Core Concepts</h2>
 <p><strong>Time:</strong> 0:05 – 0:15 (10 minutes)</p>
-<p><strong>Learning objective:</strong> Participants can define and distinguish: prompt, criteria, grader, dataset, and harness — and explain how they fit together in a single eval run.</p>
+<p><strong>Learning objective:</strong> Participants can define and distinguish: test case, acceptance criteria, quality signal, grader, and eval set — and explain how they fit together in a single eval run.</p>
 <hr />
 <h3 id="facilitator-talking-points_1">Facilitator Talking Points</h3>
 <p>Walk through each term. Write them on the whiteboard or show a slide as you go. The goal is shared vocabulary, not deep theory.</p>
@@ -197,11 +197,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 - Small is okay to start. 10–20 well-chosen cases beat 200 random ones.
 - Datasets should include happy-path cases, edge cases, and adversarial cases.
 - Your dataset grows over time — every time a user hits an unexpected behavior, that's a new dataset entry.</p>
-<p><strong>Harness</strong></p>
-<blockquote>
-<p>"The scaffolding that orchestrates the whole thing. A harness loads your dataset, runs each input through your system, applies your graders, and produces a report. It's the thing you run in CI."</p>
-</blockquote>
-<p>Draw a simple flow on the board:</p>
+<p>Draw a simple flow on the board showing how eval sets work in practice:</p>
 <pre class="codehilite"><code>Dataset -&gt; [for each input] -&gt; System (prompt + model) -&gt; Grader -&gt; Results
 </code></pre>
 
@@ -230,7 +226,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <h3 id="setup">Setup</h3>
 <p>Before starting the demo, have these ready on screen:
 - Claude Code open and ready to run slash commands
-- The <code>synthetic-eval-results.csv</code> file accessible
+- The <code>docs/synthetic-eval-results.csv</code> file accessible
 - The <code>/eval-suite-planner</code>, <code>/eval-generator</code>, and <code>/eval-result-interpreter</code> slash commands available in Claude Code</p>
 <hr />
 <h3 id="demo-script">Demo Script</h3>
@@ -253,13 +249,13 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <blockquote>
 <p>"Generate eval scenarios for a customer support agent that handles refund requests. The agent should be polite, follow the refund policy, and not make promises the policy doesn't allow."</p>
 </blockquote>
-<p>Show 3–4 of the generated scenarios. Point out that each one has an input, an expected behavior, and a suggested scoring criterion. Explain that this output is formatted for Copilot Studio upload.</p>
+<p>Show 3–4 of the generated scenarios. Point out that each one has an input, an expected behavior, and a suggested grading criterion. Explain that this output is formatted for Copilot Studio upload.</p>
 <p>Say:</p>
 <blockquote>
 <p>"This is how AI accelerates the eval-writing process. You describe the task and the success criteria in plain language, and the tool scaffolds your test cases. You review, edit, and upload them to Copilot Studio. You're not starting from a blank page."</p>
 </blockquote>
 <p><strong>Step 3 — Show the synthetic results (2 min)</strong></p>
-<p>Open <code>synthetic-eval-results.csv</code> on screen. Scroll through it briefly.</p>
+<p>Open <code>docs/synthetic-eval-results.csv</code> on screen. Scroll through it briefly.</p>
 <p>Say:</p>
 <blockquote>
 <p>"Here's what eval results look like after your test set has been run. Each row is a test case with its score, pass/fail status, and grader feedback. In a real workflow, you'd get this from Copilot Studio after uploading your test set. Today we're working with a pre-built synthetic version."</p>
@@ -269,7 +265,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <pre class="codehilite"><code>/eval-result-interpreter
 </code></pre>
 
-<p>Point it at the <code>synthetic-eval-results.csv</code> file. Show how the interpreter summarizes pass/fail rates, identifies patterns in failures, and suggests next steps.</p>
+<p>Point it at the <code>docs/synthetic-eval-results.csv</code> file. Show how the interpreter summarizes pass/fail rates, identifies patterns in failures, and suggests next steps.</p>
 <p>Pick one case that passed and one that failed from the interpreter's output.</p>
 <p>Say:</p>
 <blockquote>
@@ -345,12 +341,12 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p>Count hands. If fewer than half have raised their hands, extend Stage B by 3 minutes and compress Stage C. If most are there, keep the pace.</p>
 <hr />
 <h3 id="stage-c-run-the-eval-and-interpret-results-045-050-5-min">Stage C: Interpret Results with Synthetic CSV (0:45 – 0:50, 5 min)</h3>
-<p><strong>Facilitator action:</strong> Share the <code>synthetic-eval-results.csv</code> file with participants (shared drive, chat, or USB). Give the instruction verbally and display on screen.</p>
+<p><strong>Facilitator action:</strong> Share the <code>docs/synthetic-eval-results.csv</code> file with participants (shared drive, chat, or USB). Give the instruction verbally and display on screen.</p>
 <p>Say:</p>
 <blockquote>
 <p>"Now let's interpret results. Open Claude Code and run:"
 <code>/eval-result-interpreter</code>
-"Point it at the synthetic-eval-results.csv file I just shared. Look at the interpreter's output and answer these three questions — you'll share them in the debrief:"
+"Point it at the docs/synthetic-eval-results.csv file I just shared. Look at the interpreter's output and answer these three questions — you'll share them in the debrief:"
 1. Which cases passed? Which failed?
 2. Does the failure make sense, or does it look like the grader criteria are wrong?
 3. What's one thing you'd change — in the criteria, the dataset, or the test set — based on what you saw?</p>
@@ -407,7 +403,7 @@ Before writing a single line of eval code, write down what "good" means in plain
 <p><strong>2. Small datasets are fine. Representative datasets are essential.</strong>
 10 well-chosen cases that cover your real input distribution are worth more than 100 randomly generated ones. Include happy paths, edge cases, and at least one adversarial case.</p>
 <p><strong>3. Layer your graders.</strong>
-Start with fast, deterministic checks. Add model-graded scoring for the judgment calls. Save human review for calibration and triage — not for every run.</p>
+Start with fast, deterministic checks. Add model-graded checks for the judgment calls. Save human review for calibration and triage — not for every run.</p>
 <p><strong>4. AI accelerates the scaffolding, not the thinking.</strong>
 Use <code>/eval-generator</code> to get scenarios quickly. Use <code>/eval-faq</code> to get unstuck. But you still have to define the criteria, review the cases, and interpret the results. The thinking stays with you.</p>
 <p><strong>5. Evals are living artifacts.</strong>
@@ -419,7 +415,7 @@ A dataset you write today and never touch again will rot. Every production incid
 <p>"The best time to write an eval is before you write the prompt. The second best time is right now. You've all built a test set today — keep that file. That's your foundation."</p>
 </blockquote>
 <p>Thank participants. Point them to:
-- The eval harness repo at <code>github.com/serenaxxiee/camp-air-eval-harness</code> (for reference and the skills)
+- The eval skills repo at <code>github.com/serenaxxiee/camp-air-eval-harness</code> (for reference and the skills)
 - The <code>/eval-faq</code> slash command (available any time in Claude Code)
 - The <code>/eval-suite-planner</code> and <code>/eval-generator</code> slash commands (for their next project)
 - The <code>/eval-result-interpreter</code> slash command (for analyzing future eval results)</p>
@@ -429,29 +425,29 @@ A dataset you write today and never touch again will rot. Every production incid
 <p><strong>"How do I know how many eval cases I need?"</strong>
 Start with enough to cover your input distribution — typically 15–30 for a focused task. If you're building a classifier, you need representation of each class. If you're building a summarizer, you need short inputs, long inputs, ambiguous inputs. The number matters less than the coverage.</p>
 <p><strong>"Can I use this for multi-turn agents, not just single-turn?"</strong>
-Yes, but it's harder. Multi-turn evals require conversation fixtures — your test set needs to define a sequence of turns, not just a single input. The scoring logic stays the same; you're just scoring the final turn or a specific intermediate turn. The <code>/eval-generator</code> can help you scaffold multi-turn scenarios.</p>
+Yes, but it's harder. Multi-turn evals require conversation fixtures — your test set needs to define a sequence of turns, not just a single input. The grading logic stays the same; you're just grading the final turn or a specific intermediate turn. The <code>/eval-generator</code> can help you scaffold multi-turn scenarios.</p>
 <p><strong>"Isn't model-graded scoring circular? The AI grading itself?"</strong>
 It's a fair concern. The grader model and the system-under-test don't have to be the same model — and usually shouldn't be. Also, the grader has a much simpler job: it's applying specific criteria to a specific output, which is far easier than generating the output itself. Treat grader scores as noisy labels, not ground truth. Calibrate them against human judgments on a sample.</p>
 <p><strong>"What do I do when my grader disagrees with my gut?"</strong>
 Trust the disagreement. Either your grader is wrong (the criteria are imprecise) or your gut is wrong (you have a blind spot). In both cases, the disagreement is signal. Investigate it, don't paper over it.</p>
 <p><strong>"How do I run evals in CI?"</strong>
-If you're using Copilot Studio, you can schedule test set runs and export results for automated analysis. For custom harness setups, most frameworks support a CI mode flag that exits with a non-zero code if any grader falls below a threshold. The key is connecting your test set to your deployment pipeline.</p>
-<p><strong>"How much does model-graded scoring cost?"</strong>
+If you're using Copilot Studio, you can schedule test set runs and export results for automated analysis. For custom eval pipeline setups, most frameworks support a CI mode flag that exits with a non-zero code if any grader falls below a threshold. The key is connecting your test set to your deployment pipeline.</p>
+<p><strong>"How much does model-graded evaluation cost?"</strong>
 For a 20-case eval with one model-graded grader, you're looking at roughly 20 extra LLM calls. At typical API pricing, that's cents per run. The bigger concern is latency — each call adds 1–3 seconds. If you're running evals frequently, consider batching grader calls or caching results for identical inputs.</p>
 <hr />
 <h2 id="facilitator-checklist">Facilitator Checklist</h2>
 <h3 id="48-hours-before">48 hours before</h3>
 <ul>
 <li>[ ] Send prerequisites email to participants</li>
-<li>[ ] Confirm eval harness repo is accessible at <code>github.com/serenaxxiee/camp-air-eval-harness</code></li>
+<li>[ ] Confirm eval skills repo is accessible at <code>github.com/serenaxxiee/camp-air-eval-harness</code></li>
 <li>[ ] Confirm <code>/eval-faq</code>, <code>/eval-suite-planner</code>, <code>/eval-generator</code>, and <code>/eval-result-interpreter</code> slash commands are available</li>
-<li>[ ] Prepare the <code>synthetic-eval-results.csv</code> file for distribution</li>
+<li>[ ] Prepare the <code>docs/synthetic-eval-results.csv</code> file for distribution</li>
 <li>[ ] Run through the full demo script with a timer</li>
 </ul>
 <h3 id="day-of-before-participants-arrive">Day of, before participants arrive</h3>
 <ul>
 <li>[ ] Confirm WiFi works in the room</li>
-<li>[ ] Have <code>synthetic-eval-results.csv</code> ready to distribute (shared drive, chat, or USB)</li>
+<li>[ ] Have <code>docs/synthetic-eval-results.csv</code> ready to distribute (shared drive, chat, or USB)</li>
 <li>[ ] Display the session-at-a-glance table on screen as participants enter</li>
 <li>[ ] Set up shared doc or whiteboard for debrief</li>
 </ul>

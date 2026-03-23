@@ -48,7 +48,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 - Comfortable with TypeScript at a reading level. You do not need to write code live, but you need to not panic when a participant shows you a stack trace.</p>
 <p><strong>What experience you do NOT need:</strong>
 - A background in ML or formal evaluation methodology
-- Any specific eval framework beyond the harness in this repo
+- Any specific eval framework beyond the skills in this repo
 - Teaching or facilitation credentials</p>
 <p><strong>The right mental posture:</strong></p>
 <p>You are a coach, not a lecturer. The goal of this session is not for participants to absorb everything you know. It is for each person to leave having run a real eval once, with enough vocabulary to keep going on their own. The best thing you can do is create conditions for that — clear instructions, a room where it is safe to ask dumb questions, and a facilitator who does not dominate the airtime.</p>
@@ -106,17 +106,17 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <h2 id="4-demo-preparation-checklist">4. Demo Preparation Checklist</h2>
 <p>The demo in Segment 3 is the moment the whole session pivots on. If it goes well, participants go into the hands-on with confidence. If it breaks, you spend the first five minutes of hands-on time doing damage control.</p>
 <p><strong>48 hours before the session:</strong>
-- [ ] Clone a fresh copy of the eval harness repo
+- [ ] Clone a fresh copy of the eval skills repo
 - [ ] Install Claude Code skills (<code>/eval-generator</code>, <code>/eval-result-interpreter</code>, <code>/eval-faq</code>) and confirm they load without errors
 - [ ] Run <code>/eval-generator</code> in Claude Code with the exact customer support prompt from the outline. Confirm it produces usable scenarios
-- [ ] Have <code>synthetic-eval-results.csv</code> ready to share/display — this is the pre-built results file participants will use for result interpretation</p>
+- [ ] Have <code>docs/synthetic-eval-results.csv</code> ready to share/display — this is the pre-built results file participants will use for result interpretation</p>
 <p><strong>Morning of the session:</strong>
 - [ ] Run the skills pipeline one more time on the actual laptop you will present from
 - [ ] Set your terminal font size to at least 18pt — participants in the back need to read it
-- [ ] Have <code>synthetic-eval-results.csv</code> open and one keystroke away (separate tab or terminal pane)
+- [ ] Have <code>docs/synthetic-eval-results.csv</code> open and one keystroke away (separate tab or terminal pane)
 - [ ] Disable notifications and close Slack</p>
 <p><strong>Backup plan if the skills demo fails mid-demo:</strong>
-Say: "Let me switch to the prepared results — this is the same synthetic CSV you'll be using in the exercise." Open <code>synthetic-eval-results.csv</code> and continue narrating. The synthetic CSV is always the fallback. Do not apologize more than once.</p>
+Say: "Let me switch to the prepared results — this is the same synthetic CSV you'll be using in the exercise." Open <code>docs/synthetic-eval-results.csv</code> and continue narrating. The synthetic CSV is always the fallback. Do not apologize more than once.</p>
 <hr />
 <h2 id="5-reading-the-room">5. Reading the Room</h2>
 <h3 id="room-is-quiet-or-disengaged">Room is quiet or disengaged</h3>
@@ -142,7 +142,7 @@ Say: "Let me switch to the prepared results — this is the same synthetic CSV y
 <p><strong>Signal:</strong> Two or three participants are having a deep technical exchange that is pulling attention from others, or they are going deep on something (model-graded grader implementation, CI setup, etc.) that is outside the session scope.</p>
 <p><strong>Response:</strong> Acknowledge and redirect, do not shut down. Walk over and say: "This sounds like a good thread — I want to make sure we capture it. Can you two keep a note and bring it to the debrief?" Then physically move away, which usually breaks the gravity of the side conversation.</p>
 <p>If the topic is actually interesting to the whole room, you can choose to surface it: "Actually, this question about [topic] might be worth 60 seconds for the group." Then give it 60 seconds and move on explicitly.</p>
-<h3 id="technical-failure-npm-error-auth-issue-etc">Technical failure — npm error, auth issue, etc.</h3>
+<h3 id="technical-failure-setup-error-auth-issue-etc">Technical failure — setup error, auth issue, etc.</h3>
 <p><strong>Signal:</strong> A participant (or multiple) has an error they cannot get past in the first 5 minutes of Stage A or B.</p>
 <p><strong>Response:</strong> Triage fast. The two most common issues:
 1. <strong>Auth error on <code>/eval-faq</code> or <code>/eval-generator</code>:</strong> Have them re-run <code>claude auth login</code> in a new terminal. This is usually a session token issue.
@@ -274,7 +274,7 @@ Participants are not here to see a perfect presentation. They are here to run an
 Make sure every participant generates a complete eval test set and interprets results with the interpreter skill before the session ends. Not writes a perfect eval — <em>generates a test set and sees interpreted results</em>. That single experience — producing their own scenarios and seeing what the results mean — is the thing that makes the concepts concrete. Everything else in the session exists to make that moment possible.</p>
 <p>If you get to 0:49 and several people have not generated their test set yet, drop everything else and make it happen. Say: "Generate your test set now — even if it's not perfect, having a real eval set is the outcome." An imperfect generated test set beats a beautiful plan that never got generated.</p>
 <p><strong>One last thing:</strong>
-You know this material. The session outline, the harness, the concepts — you have worked with these things in the real world. That is what the room is paying attention to. The question is not whether you can deliver a perfect facilitation — it is whether you can share what you actually know. You can.</p>
+You know this material. The session outline, the skills, the concepts — you have worked with these things in the real world. That is what the room is paying attention to. The question is not whether you can deliver a perfect facilitation — it is whether you can share what you actually know. You can.</p>
 <hr />
 <p><em>Facilitator guide version: 1.0 | Camp AIR 2026 | Companion to session-outline.md</em></p>
 </body></html>
