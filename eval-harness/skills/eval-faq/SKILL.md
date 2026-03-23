@@ -188,7 +188,7 @@ Per Microsoft's Eval Scenario Library, five quality signals define agent quality
 4. **Action Enablement** — Does the agent empower users to take the next step?
 5. **Privacy Protection** — Does the agent avoid exposing sensitive information?
 
-Each quality signal maps to specific evaluation methods (Keyword Match, Compare Meaning, Capability Use, General Quality) via the method mapping tables in the Scenario Library.
+Each quality signal maps to specific evaluation methods (Keyword Match, Compare Meaning, Tool Use, General Quality) via the method mapping tables in the Scenario Library.
 
 ### 7 test methods (Copilot Studio)
 
@@ -227,7 +227,7 @@ Per the Triage Playbook, score interpretation follows a 4-layer framework:
 
 **Layer 4 — Pattern Analysis:** Look for concentration (failures clustered in specific scenario types), cross-signal correlations (7 documented cross-signal patterns), and trends over time.
 
-**3 Root Cause Types:** Every failure traces to one of: (1) Eval Setup Issue — the eval itself is wrong, (2) Agent Configuration Issue — the agent needs fixing, (3) Platform Limitation — a constraint outside your control. Per the Triage Playbook, always rule out eval setup issues first — at least 20% of "failures" are grader bugs, not agent bugs.
+**3 Root Cause Types:** Every failure traces to one of: (1) Eval Setup Issue — the eval itself is wrong, (2) Agent Configuration Issue — the agent needs fixing, (3) Platform Limitation — a constraint outside your control. Per the Triage Playbook, always rule out eval setup issues first — a significant portion of failures in new evals turn out to be grader bugs, not agent bugs.
 
 ### Non-determinism
 
@@ -257,7 +257,7 @@ Per MS Learn (common-evaluation-approaches), three grader categories:
 - **LLM-judge graders** (LLM judges output against written criteria): Use for quality checks requiring judgment — tone, completeness, factual grounding, relevance. Write criteria in plain language before writing grader code.
 - **Human graders**: Slowest and highest quality. Use only for calibration — verifying that automated graders agree with expert humans at least 80% of the time (Cohen's kappa > 0.6).
 
-**Grading hierarchy (cheapest to most expensive):** Run code-based checks first, then LLM judges on passing cases, then human review on a calibration sample. Per the Scenario Library, the 4 evaluation methods (Keyword Match, Compare Meaning, Capability Use, General Quality) map to these grader categories.
+**Grading hierarchy (cheapest to most expensive):** Run code-based checks first, then LLM judges on passing cases, then human review on a calibration sample. Per the Scenario Library, the 4 evaluation methods (Keyword Match, Compare Meaning, Tool Use, General Quality) map to these grader categories.
 
 **Calibration threshold:** If your LLM judge and a human expert agree on fewer than 80% of cases (kappa < 0.6), your criteria are ambiguous. Rewrite criteria before trusting scores.
 
@@ -305,7 +305,7 @@ Per the Triage Playbook (Layer 2), never trust a score you have not manually ver
 4. Count frequency per category. Sort descending.
 5. Fix the highest-frequency category first. Re-run. Repeat.
 
-Per the Triage Playbook, always include "grader error" as a category — at least 20% of failures in a new eval are grader bugs, not agent bugs.
+Per the Triage Playbook, always include "grader error" as a category — many failures in new evals are grader bugs, not agent bugs.
 
 **Additional industry context from Hamel Husain:** The axial coding methodology and "highest ROI activity in AI engineering" framing come from Hamel Husain's error analysis work. His key insight: most practitioners skip categorization and jump to "fix the prompt," missing structural patterns.
 

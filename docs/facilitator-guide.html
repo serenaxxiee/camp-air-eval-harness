@@ -115,8 +115,15 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 - [ ] Set your terminal font size to at least 18pt — participants in the back need to read it
 - [ ] Have <code>synthetic-eval-results.csv</code> open and one keystroke away (separate tab or terminal pane)
 - [ ] Disable notifications and close Slack</p>
-<p><strong>Backup plan if the skills demo fails mid-demo:</strong>
-Say: "Let me switch to the prepared results — this is the same synthetic CSV you'll be using in the exercise." Open <code>synthetic-eval-results.csv</code> and continue narrating. The synthetic CSV is always the fallback. Do not apologize more than once.</p>
+<p><strong>Backup plan if the skills demo fails mid-demo:</strong></p>
+<p>Each demo step has a pre-built fallback file in <code>docs/</code>. Switch to the matching file and narrate from it:</p>
+<ul>
+<li><strong>Step 1 (Plan) fails:</strong> Open <code>docs/tshirt-support-eval-plan.docx</code> — shows a complete eval suite plan with 10 scenarios, quality signals, and thresholds.</li>
+<li><strong>Step 2 (Generate) fails:</strong> Open <code>docs/tshirt-support-test-set-import.csv</code> — shows 12 test cases ready for Copilot Studio import (3-column format).</li>
+<li><strong>Step 3 (Interpret) fails:</strong> Open <code>docs/tshirt-support-eval-results-report.docx</code> — shows a BLOCK verdict triage report with failure analysis and top 3 actions.</li>
+<li><strong>Alternate Step 3:</strong> Open <code>docs/synthetic-eval-results.csv</code> directly and walk through the pass/fail patterns.</li>
+</ul>
+<p>Say: "Let me switch to the prepared output — this is exactly what the skill produces." Do not apologize more than once.</p>
 <hr />
 <h2 id="5-reading-the-room">5. Reading the Room</h2>
 <h3 id="room-is-quiet-or-disengaged">Room is quiet or disengaged</h3>

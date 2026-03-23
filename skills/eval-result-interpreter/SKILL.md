@@ -122,7 +122,7 @@ For each failing test case (or cluster of similar failures), apply the Playbook'
 
 If the eval passes all 5 checks, classify using the Playbook's 3 root cause types:
 
-- **Eval Setup Issue** — the test case, expected answer, or test method is wrong. The agent may be performing correctly. Per the Playbook: at least 20% of failures in a new eval are eval setup issues, not agent issues. Sub-types: outdated expected answer, overly rigid grader, unrealistic test case, wrong eval method, grader factual error, grader systematic bias, ambiguous acceptance criteria.
+- **Eval Setup Issue** — the test case, expected answer, or test method is wrong. The agent may be performing correctly. In practice, a significant portion of failures in new evals are eval setup issues, not agent issues — always check this first. Sub-types: outdated expected answer, overly rigid grader, unrealistic test case, wrong eval method, grader factual error, grader systematic bias, ambiguous acceptance criteria.
 - **Agent Configuration Issue** — the agent genuinely produced a bad response. Fix via system prompt, knowledge sources, tool config, or topic routing.
 - **Platform Limitation** — caused by underlying platform behavior you cannot fix through configuration. Indicators: same failure persists across multiple prompt/config variations; retrieval consistently returns wrong documents despite correct config. Document and design a workaround.
 

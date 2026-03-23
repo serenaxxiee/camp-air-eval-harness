@@ -153,7 +153,8 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <hr />
 <h2 id="segment-2-core-concepts">Segment 2: Core Concepts</h2>
 <p><strong>Time:</strong> 0:05 – 0:15 (10 minutes)</p>
-<p><strong>Learning objective:</strong> Participants can define and distinguish: prompt, criteria, grader, dataset, and harness — and explain how they fit together in a single eval run.</p>
+<p><strong>Learning objective:</strong> Participants can define and distinguish: test case, acceptance criteria, quality signal, grader, and eval set — and explain how they fit together in a single eval run.</p>
+<p class="small" style="color:#8b949e"><em>Note: The slides (Slide 3) show these five terms. Use the slide as your visual anchor while talking through each one below.</em></p>
 <hr />
 <h3 id="facilitator-talking-points_1">Facilitator Talking Points</h3>
 <p>Walk through each term. Write them on the whiteboard or show a slide as you go. The goal is shared vocabulary, not deep theory.</p>
@@ -239,7 +240,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <pre class="codehilite"><code>/eval-suite-planner
 </code></pre>
 
-<p>Prompt it with a description of a customer support agent that handles refund requests. Show how the planner identifies evaluation dimensions, coverage areas, and suggested criteria.</p>
+<p>Prompt it with a description of the T-shirt customer support agent (same agent used in all examples and fallback files). Show how the planner identifies evaluation dimensions, coverage areas, and suggested criteria.</p>
 <p>Say:</p>
 <blockquote>
 <p>"Before generating test cases, we plan what to test. The suite planner helps you think through coverage — what scenarios matter, what edge cases to include, and what criteria to check."</p>
@@ -249,9 +250,9 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <pre class="codehilite"><code>/eval-generator
 </code></pre>
 
-<p>Prompt it with:</p>
+<p>The generator automatically detects the planner output in the same session. If running standalone, prompt it with:</p>
 <blockquote>
-<p>"Generate eval scenarios for a customer support agent that handles refund requests. The agent should be polite, follow the refund policy, and not make promises the policy doesn't allow."</p>
+<p>"Generate eval scenarios for a customer support agent for a premium hand-wash t-shirt product. It answers care, sizing, storage, and warranty questions using a product care PDF."</p>
 </blockquote>
 <p>Show 3–4 of the generated scenarios. Point out that each one has an input, an expected behavior, and a suggested scoring criterion. Explain that this output is formatted for Copilot Studio upload.</p>
 <p>Say:</p>
