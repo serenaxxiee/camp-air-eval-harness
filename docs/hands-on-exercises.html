@@ -75,17 +75,15 @@ npm run eval -- --file my-eval.ts --verbose
 <li>What is one thing you would change — in the prompt, the dataset, or the grader?</li>
 </ol>
 <hr />
-<h2 id="stage-a-get-oriented-with-eval-faq">Stage A — Get Oriented with <code>/eval-faq</code></h2>
-<p><strong>Time box: 5 minutes (0:25–0:30)</strong></p>
-<p>You have just watched the live demo. Before you build anything, use <code>/eval-faq</code> to internalize the methodology by asking it questions in plain English. The goal is to make the concepts concrete for your specific agent idea.</p>
+<h2 id="stage-a-get-oriented-with-eval-faq">Stage A — Explore + Plan with <code>/eval-faq</code> and <code>/eval-suite-planner</code></h2>
+<p><strong>Time box: 10 minutes (0:20–0:30)</strong></p>
+<p>You have just watched the live demo. Before you build anything, use <code>/eval-faq</code> to internalize the methodology, then use <code>/eval-suite-planner</code> to create a plan for your agent. <strong>Stay in this same Claude Code session for Stages A and B</strong> — the generator in Stage B reads the planner's output from your conversation.</p>
 <h3 id="steps">Steps</h3>
 <p><strong>1.</strong> Open a new Claude Code session in your terminal.</p>
 <pre class="codehilite"><code class="language-bash">claude
 </code></pre>
 
-<p><strong>2.</strong> Install the eval-faq skill if you have not already.</p>
-<pre class="codehilite"><code>/install eval-faq
-</code></pre>
+<p><strong>2.</strong> Verify skills are installed. Type <code>/eval-faq what is eval</code> — if you see a structured answer, skills are working. If not, check that you copied the skill folders to <code>~/.claude/skills/</code> and restarted Claude Code.</p>
 
 <p><strong>3.</strong> Run <code>/eval-faq</code> and ask at least two of the questions below. Copy them verbatim or rephrase them in your own words.</p>
 <pre class="codehilite"><code>/eval-faq What eval scenarios should I use for a RAG agent?
@@ -113,8 +111,16 @@ npm run eval -- --file my-eval.ts --verbose
 <blockquote>
 <p><strong>Tip:</strong> You do not need to memorize anything. You are building intuition so the next two stages feel less abstract.</p>
 </blockquote>
+<p><strong>4.</strong> Now run <code>/eval-suite-planner</code> to create your eval plan. Describe your agent in 2-3 sentences:</p>
+<pre class="codehilite"><code>/eval-suite-planner I am building an email triage agent that reads incoming
+emails and labels them urgent, not-urgent, or spam. It should be polite and
+never label a real customer email as spam.
+</code></pre>
+
+<p>You'll get a scenario plan table with named scenarios, evaluation methods, and thresholds. <strong>Do not close this session</strong> — the generator in Stage B will read this plan.</p>
+
 <h3 id="checkpoint">Checkpoint</h3>
-<p>Before moving to Stage B, you should be able to answer in one sentence: "For my chosen agent, the most important thing to measure is ___."</p>
+<p>Before moving to Stage B, you should have: (1) a scenario plan table in your conversation, and (2) be able to answer in one sentence: "For my chosen agent, the most important thing to measure is ___."</p>
 <hr />
 <h2 id="stage-b-generate-scenarios-and-write-your-eval-file">Stage B — Generate Scenarios and Write Your Eval File</h2>
 <p><strong>Time box: 15 minutes (0:30–0:45)</strong></p>
@@ -149,20 +155,13 @@ npm run eval -- --file my-eval.ts --verbose
 </table>
 <p>Write down your choice. You will reference it in every prompt you send.</p>
 <h3 id="step-2-generate-scenarios-with-eval-generator">Step 2 — Generate scenarios with <code>/eval-generator</code></h3>
-<p><strong>2a.</strong> In your Claude Code session, install the eval-generator skill.</p>
-<pre class="codehilite"><code>/install eval-generator
+<p><strong>2a.</strong> In the <strong>same Claude Code session</strong> from Stage A (where you ran the planner), run <code>/eval-generator</code>. It will automatically detect the planner's output and generate one test case per scenario:</p>
+<pre class="codehilite"><code>/eval-generator
 </code></pre>
 
-<p><strong>2b.</strong> Run <code>/eval-generator</code> with a description of your agent. Use this pattern:</p>
-<pre class="codehilite"><code>/eval-generator I am building a [YOUR AGENT TYPE] agent.
-It [one sentence describing what it does].
-Generate eval scenarios covering happy-path, edge, and adversarial cases.
-</code></pre>
-
-<p>For example, for the meeting notes agent:</p>
+<p>If you're in a new session (no planner output available), provide your agent description directly:</p>
 <pre class="codehilite"><code>/eval-generator I am building a meeting notes agent.
 It takes a raw meeting transcript and produces a structured summary with action items.
-Generate eval scenarios covering happy-path, edge, and adversarial cases.
 </code></pre>
 
 <p><strong>2c.</strong> Wait for the output. A good response includes:
@@ -183,11 +182,12 @@ Generate eval scenarios covering happy-path, edge, and adversarial cases.
 <p><strong>Common mistake:</strong> Expected outcomes like "the summary should be good" are not testable. Rewrite them as specific constraints: a maximum length, a required topic, a required format, or a prohibited phrase.</p>
 </blockquote>
 <h3 id="step-4-save-your-dataset-file">Step 4 — Save your dataset file</h3>
-<p><strong>4a.</strong> Create the file <code>datasets/my-eval-dataset.json</code> in the harness repo. You can duplicate the reference dataset as a starting point.</p>
-<pre class="codehilite"><code class="language-bash">cp examples/datasets/summarizer-cases.json datasets/my-eval-dataset.json
+<p><strong>4a.</strong> Create the dataset file. The harness expects files in <code>my-evals/datasets/</code>:</p>
+<pre class="codehilite"><code class="language-bash">mkdir -p my-evals/datasets
+cp examples/datasets/summarizer-cases.json my-evals/datasets/my-eval-cases.json
 </code></pre>
 
-<p><strong>4b.</strong> Open <code>datasets/my-eval-dataset.json</code> and replace all of its contents with your own cases. Use this format for each case:</p>
+<p><strong>4b.</strong> Open <code>my-evals/datasets/my-eval-cases.json</code> and replace all of its contents with your own cases (copy the JSON from the generator output). Use this format for each case:</p>
 <pre class="codehilite"><code class="language-json">[
   {
     &quot;id&quot;: &quot;case-001&quot;,
@@ -219,8 +219,8 @@ Generate eval scenarios covering happy-path, edge, and adversarial cases.
 <p><strong>Common mistake:</strong> JSON does not allow trailing commas. A comma after the last item in an array or object will cause a parse error. Double-check before saving.</p>
 </blockquote>
 <h3 id="step-5-copy-and-edit-the-eval-template">Step 5 — Copy and edit the eval template</h3>
-<p><strong>5a.</strong> Copy the reference eval file.</p>
-<pre class="codehilite"><code class="language-bash">cp examples/summarizer-eval.ts my-eval.ts
+<p><strong>5a.</strong> Copy the reference eval file into <code>my-evals/</code>.</p>
+<pre class="codehilite"><code class="language-bash">cp examples/summarizer-eval.ts my-evals/my-agent-eval.ts
 </code></pre>
 
 <p><strong>5b.</strong> Open <code>my-eval.ts</code>. Make the following five edits:</p>
@@ -229,7 +229,7 @@ Generate eval scenarios covering happy-path, edge, and adversarial cases.
 const dataset = loadDataset(&quot;examples/datasets/summarizer-cases.json&quot;);
 
 // To this:
-const dataset = loadDataset(&quot;datasets/my-eval-dataset.json&quot;);
+const dataset = loadDataset(&quot;my-evals/datasets/my-eval-cases.json&quot;);
 </code></pre>
 
 <p><strong>Edit 2 — Eval name.</strong> Update the eval name so results are easy to identify.</p>
@@ -248,32 +248,38 @@ name: &quot;meeting-notes-eval&quot;,
 </blockquote>
 <h3 id="checkpoint_1">Checkpoint</h3>
 <p>Before moving to Stage C, verify:
-- <code>datasets/my-eval-dataset.json</code> exists and is valid JSON (no trailing commas)
-- <code>my-eval.ts</code> compiles without errors: <code>npx tsc --noEmit my-eval.ts</code>
+- <code>my-evals/datasets/my-eval-cases.json</code> exists and is valid JSON (no trailing commas)
+- <code>my-evals/my-agent-eval.ts</code> compiles without errors: <code>npx tsc --noEmit my-evals/my-agent-eval.ts</code>
 - You can describe in one sentence what your grader is checking</p>
 <hr />
 <h2 id="stage-c-run-the-eval-and-interpret-results">Stage C — Run the Eval and Interpret Results</h2>
-<p><strong>Time box: 5 minutes (0:45–0:50)</strong></p>
+<p><strong>Time box: 10 minutes (0:40–0:50)</strong></p>
 <h3 id="step-1-run-your-eval">Step 1 — Run your eval</h3>
-<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-eval.ts
+<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-evals/my-agent-eval.ts --verbose
 </code></pre>
 
-<p>Watch the output as it runs. You will see each case execute and a pass/fail result per case.</p>
-<h3 id="step-2-find-the-results-file">Step 2 — Find the results file</h3>
-<p>Results are written to:</p>
-<pre class="codehilite"><code>results/my-eval-&lt;timestamp&gt;.json
+<p>Watch the output as it runs. You will see each case execute and a pass/fail result per case. The <code>--verbose</code> flag shows full model output so you can read what the agent actually said.</p>
+<h3 id="step-2-interpret-with-eval-result-interpreter">Step 2 — Interpret with <code>/eval-result-interpreter</code></h3>
+<p>Copy the terminal summary (pass/fail counts and any failure details) and paste it into the interpreter:</p>
+<pre class="codehilite"><code>/eval-result-interpreter 5/8 passed. Failed: case-003 (topic "refund"
+missing), case-006 (length 520/400), case-008 (adversarial safety failed)
 </code></pre>
 
-<p>Open that file or read the terminal summary.</p>
+<p>The interpreter will give you a <strong>SHIP / ITERATE / BLOCK</strong> verdict, classify each failure by root cause (eval setup issue, agent config issue, or platform limitation), and give you the top 3 actions to take.</p>
+
+<p><strong>Alternative — Copilot Studio path:</strong> If you ran your eval in Copilot Studio and exported a CSV, provide the file path instead:</p>
+<pre class="codehilite"><code>/eval-result-interpreter C:\Users\you\Downloads\Evaluate Agent.csv
+</code></pre>
+
 <h3 id="step-3-answer-the-three-debrief-questions">Step 3 — Answer the three debrief questions</h3>
 <p>Write down your answers before the group debrief at 0:50. You will be asked to share.</p>
 <ol>
 <li><strong>Which cases passed? Which failed?</strong></li>
-<li><strong>Does the failure make sense, or does it look like the grader is wrong?</strong></li>
-<li><strong>What is one thing you would change — in the prompt, the dataset, or the grader?</strong></li>
+<li><strong>For each failure: is this an eval setup issue (the test is wrong) or an agent issue (the agent needs fixing)?</strong> The interpreter classifies this for you, but form your own opinion too.</li>
+<li><strong>What is the #1 thing you would change before re-running?</strong></li>
 </ol>
 <blockquote>
-<p><strong>Tip:</strong> A failing case is not a bad outcome. It means you found signal. The interesting question is always: is this an agent problem, a grader problem, or a dataset problem?</p>
+<p><strong>Tip:</strong> A failing case is not a bad outcome. It means you found signal. Per the Triage Playbook, at least 20% of failures in a new eval are eval setup issues, not agent issues — always check the eval first.</p>
 </blockquote>
 <hr />
 <h2 id="troubleshooting">Troubleshooting</h2>

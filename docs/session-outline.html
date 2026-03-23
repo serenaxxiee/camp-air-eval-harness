@@ -95,12 +95,14 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 - Node.js 18+ installed (<code>node --version</code> to confirm)
 - Claude Code CLI installed and authenticated (<code>claude --version</code> to confirm)
 - The eval harness repository cloned locally:
-  <code>git clone https://github.com/camp-air/eval-harness
-  cd eval-harness
+  <code>git clone https://github.com/serenaxxiee/camp-air-eval-harness
+  cd camp-air-eval-harness/eval-harness
   npm install</code>
-- Two Claude Code slash command skills installed:
+- Four Claude Code slash command skills installed (copy from repo <code>skills/</code> to <code>~/.claude/skills/</code>, then restart Claude Code):
   - <code>/eval-faq</code> — answers eval methodology questions
-  - <code>/eval-generator</code> — generates eval scenarios from a task description</p>
+  - <code>/eval-suite-planner</code> — plans eval suite with scenario types and thresholds
+  - <code>/eval-generator</code> — generates eval scenarios from a plan or description
+  - <code>/eval-result-interpreter</code> — triages eval results with SHIP/ITERATE/BLOCK verdict</p>
 <p><strong>Recommended:</strong>
 - A code editor open and ready (VS Code preferred)
 - Basic familiarity with TypeScript (participants don't need to write it from scratch, but should be able to read it)
