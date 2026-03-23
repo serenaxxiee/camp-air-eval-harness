@@ -195,7 +195,7 @@ claude
 <p><strong>Time box: 5 minutes (0:45–0:50)</strong></p>
 <p>Since we do not have live Copilot Studio access in this session, you will use a provided synthetic results file to practice interpreting eval output.</p>
 <h3 id="step-1-open-the-synthetic-results">Step 1 — Open the synthetic results</h3>
-<p>Open the file <code>docs/synthetic-eval-results.csv</code> in the cloned repo (<code>camp-air-eval-harness/docs/synthetic-eval-results.csv</code>). It contains simulated pass/fail results for 12 test cases against the T-shirt customer service agent. The columns are:</p>
+<p>Open the file <code>eval-examples/synthetic-eval-results.csv</code> in the cloned repo (<code>camp-air-eval-harness/eval-examples/synthetic-eval-results.csv</code>). It contains simulated pass/fail results for 12 test cases against the T-shirt customer service agent. The columns are:</p>
 <ul>
 <li><code>question</code> — the test input sent to the agent</li>
 <li><code>expectedResponse</code> — what the agent should have said</li>
@@ -208,7 +208,7 @@ claude
 <p class="small" style="color:#8b949e">Note: Copilot Studio exports use CamelCase method names (e.g., <code>CompareMeaning</code>) while the import CSV uses spaces (e.g., <code>Compare meaning</code>). Both refer to the same methods.</p>
 <h3 id="step-2-run-eval-result-interpreter">Step 2 — Run <code>/eval-result-interpreter</code></h3>
 <p>Run the interpreter skill and point it at the synthetic results CSV:</p>
-<pre class="codehilite"><code>/eval-result-interpreter docs/synthetic-eval-results.csv
+<pre class="codehilite"><code>/eval-result-interpreter eval-examples/synthetic-eval-results.csv
 </code></pre>
 
 <p>The interpreter will analyze the results and produce:
@@ -238,7 +238,7 @@ If the generated CSV has formatting issues when you import it to Copilot Studio,
 <p><strong>Auth error when running skills</strong>
 Your Claude Code session may have timed out. Try: (1) type <code>/exit</code>, (2) run <code>claude</code> again. If that doesn't work, ask the facilitator for help.</p>
 <p><strong>Claude Code is down or unavailable</strong>
-You can still follow along using the pre-built example files in the <code>docs/</code> folder: <code>tshirt-support-eval-plan.docx</code> (example plan output), <code>tshirt-support-test-set-import.csv</code> (example generated test set), <code>tshirt-support-eval-results-report.docx</code> (example triage report).</p>
+You can still follow along using the pre-built example files in the <code>eval-examples/</code> folder: <code>tshirt-support-eval-plan.docx</code> (example plan output), <code>tshirt-support-test-set-import.csv</code> (example generated test set), <code>tshirt-support-eval-results-report.docx</code> (example triage report).</p>
 <hr />
 <h2 id="stretch-goals">Stretch Goals</h2>
 <p>Finished early? Try one or more of these extensions.</p>

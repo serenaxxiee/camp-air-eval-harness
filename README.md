@@ -15,8 +15,9 @@ Use arrow keys or swipe to navigate. Press `f` for facilitator guide, `h` for ha
 | `index.html` | Interactive slide deck (reveal.js) |
 | `skill-deep-dive.html` | Detailed skill reference page |
 | `docs/` | Session outline, facilitator guide, hands-on exercises, participant guide |
-| `docs/synthetic-eval-results.csv` | Pre-built eval results for a T-shirt customer service agent (12 cases, 67% pass rate) |
-| `docs/tshirt-support-*.csv/.docx/.xlsx` | Fallback examples for every demo stage (plan, test set, triage report) |
+| `eval-examples/` | Pre-built eval examples and fallback artifacts for every demo stage |
+| `eval-examples/synthetic-eval-results.csv` | Synthetic eval results for T-shirt customer service agent (12 cases, 67% pass rate) |
+| `eval-examples/tshirt-support-*` | Fallback examples: eval plan (.docx/.xlsx), test set import (.csv), triage report (.docx) |
 | `skills/` | 4 installable Claude Code skills — **use this folder for installation** |
 | `eval-harness/` | TypeScript eval harness (reference implementation — NOT used during the workshop hands-on) |
 

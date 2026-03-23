@@ -377,7 +377,7 @@ storage, and warranty questions.</code></pre>
     <div class="card">
       <div class="card-title purple">3. Interpret synthetic CSV</div>
       <pre><code>/eval-result-interpreter
-docs/synthetic-eval-results.csv
+eval-examples/synthetic-eval-results.csv
 &rarr; SHIP / ITERATE / BLOCK verdict</code></pre>
     </div>
     <div class="card">
@@ -517,12 +517,12 @@ care PDF as its knowledge source.</code></pre>
   <div class="card">
     <div class="card-title">Step 1 &mdash; Get the synthetic results CSV</div>
     <p class="small">We provide a pre-built Copilot Studio eval results CSV with realistic pass/fail data. This is the same format you'll get when you run your own test set in Copilot Studio later.</p>
-    <pre style="font-size:0.6em"><code>docs/synthetic-eval-results.csv   # in the cloned repo</code></pre>
+    <pre style="font-size:0.6em"><code>eval-examples/synthetic-eval-results.csv   # in the cloned repo</code></pre>
   </div>
   <div class="card">
     <div class="card-title">Step 2 &mdash; Interpret results</div>
     <p class="small muted" style="margin-bottom:0.3em">You can start a new Claude Code session for this part &mdash; the interpreter reads from a file, not conversation history.</p>
-    <pre style="font-size:0.6em"><code>/eval-result-interpreter docs/synthetic-eval-results.csv</code></pre>
+    <pre style="font-size:0.6em"><code>/eval-result-interpreter eval-examples/synthetic-eval-results.csv</code></pre>
   </div>
   <div class="card">
     <div class="card-title">Step 3 &mdash; Reflect (3 debrief questions)</div>
