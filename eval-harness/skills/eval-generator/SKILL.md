@@ -68,9 +68,9 @@ Rules for inputs:
 - For adversarial cases, the Expected Response should describe what the agent should NOT do
 - Each question can be up to 1,000 characters including spaces
 
-### Output files
+### Output files — MUST generate both
 
-After displaying the test cases in conversation, generate two files:
+After displaying the test cases in conversation, you MUST generate both files below. Do not skip either one. Generate the CSV first, then the docx report.
 
 **A. Copilot Studio Import CSV (.csv)**
 
@@ -93,18 +93,25 @@ Rules for the CSV:
 - The file can contain up to 100 questions
 - Save as .csv or .txt format
 
-**B. Eval Test Set Report (.docx)**
+**B. Eval Test Set Report (.docx) — REQUIRED**
 
-Generate a formatted .docx document for human review using the `/docx` skill. Contents:
+Generate a formatted .docx document for human review. Use the `/docx` skill to create a professional, shareable report. This report is critical — it serves as the permanent record of the eval test set and the fallback artifact if Copilot Studio is unavailable.
 
-- **Title:** "Eval Test Set: [Agent Name]" (derive agent name from the plan or description)
-- **Plan summary:** Brief summary of the eval suite plan this was generated from (or the agent description if generated from scratch)
-- **Test cases:** Each test case formatted clearly with:
-  - Scenario name
-  - Input / question
-  - Expected response
-  - Testing method
-- **Reviewer notes:** The three reviewer notes from Step 3 below
+Contents (in this order):
+
+1. **Title page:** "Eval Test Set: [Agent Name]" (derive agent name from the plan or description). Include the date and number of test cases.
+2. **Agent description:** 2-3 sentence summary of the agent being evaluated, including its purpose, knowledge sources, and key capabilities.
+3. **Plan summary:** Brief summary of the eval suite plan this was generated from (scenario types matched, category distribution). If generated from scratch, summarize the approach taken.
+4. **Test cases table:** A formatted table with all test cases, including columns for:
+   - #  (case number)
+   - Question (the test input)
+   - Expected Response (what the agent should produce)
+   - Testing Method (General quality, Compare meaning, etc.)
+   - Category (core business, edge case, adversarial, etc.)
+5. **Reviewer notes:** The three reviewer notes from Step 3 below.
+6. **Next steps:** Brief guidance on how to use this test set — import the CSV to Copilot Studio, run the evaluation, then use `/eval-result-interpreter` on the results.
+
+The docx must be a complete, standalone document that someone could read and understand without access to the conversation history.
 
 **Important — save your plan before running evals:** Copilot Studio CSV exports do not include scenario categories or tags. Before running evals in Copilot Studio, save the scenario plan table from `/eval-suite-planner` as a reference document. You will need it when interpreting results with `/eval-result-interpreter`.
 
