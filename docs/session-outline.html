@@ -92,34 +92,30 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <h2 id="prerequisites">Prerequisites</h2>
 <p>Participants must complete these steps before arriving. Send this list in the pre-session email at least 24 hours in advance.</p>
 <p><strong>Required:</strong>
-- Node.js 18+ installed (<code>node --version</code> to confirm)
 - Claude Code CLI installed and authenticated (<code>claude --version</code> to confirm)
-- The eval harness repository cloned locally:
-  <code>git clone https://github.com/serenaxxiee/camp-air-eval-harness
-  cd camp-air-eval-harness/eval-harness
-  npm install</code>
-- Four Claude Code slash command skills installed (copy from repo <code>skills/</code> to <code>~/.claude/skills/</code>, then restart Claude Code):
+- The eval harness repository cloned locally (for skills):
+  <code>git clone https://github.com/serenaxxiee/camp-air-eval-harness</code>
+- Claude Code slash command skills installed:
   - <code>/eval-faq</code> — answers eval methodology questions
-  - <code>/eval-suite-planner</code> — plans eval suite with scenario types and thresholds
-  - <code>/eval-generator</code> — generates eval scenarios from a plan or description
-  - <code>/eval-result-interpreter</code> — triages eval results with SHIP/ITERATE/BLOCK verdict</p>
+  - <code>/eval-suite-planner</code> — plans eval test suites from a task description
+  - <code>/eval-generator</code> — generates eval test sets for Copilot Studio upload
+  - <code>/eval-result-interpreter</code> — interprets eval results from CSV</p>
 <p><strong>Recommended:</strong>
 - A code editor open and ready (VS Code preferred)
-- Basic familiarity with TypeScript (participants don't need to write it from scratch, but should be able to read it)
 - Have run at least one AI agent before — participants should know what a prompt is and roughly what an LLM call looks like</p>
 <p><strong>Not required:</strong>
 - Prior experience writing evals
-- Deep TypeScript knowledge
+- API keys or accounts for any LLM provider
+- Node.js or npm
 - Any specific domain knowledge</p>
 <hr />
 <h2 id="room-environment-setup-before-participants-arrive">Room / Environment Setup (Before Participants Arrive)</h2>
 <ul>
-<li>Project the eval harness repo on screen with a terminal split alongside</li>
-<li>Have the <code>/eval-faq</code> and <code>/eval-generator</code> slash commands pre-installed in your demo environment</li>
-<li>Run <code>npm test</code> once ahead of time to confirm the harness works end-to-end</li>
-<li>Prepare a working example eval (the <code>examples/summarizer-eval.ts</code> file in the repo works well)</li>
+<li>Project Claude Code on screen, ready to run slash commands</li>
+<li>Have the <code>/eval-faq</code>, <code>/eval-suite-planner</code>, <code>/eval-generator</code>, and <code>/eval-result-interpreter</code> slash commands pre-installed in your demo environment</li>
+<li>Have <code>synthetic-eval-results.csv</code> ready to share with participants (distribute via shared drive, chat, or USB)</li>
+<li>Prepare a working example of a generated eval test set for the demo</li>
 <li>Have a shared doc or whiteboard ready for the debrief — participants will paste results into it</li>
-<li>If using a shared WiFi network, confirm npm install works or have node_modules cached</li>
 </ul>
 <hr />
 <h2 id="segment-1-opening-framing">Segment 1: Opening / Framing</h2>
@@ -146,7 +142,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <li>Without evals, you cannot iterate confidently — every change to a prompt is a gamble</li>
 <li>With evals, you can move fast without breaking things</li>
 </ul>
-<p><strong>Set the agenda for the session.</strong> Walk through the session-at-a-glance table briefly — 30 seconds max. Participants should know they will write and run a real eval before they leave.</p>
+<p><strong>Set the agenda for the session.</strong> Walk through the session-at-a-glance table briefly — 30 seconds max. Participants should know they will plan, generate, and interpret a real eval before they leave.</p>
 <hr />
 <h3 id="timing-notes">Timing Notes</h3>
 <ul>
@@ -233,50 +229,22 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <hr />
 <h3 id="setup">Setup</h3>
 <p>Before starting the demo, have these ready on screen:
-- Terminal at the root of the eval harness repo
-- <code>examples/summarizer-eval.ts</code> open in your editor
-- The <code>/eval-generator</code> slash command available in Claude Code</p>
+- Claude Code open and ready to run slash commands
+- The <code>synthetic-eval-results.csv</code> file accessible
+- The <code>/eval-suite-planner</code>, <code>/eval-generator</code>, and <code>/eval-result-interpreter</code> slash commands available in Claude Code</p>
 <hr />
 <h3 id="demo-script">Demo Script</h3>
-<p><strong>Step 1 — Show the dataset (1 min)</strong></p>
-<p>Open <code>examples/datasets/summarizer-cases.json</code>. Scroll through it briefly.</p>
-<p>Say:</p>
-<blockquote>
-<p>"Here's our dataset. Five inputs — each one is an article snippet the agent will summarize. Notice we've also got an expected length and a topic label per case. Those will feed into our graders."</p>
-</blockquote>
-<p><strong>Step 2 — Show the eval file (2 min)</strong></p>
-<p>Open <code>examples/summarizer-eval.ts</code>. Walk through it top to bottom, pointing out:</p>
-<ul>
-<li>Where the dataset is loaded</li>
-<li>The prompt template</li>
-<li>The two graders: a character-count check (deterministic) and a model-graded relevance check</li>
-<li>Where results are written out</li>
-</ul>
-<p>Say:</p>
-<blockquote>
-<p>"This is the whole thing. It's about 60 lines. The harness handles the loop — you just define the dataset, the prompt, and the graders."</p>
-</blockquote>
-<p><strong>Step 3 — Run it (2 min)</strong></p>
-<p>In the terminal, run:</p>
-<pre class="codehilite"><code>npm run eval -- --file examples/summarizer-eval.ts
+<p><strong>Step 1 — Plan the eval suite (2 min)</strong></p>
+<p>Open Claude Code and run:</p>
+<pre class="codehilite"><code>/eval-suite-planner
 </code></pre>
 
-<p>Let it run. Narrate what's happening:</p>
-<blockquote>
-<p>"You'll see it process each case in sequence. The deterministic grader runs instantly. The model-graded grader makes an LLM call — that's where the latency is."</p>
-</blockquote>
-<p>When it finishes, show the output table in the terminal.</p>
-<p><strong>Step 4 — Interpret the results (2 min)</strong></p>
-<p>Point at the results. Pick one that passed and one that failed.</p>
+<p>Prompt it with a description of a customer support agent that handles refund requests. Show how the planner identifies evaluation dimensions, coverage areas, and suggested criteria.</p>
 <p>Say:</p>
 <blockquote>
-<p>"Case 3 failed the length check — the summary was 412 characters, and our threshold was 400. That's a hard failure. Case 4 passed both graders. Case 2 passed the length check but got a 0.6 on relevance — borderline. We'd want to look at that one manually."</p>
+<p>"Before generating test cases, we plan what to test. The suite planner helps you think through coverage — what scenarios matter, what edge cases to include, and what criteria to check."</p>
 </blockquote>
-<p>This is a key teachable moment:</p>
-<blockquote>
-<p>"Notice that failing an eval doesn't mean your AI is broken. It means you have information. Maybe the length threshold is wrong. Maybe the model is genuinely off. The eval gives you something to act on."</p>
-</blockquote>
-<p><strong>Step 5 — Show eval-generator (2 min)</strong></p>
+<p><strong>Step 2 — Generate a test set (3 min)</strong></p>
 <p>Open Claude Code and run:</p>
 <pre class="codehilite"><code>/eval-generator
 </code></pre>
@@ -285,35 +253,55 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <blockquote>
 <p>"Generate eval scenarios for a customer support agent that handles refund requests. The agent should be polite, follow the refund policy, and not make promises the policy doesn't allow."</p>
 </blockquote>
-<p>Show 3–4 of the generated scenarios. Point out that each one has an input, an expected behavior, and a suggested scoring criterion.</p>
+<p>Show 3–4 of the generated scenarios. Point out that each one has an input, an expected behavior, and a suggested scoring criterion. Explain that this output is formatted for Copilot Studio upload.</p>
 <p>Say:</p>
 <blockquote>
-<p>"This is how AI accelerates the eval-writing process. You describe the task and the success criteria in plain language, and the tool scaffolds your test cases. You review, edit, and add them to your dataset. You're not starting from a blank page."</p>
+<p>"This is how AI accelerates the eval-writing process. You describe the task and the success criteria in plain language, and the tool scaffolds your test cases. You review, edit, and upload them to Copilot Studio. You're not starting from a blank page."</p>
+</blockquote>
+<p><strong>Step 3 — Show the synthetic results (2 min)</strong></p>
+<p>Open <code>synthetic-eval-results.csv</code> on screen. Scroll through it briefly.</p>
+<p>Say:</p>
+<blockquote>
+<p>"Here's what eval results look like after your test set has been run. Each row is a test case with its score, pass/fail status, and grader feedback. In a real workflow, you'd get this from Copilot Studio after uploading your test set. Today we're working with a pre-built synthetic version."</p>
+</blockquote>
+<p><strong>Step 4 — Interpret the results (3 min)</strong></p>
+<p>Open Claude Code and run:</p>
+<pre class="codehilite"><code>/eval-result-interpreter
+</code></pre>
+
+<p>Point it at the <code>synthetic-eval-results.csv</code> file. Show how the interpreter summarizes pass/fail rates, identifies patterns in failures, and suggests next steps.</p>
+<p>Pick one case that passed and one that failed from the interpreter's output.</p>
+<p>Say:</p>
+<blockquote>
+<p>"The interpreter does the heavy lifting of reading through results and surfacing patterns. But notice — it gives you information, not decisions. You still decide whether a failure means the criteria are wrong or the agent is wrong."</p>
+</blockquote>
+<p>This is a key teachable moment:</p>
+<blockquote>
+<p>"Notice that failing an eval doesn't mean your AI is broken. It means you have information. Maybe the threshold is wrong. Maybe the model is genuinely off. The eval gives you something to act on."</p>
 </blockquote>
 <hr />
 <h3 id="timing-notes_2">Timing Notes</h3>
 <ul>
 <li>This demo must stay at 10 minutes. Practice it ahead of time with a timer.</li>
-<li>If the model-graded grader is slow (&gt;90 seconds), skip the live run and show a pre-recorded output — have a <code>results-snapshot.txt</code> file ready as backup.</li>
-<li>Do not get pulled into the TypeScript details. If someone asks about a specific line of code, say: "Good catch — you can dig into that during the hands-on section."</li>
-<li>Transition line: "Now it's your turn. You're going to write and run your own eval in the next 25 minutes."</li>
+<li>If a slash command is slow to respond, narrate what it's doing while you wait — explain how the skill processes the request.</li>
+<li>Transition line: "Now it's your turn. You're going to plan, generate, and interpret your own eval in the next 25 minutes."</li>
 </ul>
 <hr />
 <h2 id="segment-4-hands-on-exercise">Segment 4: Hands-On Exercise</h2>
 <p><strong>Time:</strong> 0:25 – 0:50 (25 minutes)</p>
-<p><strong>Learning objective:</strong> Participants write a working eval — dataset, prompt, at least one grader — and run it against the harness. They observe and interpret their own results.</p>
+<p><strong>Learning objective:</strong> Participants plan an eval suite, generate a test set for Copilot Studio upload, and interpret synthetic eval results using Claude Code skills.</p>
 <hr />
 <h3 id="overview">Overview</h3>
 <p>This is the core of the session. Participants work individually or in pairs. The exercise has three stages that build on each other.</p>
-<p><strong>Stage A</strong> — Use <code>/eval-faq</code> to get oriented (5 min)
-<strong>Stage B</strong> — Use <code>/eval-generator</code> to create scenarios, then write an eval (15 min)
-<strong>Stage C</strong> — Run the eval and interpret results (5 min)</p>
+<p><strong>Stage A</strong> — Use <code>/eval-faq</code> + <code>/eval-suite-planner</code> to get oriented and plan (5 min)
+<strong>Stage B</strong> — Use <code>/eval-generator</code> to generate a Copilot Studio test set (15 min)
+<strong>Stage C</strong> — Use <code>/eval-result-interpreter</code> with the provided synthetic CSV to interpret results (5 min)</p>
 <hr />
-<h3 id="stage-a-use-eval-faq-025-030-5-min">Stage A: Use eval-faq (0:25 – 0:30, 5 min)</h3>
+<h3 id="stage-a-use-eval-faq-025-030-5-min">Stage A: Use eval-faq + eval-suite-planner (0:25 – 0:30, 5 min)</h3>
 <p><strong>Facilitator action:</strong> Give these instructions verbally and display them on screen.</p>
 <p>Say:</p>
 <blockquote>
-<p>"First, open Claude Code and run the /eval-faq command. Ask it at least two questions about eval methodology. This is your onramp — use it to get clarity on anything from the concepts segment that wasn't fully clear."</p>
+<p>"First, open Claude Code and run the /eval-faq command. Ask it at least one question about eval methodology. Then run /eval-suite-planner to start planning your eval suite for the agent task you'll choose. This is your onramp — use it to get clarity and a plan before generating test cases."</p>
 </blockquote>
 <p><strong>Suggested questions participants can ask (display these on a slide):</strong>
 - "What makes a good eval dataset?"
@@ -324,7 +312,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p><strong>Facilitator action during Stage A:</strong> Walk the room. Glance at what people are asking. If someone has a great question/answer exchange, make a mental note — you may call on them in the debrief.</p>
 <p><strong>Timing note:</strong> This stage is timeboxed at 5 minutes. At the 5-minute mark, give a verbal prompt: "Okay, wrap up your eval-faq questions — we're moving to scenario generation."</p>
 <hr />
-<h3 id="stage-b-generate-scenarios-and-write-an-eval-030-045-15-min">Stage B: Generate Scenarios and Write an Eval (0:30 – 0:45, 15 min)</h3>
+<h3 id="stage-b-generate-scenarios-and-write-an-eval-030-045-15-min">Stage B: Generate a Copilot Studio Test Set (0:30 – 0:45, 15 min)</h3>
 <p><strong>Facilitator action:</strong> Give participants their task. Display the task prompt on screen.</p>
 <hr />
 <p><strong>The Task (display verbatim):</strong></p>
@@ -339,18 +327,13 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p>Then:
 1. Run <code>/eval-generator</code> in Claude Code and describe your chosen agent task. Ask it to generate 5–8 eval scenarios.
 2. Review the generated scenarios. Edit or discard any that don't make sense. Add one scenario of your own.
-3. Save your scenarios to <code>my-evals/datasets/my-eval-cases.json</code>.
-4. Open <code>examples/summarizer-eval.ts</code> as a starting template. Copy it to <code>my-evals/my-agent-eval.ts</code>.
-5. Edit <code>my-evals/my-agent-eval.ts</code> to:
-   - Point to your dataset
-   - Update the prompt template to match your agent task
-   - Add or modify at least one grader that reflects your criteria</p>
+3. Save the generated test set — this is what you would upload to Copilot Studio for execution.</p>
 </blockquote>
 <hr />
 <p><strong>What facilitators should watch for during Stage B:</strong></p>
 <ul>
-<li>Participants who are stuck on the TypeScript — point them to <code>examples/summarizer-eval.ts</code> and tell them to change as little as possible. The goal is one working eval, not a perfect one.</li>
-<li>Participants who finish early — prompt them to add a second grader (if they only have one) or add 3 more dataset cases.</li>
+<li>Participants who are stuck on formulating their task description — prompt them to start simple and iterate. The <code>/eval-suite-planner</code> output from Stage A should give them a starting point.</li>
+<li>Participants who finish early — prompt them to generate scenarios for a second agent task, or add 3 more hand-written cases to their test set.</li>
 <li>Participants who are generating scenarios but not editing them — encourage them to delete at least one generated scenario and write a replacement. This builds the habit of reviewing AI-generated test cases rather than accepting them wholesale.</li>
 <li>Common confusion: participants sometimes conflate the grader and the criteria. Remind them: the criteria is the rule in plain English; the grader is the code or model call that applies it.</li>
 </ul>
@@ -361,26 +344,26 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 </blockquote>
 <p>Count hands. If fewer than half have raised their hands, extend Stage B by 3 minutes and compress Stage C. If most are there, keep the pace.</p>
 <hr />
-<h3 id="stage-c-run-the-eval-and-interpret-results-045-050-5-min">Stage C: Run the Eval and Interpret Results (0:45 – 0:50, 5 min)</h3>
-<p><strong>Facilitator action:</strong> Give the run instruction verbally and display on screen.</p>
+<h3 id="stage-c-run-the-eval-and-interpret-results-045-050-5-min">Stage C: Interpret Results with Synthetic CSV (0:45 – 0:50, 5 min)</h3>
+<p><strong>Facilitator action:</strong> Share the <code>synthetic-eval-results.csv</code> file with participants (shared drive, chat, or USB). Give the instruction verbally and display on screen.</p>
 <p>Say:</p>
 <blockquote>
-<p>"Time to run it. In your terminal, from the harness root, run:"
-<code>npm run eval -- --file my-evals/my-agent-eval.ts</code>
-"When it finishes, look at your results and answer these three questions — you'll share them in the debrief:"
+<p>"Now let's interpret results. Open Claude Code and run:"
+<code>/eval-result-interpreter</code>
+"Point it at the synthetic-eval-results.csv file I just shared. Look at the interpreter's output and answer these three questions — you'll share them in the debrief:"
 1. Which cases passed? Which failed?
-2. Does the failure make sense, or does it look like your grader is wrong?
-3. What's one thing you'd change — in the prompt, the dataset, or the grader — based on what you saw?</p>
+2. Does the failure make sense, or does it look like the grader criteria are wrong?
+3. What's one thing you'd change — in the criteria, the dataset, or the test set — based on what you saw?</p>
 </blockquote>
-<p><strong>Facilitator action:</strong> Walk the room and look at results. Take note of 2–3 interesting or contrasting outcomes to highlight in the debrief.</p>
-<p><strong>If a participant's eval throws an error:</strong>
-- Check that the dataset JSON is valid (common issue: trailing commas)
-- Check that the file path in the eval matches the dataset filename exactly
-- If it's a TypeScript compilation error, have them compare their file against <code>examples/summarizer-eval.ts</code> line by line</p>
+<p><strong>Facilitator action:</strong> Walk the room and look at results. Take note of 2–3 interesting or contrasting interpretations to highlight in the debrief.</p>
+<p><strong>If a participant's interpreter isn't working:</strong>
+- Check that the CSV file path is correct
+- Check that Claude Code has the <code>/eval-result-interpreter</code> skill installed
+- If the skill isn't responding, have them open the CSV directly and interpret it manually</p>
 <p><strong>Timing note:</strong> At 0:49, give a verbal 1-minute warning: "One more minute — wrap up what you're looking at, we're going to share results."</p>
 <hr />
 <h3 id="timing-contingency">Timing Contingency</h3>
-<p>If Stage B runs long and participants don't finish their eval by 0:45, shift Stage C to: "Run the eval, even if it's incomplete. A partial run is fine — look at whatever output you get and bring that to the debrief." Do not skip Stage C entirely — running the harness at least once is a core outcome of the session.</p>
+<p>If Stage B runs long and participants don't finish their test set by 0:45, shift Stage C to: "Open the synthetic CSV and run /eval-result-interpreter on it, even if your test set isn't complete. Interpreting results is a core skill — bring whatever insights you get to the debrief." Do not skip Stage C entirely — interpreting eval results is a core outcome of the session.</p>
 <hr />
 <h2 id="segment-5-debrief-wrap-up">Segment 5: Debrief &amp; Wrap-Up</h2>
 <p><strong>Time:</strong> 0:50 – 1:00 (10 minutes)</p>
@@ -413,7 +396,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 </blockquote>
 <p>On the AI-first workflow:</p>
 <blockquote>
-<p>"Think about what just happened. You described a task in plain English, a tool gave you test scenarios, you ran them through a harness, and you have structured results to act on. That whole loop took 20 minutes. Without the AI tools, writing that dataset from scratch would have taken an afternoon. The velocity gain is real — but only if you stay in the loop as the reviewer."</p>
+<p>"Think about what just happened. You described a task in plain English, a tool planned your eval suite, generated your test scenarios, and interpreted the results for you. That whole loop took 20 minutes. Without the AI tools, writing that test set from scratch would have taken an afternoon. The velocity gain is real — but only if you stay in the loop as the reviewer."</p>
 </blockquote>
 <hr />
 <h3 id="key-takeaways-057-100-3-min">Key Takeaways (0:57 – 1:00, 3 min)</h3>
@@ -433,25 +416,26 @@ A dataset you write today and never touch again will rot. Every production incid
 <h3 id="closing">Closing</h3>
 <p>End with this line:</p>
 <blockquote>
-<p>"The best time to write an eval is before you write the prompt. The second best time is right now. You've all written one today — keep that file. That's your foundation."</p>
+<p>"The best time to write an eval is before you write the prompt. The second best time is right now. You've all built a test set today — keep that file. That's your foundation."</p>
 </blockquote>
 <p>Thank participants. Point them to:
-- The eval harness repo (for reference and the example files)
+- The eval harness repo at <code>github.com/serenaxxiee/camp-air-eval-harness</code> (for reference and the skills)
 - The <code>/eval-faq</code> slash command (available any time in Claude Code)
-- The <code>/eval-generator</code> slash command (for their next project)</p>
+- The <code>/eval-suite-planner</code> and <code>/eval-generator</code> slash commands (for their next project)
+- The <code>/eval-result-interpreter</code> slash command (for analyzing future eval results)</p>
 <hr />
 <h2 id="facilitator-reference-common-questions-and-how-to-handle-them">Facilitator Reference: Common Questions and How to Handle Them</h2>
 <p>These are real questions that come up in this session. Have answers ready.</p>
 <p><strong>"How do I know how many eval cases I need?"</strong>
 Start with enough to cover your input distribution — typically 15–30 for a focused task. If you're building a classifier, you need representation of each class. If you're building a summarizer, you need short inputs, long inputs, ambiguous inputs. The number matters less than the coverage.</p>
 <p><strong>"Can I use this for multi-turn agents, not just single-turn?"</strong>
-Yes, but it's harder. The harness supports multi-turn via conversation fixtures — see <code>examples/multi-turn-eval.ts</code>. The scoring logic stays the same; you're just scoring the final turn or a specific intermediate turn.</p>
+Yes, but it's harder. Multi-turn evals require conversation fixtures — your test set needs to define a sequence of turns, not just a single input. The scoring logic stays the same; you're just scoring the final turn or a specific intermediate turn. The <code>/eval-generator</code> can help you scaffold multi-turn scenarios.</p>
 <p><strong>"Isn't model-graded scoring circular? The AI grading itself?"</strong>
 It's a fair concern. The grader model and the system-under-test don't have to be the same model — and usually shouldn't be. Also, the grader has a much simpler job: it's applying specific criteria to a specific output, which is far easier than generating the output itself. Treat grader scores as noisy labels, not ground truth. Calibrate them against human judgments on a sample.</p>
 <p><strong>"What do I do when my grader disagrees with my gut?"</strong>
 Trust the disagreement. Either your grader is wrong (the criteria are imprecise) or your gut is wrong (you have a blind spot). In both cases, the disagreement is signal. Investigate it, don't paper over it.</p>
 <p><strong>"How do I run evals in CI?"</strong>
-The harness supports a <code>--ci</code> flag that exits with a non-zero code if any grader falls below a threshold. Plug that into your GitHub Actions or equivalent. See <code>docs/ci-setup.md</code> in the repo for a step-by-step.</p>
+If you're using Copilot Studio, you can schedule test set runs and export results for automated analysis. For custom harness setups, most frameworks support a CI mode flag that exits with a non-zero code if any grader falls below a threshold. The key is connecting your test set to your deployment pipeline.</p>
 <p><strong>"How much does model-graded scoring cost?"</strong>
 For a 20-case eval with one model-graded grader, you're looking at roughly 20 extra LLM calls. At typical API pricing, that's cents per run. The bigger concern is latency — each call adds 1–3 seconds. If you're running evals frequently, consider batching grader calls or caching results for identical inputs.</p>
 <hr />
@@ -459,14 +443,15 @@ For a 20-case eval with one model-graded grader, you're looking at roughly 20 ex
 <h3 id="48-hours-before">48 hours before</h3>
 <ul>
 <li>[ ] Send prerequisites email to participants</li>
-<li>[ ] Confirm eval harness repo is accessible</li>
-<li>[ ] Confirm <code>/eval-faq</code> and <code>/eval-generator</code> slash commands are available</li>
+<li>[ ] Confirm eval harness repo is accessible at <code>github.com/serenaxxiee/camp-air-eval-harness</code></li>
+<li>[ ] Confirm <code>/eval-faq</code>, <code>/eval-suite-planner</code>, <code>/eval-generator</code>, and <code>/eval-result-interpreter</code> slash commands are available</li>
+<li>[ ] Prepare the <code>synthetic-eval-results.csv</code> file for distribution</li>
 <li>[ ] Run through the full demo script with a timer</li>
 </ul>
 <h3 id="day-of-before-participants-arrive">Day of, before participants arrive</h3>
 <ul>
-<li>[ ] Confirm WiFi / npm install works in the room</li>
-<li>[ ] Have <code>results-snapshot.txt</code> backup ready for the demo if live run is slow</li>
+<li>[ ] Confirm WiFi works in the room</li>
+<li>[ ] Have <code>synthetic-eval-results.csv</code> ready to distribute (shared drive, chat, or USB)</li>
 <li>[ ] Display the session-at-a-glance table on screen as participants enter</li>
 <li>[ ] Set up shared doc or whiteboard for debrief</li>
 </ul>
@@ -485,7 +470,7 @@ For a 20-case eval with one model-graded grader, you're looking at roughly 20 ex
 </ul>
 <hr />
 <h2 id="appendix-sample-dataset-format">Appendix: Sample Dataset Format</h2>
-<p>Participants can reference this if they're unsure how to format <code>my-evals/datasets/my-eval-cases.json</code>.</p>
+<p>Participants can reference this if they're unsure how to format <code>my-eval-dataset.json</code>.</p>
 <pre class="codehilite"><code class="language-json">[
   {
     &quot;id&quot;: &quot;case-001&quot;,
@@ -518,14 +503,14 @@ For a 20-case eval with one model-graded grader, you're looking at roughly 20 ex
 - <code>expected</code> — the values your graders will check against. Can hold any fields your graders reference.
 - <code>tags</code> — optional. Useful for filtering results by category.</p>
 <hr />
-<h2 id="appendix-eval-harness-quick-reference">Appendix: Eval Harness Quick Reference</h2>
-<pre class="codehilite"><code>npm run eval -- --file &lt;path-to-eval-file&gt;     # Run a specific eval
-npm run eval -- --file &lt;path&gt; --ci             # CI mode: exits non-zero on failure
-npm run eval -- --file &lt;path&gt; --tags edge-case # Run only cases with a specific tag
-npm run eval -- --file &lt;path&gt; --verbose        # Show full model outputs in terminal
+<h2 id="appendix-claude-code-skills-quick-reference">Appendix: Claude Code Skills Quick Reference</h2>
+<pre class="codehilite"><code>/eval-faq                    # Ask questions about eval methodology
+/eval-suite-planner          # Plan an eval suite from a task description
+/eval-generator              # Generate eval test sets for Copilot Studio upload
+/eval-result-interpreter     # Interpret eval results from a CSV file
 </code></pre>
 
-<p>Results are written to <code>results/&lt;eval-filename&gt;-&lt;timestamp&gt;.json</code> after each run.</p>
+<p>Generated test sets can be saved locally and uploaded to Copilot Studio for execution. Use <code>/eval-result-interpreter</code> to analyze the results CSV after a run.</p>
 <hr />
 <p><em>Session outline version: 1.0 | Camp AIR 2026 | Prepared for a 60-minute workshop format</em></p>
 </body></html>

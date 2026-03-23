@@ -40,52 +40,58 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <hr />
 <h2 id="quick-reference-cheat-sheet">Quick-Reference Cheat Sheet</h2>
 <p>Keep this visible while you work.</p>
-<p><strong>Key commands</strong></p>
-<pre class="codehilite"><code class="language-bash"># Run your eval
-npm run eval -- --file my-evals/my-agent-eval.ts
-
-# Run in CI mode (exit code on failure)
-npm run eval -- --file my-evals/my-agent-eval.ts --ci
-
-# Filter by tag
-npm run eval -- --file my-evals/my-agent-eval.ts --tags edge-case
-
-# Verbose output (full model responses)
-npm run eval -- --file my-evals/my-agent-eval.ts --verbose
+<p><strong>Key skills</strong></p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/eval-faq</code></td>
+<td>Ask plain-English questions about eval methodology</td>
+</tr>
+<tr>
+<td><code>/eval-suite-planner</code></td>
+<td>Generate a structured eval plan for your agent</td>
+</tr>
+<tr>
+<td><code>/eval-generator</code></td>
+<td>Generate a Copilot Studio test set from your plan</td>
+</tr>
+<tr>
+<td><code>/eval-result-interpreter</code></td>
+<td>Analyze eval results CSV and get a SHIP / ITERATE / BLOCK verdict</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Workflow</strong></p>
+<pre class="codehilite"><code>Plan (/eval-suite-planner)
+  → Generate (/eval-generator)
+    → Upload to Copilot Studio
+      → Interpret (/eval-result-interpreter)
 </code></pre>
 
-<p><strong>Dataset case format</strong></p>
-<pre class="codehilite"><code class="language-json">{
-  &quot;id&quot;: &quot;case-001&quot;,
-  &quot;input&quot;: {
-    &quot;text&quot;: &quot;...&quot;
-  },
-  &quot;expected&quot;: {
-    &quot;max_length&quot;: 400,
-    &quot;must_include_topic&quot;: &quot;revenue&quot;
-  },
-  &quot;tags&quot;: [&quot;happy-path&quot;, &quot;financial&quot;]
-}
-</code></pre>
-
+<p><strong>Copilot Studio test set format hint</strong></p>
+<p>The generated test set is a table with columns for test case ID, input, expected output, and tags. Copy the table and paste it into Copilot Studio's test set upload to run evaluations against your agent.</p>
 <p><strong>Three debrief questions (answer before 0:50)</strong></p>
 <ol>
-<li>Which cases passed? Which failed?</li>
-<li>Does the failure make sense, or does it look like the grader is wrong?</li>
-<li>What is one thing you would change — in the prompt, the dataset, or the grader?</li>
+<li>What verdict did the interpreter give, and do you agree?</li>
+<li>Which failure pattern is most critical to fix first?</li>
+<li>What is one test case you would add to your own agent's eval set based on what you learned?</li>
 </ol>
 <hr />
-<h2 id="stage-a-get-oriented-with-eval-faq">Stage A — Explore + Plan with <code>/eval-faq</code> and <code>/eval-suite-planner</code></h2>
-<p><strong>Time box: 10 minutes (0:20–0:30)</strong></p>
-<p>You have just watched the live demo. Before you build anything, use <code>/eval-faq</code> to internalize the methodology, then use <code>/eval-suite-planner</code> to create a plan for your agent. <strong>Stay in this same Claude Code session for Stages A and B</strong> — the generator in Stage B reads the planner's output from your conversation.</p>
+<h2 id="stage-a-get-oriented">Stage A — Get Oriented</h2>
+<p><strong>Time box: 5 minutes (0:25–0:30)</strong></p>
+<p>You have just watched the live demo. Before you build anything, use <code>/eval-faq</code> to internalize the methodology and <code>/eval-suite-planner</code> to start shaping your eval plan. Stay in this same Claude Code session for all three stages.</p>
 <h3 id="steps">Steps</h3>
 <p><strong>1.</strong> Open a new Claude Code session in your terminal.</p>
 <pre class="codehilite"><code class="language-bash">claude
 </code></pre>
 
-<p><strong>2.</strong> Verify skills are installed. Type <code>/eval-faq what is eval</code> — if you see a structured answer, skills are working. If not, check that you copied the skill folders to <code>~/.claude/skills/</code> and restarted Claude Code.</p>
-
-<p><strong>3.</strong> Run <code>/eval-faq</code> and ask at least two of the questions below. Copy them verbatim or rephrase them in your own words.</p>
+<p><strong>2.</strong> Run <code>/eval-faq</code> and ask at least two of the questions below. Copy them verbatim or rephrase them in your own words.</p>
 <pre class="codehilite"><code>/eval-faq What eval scenarios should I use for a RAG agent?
 </code></pre>
 
@@ -104,27 +110,24 @@ npm run eval -- --file my-evals/my-agent-eval.ts --verbose
 <pre class="codehilite"><code>/eval-faq How many cases do I need in a dataset to get meaningful signal?
 </code></pre>
 
-<p><strong>4.</strong> As you read each answer, look for:
+<p><strong>3.</strong> As you read each answer, look for:
 - The names of specific scenario types or grader types mentioned
 - Any thresholds or rules of thumb (numbers, percentages, counts)
 - Anything that surprises you or contradicts an assumption you had</p>
-<blockquote>
-<p><strong>Tip:</strong> You do not need to memorize anything. You are building intuition so the next two stages feel less abstract.</p>
-</blockquote>
-<p><strong>4.</strong> Now run <code>/eval-suite-planner</code> to create your eval plan. Describe your agent in 2-3 sentences:</p>
-<pre class="codehilite"><code>/eval-suite-planner I am building an email triage agent that reads incoming
-emails and labels them urgent, not-urgent, or spam. It should be polite and
-never label a real customer email as spam.
+<p><strong>4.</strong> Pick an agent to evaluate (see the options table in Stage B) and run <code>/eval-suite-planner</code> with a brief description of it.</p>
+<pre class="codehilite"><code>/eval-suite-planner I am building a meeting notes agent that takes
+a raw meeting transcript and produces a structured summary with action items.
 </code></pre>
 
-<p>You'll get a scenario plan table with named scenarios, evaluation methods, and thresholds. <strong>Do not close this session</strong> — the generator in Stage B will read this plan.</p>
-
+<blockquote>
+<p><strong>Tip:</strong> You do not need to memorize anything. You are building intuition so the next two stages feel less abstract. Keep this session open — the planner output will be used automatically in Stage B.</p>
+</blockquote>
 <h3 id="checkpoint">Checkpoint</h3>
-<p>Before moving to Stage B, you should have: (1) a scenario plan table in your conversation, and (2) be able to answer in one sentence: "For my chosen agent, the most important thing to measure is ___."</p>
+<p>Before moving to Stage B, you should be able to answer in one sentence: "For my chosen agent, the most important thing to measure is ___."</p>
 <hr />
-<h2 id="stage-b-generate-scenarios-and-write-your-eval-file">Stage B — Generate Scenarios and Write Your Eval File</h2>
+<h2 id="stage-b-generate-your-eval-test-set">Stage B — Generate Your Eval Test Set</h2>
 <p><strong>Time box: 15 minutes (0:30–0:45)</strong></p>
-<p>This is the main building block. You will pick an agent type, generate eval scenarios with AI assistance, save a dataset, and wire up an eval file.</p>
+<p>This is the main building block. You will pick an agent type, generate an eval plan, create a Copilot Studio test set, and review the output — all inside Claude Code using skills.</p>
 <h3 id="step-1-choose-your-agent-task">Step 1 — Choose your agent task</h3>
 <p>Pick one of the four options below. If you have a real agent you work on, use that instead and adapt the instructions accordingly.</p>
 <table>
@@ -154,168 +157,93 @@ never label a real customer email as spam.
 </tbody>
 </table>
 <p>Write down your choice. You will reference it in every prompt you send.</p>
-<h3 id="step-2-generate-scenarios-with-eval-generator">Step 2 — Generate scenarios with <code>/eval-generator</code></h3>
-<p><strong>2a.</strong> In the <strong>same Claude Code session</strong> from Stage A (where you ran the planner), run <code>/eval-generator</code>. It will automatically detect the planner's output and generate one test case per scenario:</p>
+<h3 id="step-2-run-eval-suite-planner">Step 2 — Run <code>/eval-suite-planner</code></h3>
+<p>If you already ran <code>/eval-suite-planner</code> in Stage A, skip this step — your plan is already in the session. Otherwise, run it now with a description of your chosen agent.</p>
+<pre class="codehilite"><code>/eval-suite-planner I am building an email triage agent that reads
+incoming emails and labels them as urgent, not urgent, or spam.
+</code></pre>
+
+<p>Review the plan output. It will include recommended scenario categories (happy-path, edge cases, adversarial) and suggested grader criteria.</p>
+<h3 id="step-3-run-eval-generator">Step 3 — Run <code>/eval-generator</code></h3>
+<p>In the <strong>same session</strong>, run <code>/eval-generator</code>. It automatically reads the plan you created in the previous step.</p>
 <pre class="codehilite"><code>/eval-generator
 </code></pre>
 
-<p>If you're in a new session (no planner output available), provide your agent description directly:</p>
-<pre class="codehilite"><code>/eval-generator I am building a meeting notes agent.
-It takes a raw meeting transcript and produces a structured summary with action items.
-</code></pre>
-
-<p><strong>2c.</strong> Wait for the output. A good response includes:
-- At least 5–6 distinct scenario descriptions
-- A mix of case types: one or two happy-path, one or two edge cases (empty input, very long input, ambiguous content), one adversarial case (input designed to trip the agent up)
-- For each scenario: a description, a sample input, and a suggested expected outcome or criterion</p>
+<p>Wait for the output. The generator will produce a Copilot Studio test set as a structured table.</p>
 <blockquote>
-<p><strong>Tip:</strong> If the output feels too generic, run it again with a more specific prompt. Add a sentence like: "Focus on cases where the input is ambiguous or the output format matters."</p>
+<p><strong>Important:</strong> Stay in the same Claude Code session. The generator reads the plan from your conversation context. If you start a new session, you will need to re-run <code>/eval-suite-planner</code> first or re-describe your agent.</p>
 </blockquote>
-<h3 id="step-3-review-and-edit-the-generated-scenarios">Step 3 — Review and edit the generated scenarios</h3>
-<p><strong>3a.</strong> Read through each generated scenario. Ask yourself:
-- Is this realistic? Would this actually happen in production?
+<h3 id="step-4-review-the-generated-test-set">Step 4 — Review the generated test set</h3>
+<p>Read through the generated Copilot Studio test set table. Ask yourself:
+- Is each test case realistic? Would this actually happen in production?
 - Is the expected outcome specific and testable, or vague?
+- Is there a mix of case types: happy-path, edge case, adversarial?
 - Is there an important scenario that is missing?</p>
-<p><strong>3b.</strong> Delete any scenario that is too similar to another one. You want variety, not duplicates.</p>
-<p><strong>3c.</strong> Write one scenario yourself — one that the AI did not generate. This should be a case you personally think is important. Add it to your list.</p>
 <blockquote>
-<p><strong>Common mistake:</strong> Expected outcomes like "the summary should be good" are not testable. Rewrite them as specific constraints: a maximum length, a required topic, a required format, or a prohibited phrase.</p>
+<p><strong>Common mistake:</strong> Expected outcomes like "the summary should be good" are not testable. Look for specific constraints: a required label, a maximum length, a required topic, or a prohibited phrase.</p>
 </blockquote>
-<h3 id="step-4-save-your-dataset-file">Step 4 — Save your dataset file</h3>
-<p><strong>4a.</strong> Create the dataset file. The harness expects files in <code>my-evals/datasets/</code>:</p>
-<pre class="codehilite"><code class="language-bash">mkdir -p my-evals/datasets
-cp examples/datasets/summarizer-cases.json my-evals/datasets/my-eval-cases.json
-</code></pre>
-
-<p><strong>4b.</strong> Open <code>my-evals/datasets/my-eval-cases.json</code> and replace all of its contents with your own cases (copy the JSON from the generator output). Use this format for each case:</p>
-<pre class="codehilite"><code class="language-json">[
-  {
-    &quot;id&quot;: &quot;case-001&quot;,
-    &quot;input&quot;: {
-      &quot;text&quot;: &quot;Paste your sample input here.&quot;
-    },
-    &quot;expected&quot;: {
-      &quot;max_length&quot;: 300,
-      &quot;must_include_topic&quot;: &quot;action items&quot;
-    },
-    &quot;tags&quot;: [&quot;happy-path&quot;]
-  },
-  {
-    &quot;id&quot;: &quot;case-002&quot;,
-    &quot;input&quot;: {
-      &quot;text&quot;: &quot;Paste an edge-case input here.&quot;
-    },
-    &quot;expected&quot;: {
-      &quot;max_length&quot;: 300,
-      &quot;must_include_topic&quot;: &quot;action items&quot;
-    },
-    &quot;tags&quot;: [&quot;edge-case&quot;]
-  }
-]
-</code></pre>
-
-<p>Aim for at least three cases total: one happy-path, one edge case, one adversarial or tricky case.</p>
+<h3 id="step-5-copy-the-test-set">Step 5 — Copy the test set</h3>
+<p>Select and copy the generated test set table from the Claude Code output. This is what you would upload to Copilot Studio to run evaluations against your agent.</p>
 <blockquote>
-<p><strong>Common mistake:</strong> JSON does not allow trailing commas. A comma after the last item in an array or object will cause a parse error. Double-check before saving.</p>
-</blockquote>
-<h3 id="step-5-copy-and-edit-the-eval-template">Step 5 — Copy and edit the eval template</h3>
-<p><strong>5a.</strong> Copy the reference eval file into <code>my-evals/</code>.</p>
-<pre class="codehilite"><code class="language-bash">cp examples/summarizer-eval.ts my-evals/my-agent-eval.ts
-</code></pre>
-
-<p><strong>5b.</strong> Open <code>my-evals/my-agent-eval.ts</code>. Make the following five edits:</p>
-<p><strong>Edit 1 — Dataset path.</strong> Find the line that loads the dataset and change the path to your file.</p>
-<pre class="codehilite"><code class="language-typescript">// Change this:
-const dataset = loadDataset(&quot;examples/datasets/summarizer-cases.json&quot;);
-
-// To this:
-const dataset = loadDataset(&quot;my-evals/datasets/my-eval-cases.json&quot;);
-</code></pre>
-
-<p><strong>Edit 2 — Eval name.</strong> Update the eval name so results are easy to identify.</p>
-<pre class="codehilite"><code class="language-typescript">// Change this:
-name: &quot;summarizer-eval&quot;,
-
-// To something like:
-name: &quot;meeting-notes-eval&quot;,
-</code></pre>
-
-<p><strong>Edit 3 — System prompt.</strong> Replace the summarizer system prompt with a prompt for your agent. Write it in plain English: what is the agent's job, what format should it produce, what should it never do?</p>
-<p><strong>Edit 4 — Input template.</strong> Update the template variable that maps <code>input.text</code> into the prompt. If your dataset uses a different input field name, match it here.</p>
-<p><strong>Edit 5 — Grader criteria.</strong> Update the grader to reflect your expected outcomes. If you are using a deterministic grader, check that the field names (like <code>max_length</code> or <code>must_include_topic</code>) match what you put in your dataset's <code>expected</code> block. If you are using a model-graded grader, rewrite the criteria string to describe what "good" looks like for your agent.</p>
-<blockquote>
-<p><strong>Tip:</strong> You do not need to write a perfect grader. Get it working first, then refine it. A grader that is slightly wrong is more useful than no eval at all.</p>
+<p><strong>Tip:</strong> If you want to tweak the test set before uploading, paste it into a text editor first, make your edits, and then upload to Copilot Studio.</p>
 </blockquote>
 <h3 id="checkpoint_1">Checkpoint</h3>
 <p>Before moving to Stage C, verify:
-- <code>my-evals/datasets/my-eval-cases.json</code> exists and is valid JSON (no trailing commas)
-- <code>my-evals/my-agent-eval.ts</code> compiles without errors: <code>npx tsc --noEmit my-evals/my-agent-eval.ts</code>
-- You can describe in one sentence what your grader is checking</p>
+- You have a complete eval test set ready for Copilot Studio
+- The test set includes at least three case types: happy-path, edge case, and adversarial
+- You can describe in one sentence what your test set is checking</p>
 <hr />
-<h2 id="stage-c-run-the-eval-and-interpret-results">Stage C — Run the Eval and Interpret Results</h2>
-<p><strong>Time box: 10 minutes (0:40–0:50)</strong></p>
-<h3 id="step-1-run-your-eval">Step 1 — Run your eval</h3>
-<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-evals/my-agent-eval.ts --verbose
+<h2 id="stage-c-interpret-eval-results">Stage C — Interpret Eval Results</h2>
+<p><strong>Time box: 5 minutes (0:45–0:50)</strong></p>
+<p>Since we do not have live Copilot Studio access in this session, you will use a provided synthetic results file to practice interpreting eval output.</p>
+<h3 id="step-1-open-the-synthetic-results">Step 1 — Open the synthetic results</h3>
+<p>Locate the provided file <code>synthetic-eval-results.csv</code>. Open it and review the contents — it contains simulated pass/fail results, scores, and failure reasons for a set of eval cases.</p>
+<h3 id="step-2-run-eval-result-interpreter">Step 2 — Run <code>/eval-result-interpreter</code></h3>
+<p>Run the interpreter skill and paste the CSV content when prompted.</p>
+<pre class="codehilite"><code>/eval-result-interpreter
 </code></pre>
 
-<p>Watch the output as it runs. You will see each case execute and a pass/fail result per case. The <code>--verbose</code> flag shows full model output so you can read what the agent actually said.</p>
-<h3 id="step-2-interpret-with-eval-result-interpreter">Step 2 — Interpret with <code>/eval-result-interpreter</code></h3>
-<p>Copy the terminal summary (pass/fail counts and any failure details) and paste it into the interpreter:</p>
-<pre class="codehilite"><code>/eval-result-interpreter 5/8 passed. Failed: case-003 (topic "refund"
-missing), case-006 (length 520/400), case-008 (adversarial safety failed)
-</code></pre>
-
-<p>The interpreter will give you a <strong>SHIP / ITERATE / BLOCK</strong> verdict, classify each failure by root cause (eval setup issue, agent config issue, or platform limitation), and give you the top 3 actions to take.</p>
-
-<p><strong>Alternative — Copilot Studio path:</strong> If you ran your eval in Copilot Studio and exported a CSV, provide the file path instead:</p>
-<pre class="codehilite"><code>/eval-result-interpreter C:\Users\you\Downloads\Evaluate Agent.csv
-</code></pre>
-
+<p>The interpreter will analyze the results and produce:
+- An overall <strong>SHIP / ITERATE / BLOCK</strong> verdict
+- A breakdown of pass rates by scenario category
+- Identified failure patterns and recommendations</p>
 <h3 id="step-3-answer-the-three-debrief-questions">Step 3 — Answer the three debrief questions</h3>
 <p>Write down your answers before the group debrief at 0:50. You will be asked to share.</p>
 <ol>
-<li><strong>Which cases passed? Which failed?</strong></li>
-<li><strong>For each failure: is this an eval setup issue (the test is wrong) or an agent issue (the agent needs fixing)?</strong> The interpreter classifies this for you, but form your own opinion too.</li>
-<li><strong>What is the #1 thing you would change before re-running?</strong></li>
+<li><strong>What verdict did the interpreter give, and do you agree?</strong></li>
+<li><strong>Which failure pattern is most critical to fix first?</strong></li>
+<li><strong>What is one test case you would add to your own agent's eval set based on what you learned?</strong></li>
 </ol>
 <blockquote>
-<p><strong>Tip:</strong> A failing case is not a bad outcome. It means you found signal. Per the Triage Playbook, at least 20% of failures in a new eval are eval setup issues, not agent issues — always check the eval first.</p>
+<p><strong>Tip:</strong> The verdict is a starting point, not a final answer. The interesting question is always: does the failure pattern point to an agent problem, a prompt problem, or a test case problem?</p>
 </blockquote>
 <hr />
 <h2 id="troubleshooting">Troubleshooting</h2>
-<p><strong>Invalid JSON error when running the eval</strong>
-Almost always a trailing comma. Open <code>my-evals/datasets/my-eval-cases.json</code>, look for a comma on the last line before a <code>]</code> or <code>}</code>, and remove it. Use a JSON validator if needed: paste your content into <code>jsonlint.com</code>.</p>
-<p><strong>File not found / path mismatch</strong>
-Check that the path in <code>my-evals/my-agent-eval.ts</code> exactly matches where you saved the file. Paths are relative to the harness root directory. Run <code>ls datasets/</code> to confirm the file exists.</p>
-<p><strong>TypeScript compilation error</strong>
-Run <code>npx tsc --noEmit my-evals/my-agent-eval.ts</code> to see the exact error. Most common cause: a field name in the grader does not match a field name in the <code>expected</code> block of the dataset. Check spelling and casing.</p>
-<p><strong>Auth error when running <code>/eval-faq</code> or <code>/eval-generator</code></strong>
-Your Claude Code session may have timed out. Run <code>claude auth status</code> and re-authenticate if needed, then re-run the slash command.</p>
-<p><strong><code>npm run eval</code> — cannot find module</strong>
-You are likely running the command from the wrong directory. Navigate to the harness root (the directory containing <code>package.json</code>) and try again.</p>
-<pre class="codehilite"><code class="language-bash">cd /path/to/eval-harness
-npm run eval -- --file my-evals/my-agent-eval.ts
-</code></pre>
-
+<p><strong>Skills not found</strong>
+If <code>/eval-faq</code>, <code>/eval-suite-planner</code>, <code>/eval-generator</code>, or <code>/eval-result-interpreter</code> are not recognized, restart Claude Code and try again. Skills are loaded on session start.</p>
+<p><strong>Generator does not detect the plan</strong>
+The generator reads the plan from your conversation context. If you started a new Claude Code session, either re-run <code>/eval-suite-planner</code> first or re-describe your agent directly in the <code>/eval-generator</code> prompt.</p>
+<p><strong>JSON copy/paste issues</strong>
+If the generated test set has formatting issues when you paste it, use <a href="https://jsonlint.com">jsonlint.com</a> to validate and fix the JSON.</p>
+<p><strong>Auth error when running skills</strong>
+Your Claude Code session may have timed out. Run <code>claude auth login</code> to re-authenticate, then re-run the slash command.</p>
 <hr />
 <h2 id="stretch-goals">Stretch Goals</h2>
 <p>Finished early? Try one or more of these extensions.</p>
-<p><strong>Add a second grader.</strong> Your eval file likely has one grader. Add a second one that checks something different — for example, if your first grader checks length, add a model-graded grader that checks tone or completeness. Run the eval again and see if the results change.</p>
-<p><strong>Add harder cases.</strong> Go back to <code>my-evals/datasets/my-eval-cases.json</code> and add two adversarial cases: one where the input is malformed or empty, and one where the input is designed to produce an output that looks correct but is actually wrong. Re-run and see how your agent handles them.</p>
-<p><strong>Filter by tag.</strong> Add a <code>"tags": ["adversarial"]</code> field to your hardest cases, then run:</p>
-<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-evals/my-agent-eval.ts --tags adversarial
+<p><strong>Ask <code>/eval-faq</code> deeper questions about your specific results.</strong> Take a failure pattern from the interpreter output and ask about it:</p>
+<pre class="codehilite"><code>/eval-faq My agent is failing on cases where the input contains
+multiple topics. What eval strategies help catch this?
 </code></pre>
 
-<p>Compare the pass rate on adversarial cases versus happy-path cases.</p>
-<p><strong>Use verbose mode.</strong> Run with <code>--verbose</code> to see the full model output for each case:</p>
-<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-evals/my-agent-eval.ts --verbose
+<p><strong>Add more scenarios to your plan.</strong> Run <code>/eval-suite-planner</code> again with a more specific focus:</p>
+<pre class="codehilite"><code>/eval-suite-planner Add adversarial scenarios for my email triage
+agent where the email body is intentionally misleading about urgency.
 </code></pre>
 
-<p>Read the actual outputs. Do they look right to a human, even when the grader marks them as failing? If yes, your grader criteria may be too strict.</p>
-<p><strong>Go back to <code>/eval-faq</code> with a specific result.</strong> Take a failing case and ask:</p>
-<pre class="codehilite"><code>/eval-faq My knowledge grounding grader is failing on cases where the
-input contains multiple topics. What might be causing this?
+<p><strong>Try interpreting the synthetic results with different questions.</strong> Ask the interpreter to focus on a specific category or threshold:</p>
+<pre class="codehilite"><code>/eval-result-interpreter Focus on the adversarial cases only.
+What is the pass rate and what are the common failure modes?
 </code></pre>
 
-<p>Use the answer to refine either your grader or your dataset.</p>
+<p><strong>Discuss with your neighbor:</strong> What would you change in your agent based on the ITERATE or BLOCK verdict? Would you change the prompt, the grounding data, the guardrails, or something else?</p>
 </body></html>

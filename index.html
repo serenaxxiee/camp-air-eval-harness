@@ -88,9 +88,9 @@
   <div class="card"><span class="badge badge-green">5 min</span> &nbsp; <strong>Skill Demo</strong> <span class="muted">&mdash; See 4 AI-powered eval skills in action</span></div>
   <div class="card"><span class="badge badge-orange">10 min</span> &nbsp; <strong>Explore + Plan</strong> <span class="muted">&mdash; /eval-faq + /eval-suite-planner</span></div>
   <div class="card"><span class="badge badge-purple">15 min</span> &nbsp; <strong>Generate</strong> <span class="muted">&mdash; /eval-generator &rarr; create test cases</span></div>
-  <div class="card"><span class="badge badge-blue">15 min</span> &nbsp; <strong>Run + Triage</strong> <span class="muted">&mdash; Eval harness + /eval-result-interpreter</span></div>
+  <div class="card"><span class="badge badge-blue">15 min</span> &nbsp; <strong>Interpret + Triage</strong> <span class="muted">&mdash; Synthetic results CSV + /eval-result-interpreter</span></div>
   <div class="card"><span class="badge badge-muted">10 min</span> &nbsp; <strong>Debrief</strong> <span class="muted">&mdash; Share results + key takeaways</span></div>
-  <p class="muted small" style="margin-top:0.8em">You'll do the full eval lifecycle &mdash; plan, generate, run, interpret &mdash; in 40 minutes.</p>
+  <p class="muted small" style="margin-top:0.8em">You'll do the full eval lifecycle &mdash; plan, generate, interpret &mdash; in 40 minutes.</p>
 </section>
 
 <!-- ============ SLIDE 3: SHARED VOCABULARY ============ -->
@@ -105,7 +105,7 @@
       <tr><td class="blue"><strong>Quality Signal</strong></td><td>A named dimension of quality derived from patterns. Agent-specific, not generic.</td><td class="muted mono small">Policy Accuracy, Source Attribution, Escalation Judgment</td></tr>
       <tr><td class="blue"><strong>Grader</strong></td><td>Applies criteria to a response. Deterministic (regex, length) or model-graded (LLM judge).</td><td class="muted mono small">keywordMatch("hand wash"), modelGraded("empathetic")</td></tr>
       <tr><td class="blue"><strong>Eval Set</strong></td><td>A collection of test cases measuring quality dimensions. Your reusable, growing asset.</td><td class="muted mono small">20 cases across core, variations, architecture, edge</td></tr>
-      <tr><td class="blue"><strong>Harness</strong></td><td>The engine that runs test cases, applies graders, and produces a results report.</td><td class="muted mono small">npm run eval &rarr; 17/20 passed (85%)</td></tr>
+      <tr><td class="blue"><strong>Harness</strong></td><td>The engine that runs test cases, applies graders, and produces a results report.</td><td class="muted mono small">Copilot Studio &rarr; 7/12 passed (58%)</td></tr>
     </tbody>
   </table>
 </section>
@@ -169,13 +169,13 @@
     <div class="card" style="text-align:center">
       <div class="card-title green" style="font-size:1.1em">Generate</div>
       <code class="small">/eval-generator</code>
-      <p class="small" style="margin-top:0.4em">Creates 6&ndash;8 test cases in harness-ready JSON</p>
+      <p class="small" style="margin-top:0.4em">Creates 6&ndash;8 test cases for Copilot Studio upload</p>
     </div>
     <div class="flow-arrow">&rarr;</div>
     <div class="card" style="text-align:center">
       <div class="card-title blue" style="font-size:1.1em">Run</div>
-      <code class="small">Copilot Studio / harness</code>
-      <p class="small" style="margin-top:0.4em">Run test cases in Copilot Studio or Camp AIR harness &rarr; export results</p>
+      <code class="small">Copilot Studio</code>
+      <p class="small" style="margin-top:0.4em">Upload test set to Copilot Studio &rarr; run evaluations &rarr; export CSV</p>
     </div>
     <div class="flow-arrow">&rarr;</div>
     <div class="card" style="text-align:center">
@@ -374,15 +374,16 @@ urgent, not-urgent, or spam</code></pre>
 &rarr; generates one test case per scenario</code></pre>
     </div>
     <div class="card">
-      <div class="card-title blue">3. Run in Copilot Studio</div>
-      <pre><code>Copy Copilot Studio table &rarr; Create test set
-Run evaluation &rarr; Export CSV results</code></pre>
+      <div class="card-title purple">3. Interpret synthetic CSV</div>
+      <pre><code>/eval-result-interpreter
+synthetic-eval-results.csv
+&rarr; SHIP / ITERATE / BLOCK verdict</code></pre>
     </div>
     <div class="card">
-      <div class="card-title purple">4. Interpret CSV</div>
-      <pre><code>/eval-result-interpreter
-C:\Downloads\Evaluate Agent.csv
-&rarr; SHIP / ITERATE / BLOCK verdict</code></pre>
+      <div class="card-title muted">In production</div>
+      <pre><code>Upload test set to Copilot Studio
+Run evaluation &rarr; Export CSV
+/eval-result-interpreter on real results</code></pre>
     </div>
   </div>
 </section>
@@ -398,8 +399,8 @@ C:\Downloads\Evaluate Agent.csv
       <p class="muted small" style="margin-top:0.3em">from <code>/eval-suite-planner</code></p>
     </div>
     <div class="card" style="text-align:center">
-      <div class="card-title green" style="font-size:1.1em">Test Cases</div>
-      <p class="small">6&ndash;8 concrete test cases with realistic inputs, expected outputs, and test method configurations &mdash; ready to paste into Copilot Studio.</p>
+      <div class="card-title green" style="font-size:1.1em">Eval Test Set</div>
+      <p class="small">A complete eval test set with 6&ndash;8 test cases, realistic inputs, expected outputs, and test method configurations &mdash; ready for Copilot Studio upload.</p>
       <p class="muted small" style="margin-top:0.3em">from <code>/eval-generator</code></p>
     </div>
     <div class="card" style="text-align:center">
@@ -408,7 +409,7 @@ C:\Downloads\Evaluate Agent.csv
       <p class="muted small" style="margin-top:0.3em">from <code>/eval-result-interpreter</code></p>
     </div>
   </div>
-  <div class="banner" style="margin-top:0.6em">These three artifacts form your <strong>eval foundation</strong>. Keep them. Expand them. Every production incident becomes a new test case.</div>
+  <div class="banner" style="margin-top:0.6em">These three artifacts form your <strong>eval foundation</strong>. Upload your test set to Copilot Studio, run it against your real agent, and keep expanding. Every production incident becomes a new test case.</div>
 </section>
 
 <!-- ============ SLIDE 9: HANDS-ON PART 1 ============ -->
@@ -441,7 +442,7 @@ things the policy does not allow.</code></pre>
   <div class="card">
     <div class="card-title">Step 1 &mdash; Generate test cases from your plan</div>
     <pre style="font-size:0.6em"><code>/eval-generator</code></pre>
-    <p class="small" style="margin-top:0.3em">The generator detects the planner output and produces one test case per scenario. Two formats: <span class="blue">Copilot Studio table</span> (primary) + <span class="green">Camp AIR harness JSON</span>.</p>
+    <p class="small" style="margin-top:0.3em">The generator detects the planner output and produces one test case per scenario. Output: <span class="blue">Copilot Studio table</span> ready for upload.</p>
   </div>
   <div class="card">
     <div class="card-title">Step 2 &mdash; Review and refine</div>
@@ -450,31 +451,26 @@ things the policy does not allow.</code></pre>
     <p class="small"><span class="orange">&bull;</span> Check that adversarial cases test something meaningful (prompt injection, out-of-scope request).</p>
   </div>
   <div class="card">
-    <div class="card-title">Step 3 &mdash; Save your test cases</div>
-    <p class="small"><strong>Copilot Studio path:</strong> Copy the Copilot Studio table &rarr; Create a new test set in Copilot Studio &rarr; Paste the questions and expected responses.</p>
-    <p class="small"><strong>Camp AIR harness path:</strong> Copy the JSON &rarr; Save to <code>my-evals/datasets/my-eval-cases.json</code> &rarr; Update <code>my-evals/my-agent-eval.ts</code>.</p>
+    <div class="card-title">Step 3 &mdash; Save your test set</div>
+    <p class="small">Copy the Copilot Studio table from the generator output. This is your complete eval test set, ready for upload to Copilot Studio when you're back at your desk.</p>
   </div>
   <div class="card">
     <div class="card-title green">Done when</div>
-    <p class="small">You have 6&ndash;8 reviewed test cases saved in Copilot Studio or the harness. Save the scenario plan table as a reference &mdash; CSV exports lose this metadata.</p>
+    <p class="small">You have 6&ndash;8 reviewed test cases in a Copilot Studio table format. Save the scenario plan table as a reference &mdash; CSV exports lose this metadata.</p>
   </div>
 </section>
 
 <!-- ============ SLIDE 11: HANDS-ON PART 3 ============ -->
 <section>
-  <h2>Hands-On Part 3: Run + Triage <span class="badge badge-blue">15 min</span></h2>
+  <h2>Hands-On Part 3: Interpret + Triage <span class="badge badge-blue">15 min</span></h2>
   <div class="card">
-    <div class="card-title">Step 1 &mdash; Run the eval</div>
-    <p class="small"><strong>Copilot Studio:</strong> Go to your agent &rarr; Evaluate tab &rarr; Select your test set &rarr; Run &rarr; Wait for results &rarr; Export CSV (download button).</p>
-    <p class="small"><strong>Camp AIR harness:</strong> <code>npm run eval -- --file my-evals/my-agent-eval.ts --verbose</code></p>
+    <div class="card-title">Step 1 &mdash; Get the synthetic results CSV</div>
+    <p class="small">We provide a pre-built Copilot Studio eval results CSV with realistic pass/fail data. This is the same format you'll get when you run your own test set in Copilot Studio later.</p>
+    <pre style="font-size:0.6em"><code>synthetic-eval-results.csv   # provided in the repo</code></pre>
   </div>
   <div class="card">
     <div class="card-title">Step 2 &mdash; Interpret results</div>
-    <pre style="font-size:0.6em"><code># Copilot Studio path (paste the CSV file path):
-/eval-result-interpreter C:\Users\you\Downloads\Evaluate Agent.csv
-
-# Camp AIR harness path (paste the terminal output):
-/eval-result-interpreter 5/8 passed. Failed: case-003 (topic missing)...</code></pre>
+    <pre style="font-size:0.6em"><code>/eval-result-interpreter synthetic-eval-results.csv</code></pre>
   </div>
   <div class="card">
     <div class="card-title">Step 3 &mdash; Reflect (3 debrief questions)</div>
@@ -493,28 +489,24 @@ things the policy does not allow.</code></pre>
   <h2>Setup Instructions</h2>
   <div class="card">
     <div class="card-title">Prerequisites</div>
-    <p class="small"><span class="blue">&bull;</span> Node.js 18+ (<code>node --version</code>) &nbsp; <span class="blue">&bull;</span> Claude Code CLI (<code>claude --version</code>) &nbsp; <span class="blue">&bull;</span> Anthropic API key ready &nbsp; <span class="blue">&bull;</span> Git Bash (for Windows)</p>
+    <p class="small"><span class="blue">&bull;</span> Claude Code CLI (<code>claude --version</code>) &nbsp; <span class="blue">&bull;</span> Git Bash (for Windows)</p>
   </div>
   <div class="card">
-    <div class="card-title">Clone &amp; Install (in Git Bash)</div>
+    <div class="card-title">Clone the repo (in Git Bash)</div>
     <pre><code>git clone https://github.com/serenaxxiee/camp-air-eval-harness
-cd camp-air-eval-harness/eval-harness
-npm install</code></pre>
+cd camp-air-eval-harness</code></pre>
   </div>
   <div class="card">
     <div class="card-title">Install the 4 AI Skills (in Git Bash)</div>
-    <pre><code>cp -r ../skills/eval-faq ~/.claude/skills/
-cp -r ../skills/eval-generator ~/.claude/skills/
-cp -r ../skills/eval-result-interpreter ~/.claude/skills/
-cp -r ../skills/eval-suite-planner ~/.claude/skills/</code></pre>
+    <pre><code>cp -r skills/eval-faq ~/.claude/skills/
+cp -r skills/eval-generator ~/.claude/skills/
+cp -r skills/eval-result-interpreter ~/.claude/skills/
+cp -r skills/eval-suite-planner ~/.claude/skills/</code></pre>
     <p class="small muted" style="margin-top:0.3em">Then <strong>restart Claude Code</strong> for skills to take effect. Verify: <code>ls ~/.claude/skills/eval-*/SKILL.md</code> &mdash; should show 4 files.</p>
   </div>
   <div class="card">
-    <div class="card-title">Set API Key &amp; Verify</div>
-    <pre><code>export ANTHROPIC_API_KEY=sk-ant-...     # Git Bash / macOS / Linux
-# PowerShell: $env:ANTHROPIC_API_KEY="sk-ant-..."
-npm test                                 # Runs example eval (~83% pass rate)</code></pre>
-    <p class="small muted">Quick skill check: in Claude Code, type <code>/eval-faq what is eval</code> &mdash; if you see a structured answer, skills are working.</p>
+    <div class="card-title">Verify skills are working</div>
+    <p class="small">In Claude Code, type <code>/eval-faq what is eval</code> &mdash; if you see a structured answer, skills are loaded and working.</p>
   </div>
 </section>
 
@@ -526,10 +518,8 @@ npm test                                 # Runs example eval (~83% pass rate)</c
     <thead><tr><th>Problem</th><th>Fix</th></tr></thead>
     <tbody>
       <tr><td class="blue"><code>/eval-faq</code> not recognized</td><td>Restart Claude Code after copying skills. Verify: <code>ls ~/.claude/skills/eval-*/SKILL.md</code></td></tr>
-      <tr><td class="blue"><code>npm install</code> fails</td><td>Make sure you're in <code>eval-harness/</code> (not the repo root). Check Node 18+.</td></tr>
-      <tr><td class="blue">API key error</td><td><code>export ANTHROPIC_API_KEY=sk-ant-...</code> (Git Bash) or <code>$env:ANTHROPIC_API_KEY="sk-ant-..."</code> (PowerShell)</td></tr>
       <tr><td class="blue"><code>/eval-generator</code> doesn't read plan</td><td>Planner and generator must run in the <strong>same Claude Code session</strong>. Don't close between steps.</td></tr>
-      <tr><td class="blue">Copilot Studio CSV is empty</td><td>Wait for the eval run to complete. Re-export. Check the Downloads folder for the file.</td></tr>
+      <tr><td class="blue">Interpreter can't find CSV</td><td>Use the full file path to the synthetic results CSV. Check that the repo cloned successfully.</td></tr>
       <tr><td class="blue">100% pass rate on first run</td><td>This means your tests are too easy, not that your agent is perfect. Add edge cases and adversarial scenarios.</td></tr>
       <tr><td class="blue">Windows <code>cp -r</code> fails</td><td>Use Git Bash (not PowerShell or CMD). Or manually copy the 4 skill folders to <code>%USERPROFILE%\.claude\skills\</code></td></tr>
     </tbody>
@@ -543,7 +533,7 @@ npm test                                 # Runs example eval (~83% pass rate)</c
   <div class="card"><span class="green"><strong>Small datasets are fine. Representative ones are essential.</strong></span><br><span class="small">10 well-chosen cases beat 100 random ones. Include happy paths, edge cases, and adversarial.</span></div>
   <div class="card"><span class="orange"><strong>AI accelerates the scaffolding, not the thinking.</strong></span><br><span class="small">Use /eval-generator for speed. But you define criteria, review cases, and interpret results.</span></div>
   <div class="card"><span class="purple"><strong>Eval sets compound over time.</strong></span><br><span class="small">Every incident, every edge case, every lesson learned becomes a test case that protects you forever.</span></div>
-  <div class="card"><span class="blue"><strong>The full lifecycle took you 40 minutes today.</strong></span><br><span class="small">Plan &rarr; Generate &rarr; Run &rarr; Interpret. Keep that file. That's your foundation.</span></div>
+  <div class="card"><span class="blue"><strong>The full lifecycle took you 40 minutes today.</strong></span><br><span class="small">Plan &rarr; Generate &rarr; Interpret. You have a complete test set ready for Copilot Studio and a methodology for interpreting results.</span></div>
   <div class="banner muted" style="margin-top:0.6em">&ldquo;The best time to write an eval is before you write the prompt. The second best time is right now.&rdquo;</div>
 </section>
 

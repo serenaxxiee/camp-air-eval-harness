@@ -84,14 +84,14 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <tr>
 <td>Live Demo</td>
 <td>0:15 – 0:25</td>
-<td>Run summarizer eval, show eval-generator</td>
-<td>Show pre-recorded <code>results-snapshot.txt</code> instead of live run</td>
+<td>Demo skills pipeline + show synthetic results</td>
+<td>Walk through the synthetic CSV instead of live demo</td>
 </tr>
 <tr>
 <td>Hands-On Exercise</td>
 <td>0:25 – 0:50</td>
 <td>Rove the room, check in at ~0:40</td>
-<td>Tell participants to run a partial eval rather than finish the file</td>
+<td>Tell participants to copy the generated test set as-is rather than perfecting it</td>
 </tr>
 <tr>
 <td>Debrief &amp; Wrap-Up</td>
@@ -106,19 +106,17 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <h2 id="4-demo-preparation-checklist">4. Demo Preparation Checklist</h2>
 <p>The demo in Segment 3 is the moment the whole session pivots on. If it goes well, participants go into the hands-on with confidence. If it breaks, you spend the first five minutes of hands-on time doing damage control.</p>
 <p><strong>48 hours before the session:</strong>
-- [ ] Clone a fresh copy of the eval harness repo and run <code>npm install</code> from scratch — do not rely on a stale local copy
-- [ ] Run <code>npm run eval -- --file examples/summarizer-eval.ts</code> all the way through. Confirm you see the results table with at least one pass and one fail
+- [ ] Clone a fresh copy of the eval harness repo
+- [ ] Install Claude Code skills (<code>/eval-generator</code>, <code>/eval-result-interpreter</code>, <code>/eval-faq</code>) and confirm they load without errors
 - [ ] Run <code>/eval-generator</code> in Claude Code with the exact customer support prompt from the outline. Confirm it produces usable scenarios
-- [ ] Save the terminal output from your successful run as <code>results-snapshot.txt</code> in the repo root — this is your backup if the live run fails
-- [ ] Confirm your API key has enough quota to run the demo + 30 participants simultaneously without hitting rate limits</p>
+- [ ] Have <code>synthetic-eval-results.csv</code> ready to share/display — this is the pre-built results file participants will use for result interpretation</p>
 <p><strong>Morning of the session:</strong>
-- [ ] Run the demo one more time on the actual laptop you will present from
+- [ ] Run the skills pipeline one more time on the actual laptop you will present from
 - [ ] Set your terminal font size to at least 18pt — participants in the back need to read it
-- [ ] Open <code>examples/summarizer-eval.ts</code> in your editor with the file tree visible on the left
-- [ ] Put <code>results-snapshot.txt</code> one keystroke away (open in a separate tab or terminal pane)
+- [ ] Have <code>synthetic-eval-results.csv</code> open and one keystroke away (separate tab or terminal pane)
 - [ ] Disable notifications and close Slack</p>
-<p><strong>Backup plan if the live run fails mid-demo:</strong>
-Say: "The model-graded grader is being slow today — let me show you what the output looks like from my earlier run." Switch to <code>results-snapshot.txt</code>. Continue narrating as if nothing happened. Do not apologize more than once.</p>
+<p><strong>Backup plan if the skills demo fails mid-demo:</strong>
+Say: "Let me switch to the prepared results — this is the same synthetic CSV you'll be using in the exercise." Open <code>synthetic-eval-results.csv</code> and continue narrating. The synthetic CSV is always the fallback. Do not apologize more than once.</p>
 <hr />
 <h2 id="5-reading-the-room">5. Reading the Room</h2>
 <h3 id="room-is-quiet-or-disengaged">Room is quiet or disengaged</h3>
@@ -130,7 +128,7 @@ Say: "The model-graded grader is being slow today — let me show you what the o
 <p><strong>Signal:</strong> At your mid-Stage-B check-in (~0:40), fewer than half have raised hands confirming they have a dataset file saved.</p>
 <p><strong>Response:</strong> Immediately give a simplification directive. Walk to the center of the room and say:</p>
 <blockquote>
-<p>"Here's a shortcut — if you haven't started the dataset file yet, go to <code>examples/datasets/summarizer-cases.json</code>, duplicate it, change the input text to match your chosen agent task, and that's your dataset. Do not start from a blank file."</p>
+<p>"Here's a shortcut — if you haven't finished generating yet, copy the generator output as-is, don't perfect it. A complete but imperfect test set is better than no test set. Move on to Stage C."</p>
 </blockquote>
 <p>Extend Stage B by 3–4 minutes and compress Stage C to: "Run it once, capture whatever output appears, bring that to the debrief." A partial result is a valid result.</p>
 <h3 id="room-is-moving-fast-early-finishers">Room is moving fast — early finishers</h3>
@@ -146,10 +144,9 @@ Say: "The model-graded grader is being slow today — let me show you what the o
 <p>If the topic is actually interesting to the whole room, you can choose to surface it: "Actually, this question about [topic] might be worth 60 seconds for the group." Then give it 60 seconds and move on explicitly.</p>
 <h3 id="technical-failure-npm-error-auth-issue-etc">Technical failure — npm error, auth issue, etc.</h3>
 <p><strong>Signal:</strong> A participant (or multiple) has an error they cannot get past in the first 5 minutes of Stage A or B.</p>
-<p><strong>Response:</strong> Triage fast. The three most common issues:
+<p><strong>Response:</strong> Triage fast. The two most common issues:
 1. <strong>Auth error on <code>/eval-faq</code> or <code>/eval-generator</code>:</strong> Have them re-run <code>claude auth login</code> in a new terminal. This is usually a session token issue.
-2. <strong><code>npm run eval</code> fails with a module error:</strong> Have them run <code>npm install</code> again. Missing node_modules is the most common cause.
-3. <strong>TypeScript compilation error in their eval file:</strong> Tell them to copy <code>examples/summarizer-eval.ts</code> fresh and make only one change at a time. Do not try to debug the original.</p>
+2. <strong>"Skill not found" error:</strong> Have them restart Claude Code entirely. Skills sometimes fail to load on first launch.</p>
 <p>If more than 5 people have blocking errors: stop the room briefly, acknowledge it ("Looks like a few of us have a setup issue — let's spend 2 minutes getting everyone unblocked"), and walk through the fix for the most common cause. Do not let one setup problem quietly strand a third of the room.</p>
 <hr />
 <h2 id="6-participant-archetypes">6. Participant Archetypes</h2>
@@ -158,9 +155,9 @@ Say: "The model-graded grader is being slow today — let me show you what the o
 <p><strong>What they need:</strong> Acknowledgment before reframe. Do not argue. Say: "That works at small scale — the question is what happens when you change the prompt and you have 50 cases to check. Or when you have three team members each making changes." Concrete scale is the best reframe. If they remain skeptical, that is fine. They are engaging, not checked out.</p>
 <h3 id="the-perfectionist">The Perfectionist</h3>
 <p><strong>How to spot them:</strong> Fifteen minutes into Stage B, they have not run a single command. They are still writing criteria in a doc, or rewriting the prompt template, or asking eval-faq five follow-up questions.</p>
-<p><strong>What they need:</strong> A forcing function. Walk over and say, directly but warmly: "Run what you have. An imperfect eval that runs is worth more than a perfect eval that doesn't. You can fix the criteria after you see the output." If they push back, tell them the goal for this session is exactly one run of the harness — not one perfect eval.</p>
+<p><strong>What they need:</strong> A forcing function. Walk over and say, directly but warmly: "Copy your generator output and move to Stage C. An imperfect test set that gets interpreted is worth more than a perfect one that never leaves the generator. You can fix the criteria after you see the results." If they push back, tell them the goal for this session is a complete test set plus result interpretation — not one perfect eval.</p>
 <h3 id="the-explorer">The Explorer</h3>
-<p><strong>How to spot them:</strong> Deep in the repo, reading <code>multi-turn-eval.ts</code>, or trying to add a custom grader type, or Googling something unrelated to the task.</p>
+<p><strong>How to spot them:</strong> Deep in the repo, exploring <code>/eval-faq</code> deeply, or trying to add a custom grader type, or Googling something unrelated to the task.</p>
 <p><strong>What they need:</strong> A gentle boundary and a follow-up offer. Say: "I love that you're going deep — hold that thread, finish the core exercise, and come find me after the session. I want to hear what you found." Give them the satisfaction of knowing their rabbit hole is valued, but redirect them to the shared outcome.</p>
 <h3 id="the-disengaged">The Disengaged</h3>
 <p><strong>How to spot them:</strong> Phone out, no editor open, not writing anything during Stage B.</p>
@@ -194,7 +191,7 @@ Say: "The model-graded grader is being slow today — let me show you what the o
 </blockquote>
 <p><strong>Stage B → Stage C (at ~0:45):</strong></p>
 <blockquote>
-<p>"Time to run it. Terminal, harness root, command is on screen. When it finishes, answer the three questions on the slide — you'll share in debrief."</p>
+<p>"Now let's interpret results — open the synthetic CSV I shared and run /eval-result-interpreter. Answer the three questions on the slide — you'll share in debrief."</p>
 </blockquote>
 <p><strong>Stage C → Debrief (at ~0:50):</strong></p>
 <blockquote>
@@ -222,12 +219,12 @@ Say: "The model-graded grader is being slow today — let me show you what the o
 <li>Frame the ask in a low-stakes way: "I was watching [Name]'s screen during the exercise and saw something interesting — [Name], can you show us your results? Even if they're partial."</li>
 <li>Give an out: "And if your eval errored out completely, that's actually worth sharing too — we'll make it useful."</li>
 </ul>
-<h3 id="when-a-participants-eval-completely-failed-or-errored-out">When a participant's eval completely failed or errored out</h3>
-<p>Do not skip them. An eval that failed is the richest teaching case. Say:</p>
+<h3 id="when-a-participants-generator-didnt-produce-useful-output">When a participant's generator didn't produce useful output</h3>
+<p>Do not skip them. A generator that produced weak output is the richest teaching case. Say:</p>
 <blockquote>
-<p>"Walk us through what happened. What error did you hit? What did you try?"</p>
+<p>"Walk us through what happened. What did the generator give you? What would you change about the prompt?"</p>
 </blockquote>
-<p>Then turn it to the group: "Anyone recognize that issue? What would you check first?" This turns a failure into a debugging exercise, which is both useful and normalizing — production evals fail too, and debugging them is the job.</p>
+<p>Then turn it to the group: "Anyone recognize that issue? What would you adjust?" This turns a weak result into a prompt-refinement exercise, which is both useful and normalizing — real eval design is iterative, and improving prompts is the job.</p>
 <h3 id="surfacing-the-key-lesson-from-whatever-results-the-room-produced">Surfacing the key lesson from whatever results the room produced</h3>
 <p>The room will produce varied results — some passing evals, some failing ones, some errors. Regardless of what comes up, these are the three lessons you can anchor to in any debrief:</p>
 <ol>
@@ -274,8 +271,8 @@ Say: "The model-graded grader is being slow today — let me show you what the o
 <p><strong>Why it is fine:</strong>
 Participants are not here to see a perfect presentation. They are here to run an eval for the first time and leave with vocabulary they did not have before. That outcome is achievable even when setup breaks, even when the demo is imperfect, and even when one person is on their phone.</p>
 <p><strong>The one thing that matters most:</strong>
-Make sure every participant runs the harness at least once before the session ends. Not writes a perfect eval — <em>runs the command and sees output</em>. That single experience — watching their own cases process and seeing a results table — is the thing that makes the concepts concrete. Everything else in the session exists to make that moment possible.</p>
-<p>If you get to 0:49 and several people have not run the command yet, drop everything else and make it happen. Say: "Run what you have right now — even one case is fine." A partial run beats a beautiful unrun eval file.</p>
+Make sure every participant generates a complete eval test set and interprets results with the interpreter skill before the session ends. Not writes a perfect eval — <em>generates a test set and sees interpreted results</em>. That single experience — producing their own scenarios and seeing what the results mean — is the thing that makes the concepts concrete. Everything else in the session exists to make that moment possible.</p>
+<p>If you get to 0:49 and several people have not generated their test set yet, drop everything else and make it happen. Say: "Generate your test set now — even if it's not perfect, having a real eval set is the outcome." An imperfect generated test set beats a beautiful plan that never got generated.</p>
 <p><strong>One last thing:</strong>
 You know this material. The session outline, the harness, the concepts — you have worked with these things in the real world. That is what the room is paying attention to. The question is not whether you can deliver a perfect facilitation — it is whether you can share what you actually know. You can.</p>
 <hr />
