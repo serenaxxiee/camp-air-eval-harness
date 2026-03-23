@@ -139,19 +139,20 @@
 <!-- ============ SLIDE 5: COPILOT STUDIO TEST METHODS ============ -->
 <section>
   <h2>7 Test Methods in Copilot Studio</h2>
-  <p class="muted small">Choose based on what you're checking &mdash; use two methods per test case where possible</p>
+  <p class="muted small">Choose based on what you're checking &mdash; <span class="green">5 methods</span> can be set via CSV import; <span class="orange">2</span> are configured in the UI after import</p>
   <table>
-    <thead><tr><th>Method</th><th>Type</th><th>What It Checks</th><th>Best For</th></tr></thead>
+    <thead><tr><th>Method</th><th>Type</th><th>What It Checks</th><th>CSV Import?</th></tr></thead>
     <tbody>
-      <tr><td class="blue"><strong>Keyword Match</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Specific words/phrases appear (All or Any mode)</td><td>Policy compliance, must-include checks</td></tr>
-      <tr><td class="green"><strong>Compare Meaning</strong></td><td><span class="badge badge-green">Model-based</span></td><td>Semantic similarity to expected answer</td><td>Factual accuracy, flexible phrasing</td></tr>
-      <tr><td><strong>Text Similarity</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Cosine similarity score (0&ndash;1)</td><td>Verbatim compliance, legal text</td></tr>
-      <tr><td><strong>Exact Match</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Character-for-character equality</td><td>Classification labels, routing codes</td></tr>
-      <tr><td class="purple"><strong>General Quality</strong></td><td><span class="badge badge-purple">Model-based</span></td><td>LLM judges: Relevance, Groundedness, Completeness, Abstention</td><td>Tone, helpfulness, open-ended quality</td></tr>
-      <tr><td class="orange"><strong>Tool Use</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Agent triggered correct tools/topics</td><td>Tool invocation, source selection, routing</td></tr>
-      <tr><td class="blue"><strong>Custom</strong></td><td><span class="badge badge-blue">Model-based</span></td><td>Your criteria + labels (pass/fail)</td><td>Domain-specific checks (compliance, triage)</td></tr>
+      <tr><td class="purple"><strong>General quality</strong></td><td><span class="badge badge-purple">Model-based</span></td><td>LLM judges: Relevance, Groundedness, Completeness, Abstention</td><td><span class="green">&#10003;</span></td></tr>
+      <tr><td class="green"><strong>Compare meaning</strong></td><td><span class="badge badge-green">Model-based</span></td><td>Semantic similarity to expected answer</td><td><span class="green">&#10003;</span></td></tr>
+      <tr><td><strong>Similarity</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Text similarity score (0&ndash;1)</td><td><span class="green">&#10003;</span></td></tr>
+      <tr><td><strong>Exact match</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Character-for-character equality</td><td><span class="green">&#10003;</span></td></tr>
+      <tr><td class="blue"><strong>Keyword match</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Specific words/phrases appear (All or Any mode)</td><td><span class="green">&#10003;</span></td></tr>
+      <tr><td class="orange"><strong>Tool Use</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Agent triggered correct tools/topics</td><td><span class="muted">UI only</span></td></tr>
+      <tr><td class="orange"><strong>Custom</strong></td><td><span class="badge badge-blue">Model-based</span></td><td>Your criteria + labels (pass/fail)</td><td><span class="muted">UI only</span></td></tr>
     </tbody>
   </table>
+  <p class="muted small" style="margin-top:0.4em">CSV import format: 3 columns &mdash; <code>Question</code>, <code>Expected response</code>, <code>Testing method</code> &mdash; per <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-create#create-a-test-set-file-to-import" style="color:#58a6ff">MS Learn</a></p>
 </section>
 
 <!-- ============ SLIDE 6: AI DOES THE HEAVY LIFTING ============ -->
@@ -253,11 +254,11 @@ on case-003, how do I debug it?</code></pre>
     <div>
       <div class="card">
         <div class="card-title orange">Example</div>
-        <pre style="font-size:0.6em"><code>/eval-suite-planner I am building an
-email triage agent that reads incoming
-emails and labels them urgent,
-not-urgent, or spam. It should never
-label a real customer email as spam.</code></pre>
+        <pre style="font-size:0.6em"><code>/eval-suite-planner I am building a
+customer support agent for a premium
+hand-wash t-shirt product. It answers
+care, sizing, storage, and warranty
+questions using a product care PDF.</code></pre>
       </div>
       <div class="card">
         <div class="card-title green">Key behavior</div>
@@ -280,8 +281,9 @@ label a real customer email as spam.</code></pre>
       </div>
       <div class="card">
         <div class="card-title blue">Two output formats</div>
-        <p class="small"><span class="blue">&bull;</span> <strong>Copilot Studio table</strong> (primary) &mdash; Question, Expected Response, Test Method, Pass Score</p>
-        <p class="small"><span class="green">&bull;</span> <strong>CSV + docx</strong> (secondary) &mdash; for offline review and sharing</p>
+        <p class="small"><span class="blue">&bull;</span> <strong>Copilot Studio table</strong> (primary) &mdash; Question, Expected Response, Testing Method</p>
+        <p class="small"><span class="green">&bull;</span> <strong>CSV import file</strong> &mdash; 3 columns (Question, Expected response, Testing method) ready for Copilot Studio upload</p>
+        <p class="small"><span class="green">&bull;</span> <strong>docx report</strong> &mdash; for offline review and sharing</p>
       </div>
       <div class="card">
         <div class="card-title purple">Smart guard</div>
@@ -361,9 +363,10 @@ C:\Downloads\Evaluate Agent.csv
   <div class="grid-2" style="margin-top:0.8em">
     <div class="card">
       <div class="card-title orange">1. Plan</div>
-      <pre><code>/eval-suite-planner I'm building an email
-triage agent that labels emails as
-urgent, not-urgent, or spam</code></pre>
+      <pre><code>/eval-suite-planner I'm building a customer
+support agent for a premium hand-wash
+t-shirt product. It answers care, sizing,
+storage, and warranty questions.</code></pre>
     </div>
     <div class="card">
       <div class="card-title green">2. Generate (reads from plan)</div>
@@ -467,10 +470,11 @@ claude</code></pre>
   <div class="card">
     <div class="card-title">Step 2 &mdash; Plan your eval suite</div>
     <p class="small">Pick an agent (your own Copilot Studio agent, or one of these examples):</p>
-    <pre style="font-size:0.6em"><code>/eval-suite-planner I am building a customer support agent that answers
-questions about our product return policy and helps customers submit
-return requests. It should follow the return policy and never promise
-things the policy does not allow.</code></pre>
+    <pre style="font-size:0.6em"><code>/eval-suite-planner I am building a customer support agent for
+a premium hand-wash t-shirt product. It answers questions about
+product care (washing, drying, ironing), sizing, storage, warranty
+claims, and escalates issues it cannot resolve. It uses a product
+care PDF as its knowledge source.</code></pre>
     <p class="small muted" style="margin-top:0.3em"><strong>More examples:</strong></p>
     <p class="small muted">&bull; <em>&ldquo;I am building an IT helpdesk agent that troubleshoots VPN issues, password resets, and software installation requests for employees.&rdquo;</em></p>
     <p class="small muted">&bull; <em>&ldquo;I am building an HR FAQ agent that answers questions about company policies like PTO, benefits, and onboarding.&rdquo;</em></p>

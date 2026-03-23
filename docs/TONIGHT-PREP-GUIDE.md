@@ -56,7 +56,7 @@ Should produce a structured 3-5 sentence answer citing Microsoft sources.
 **Start a timer**, then in Claude Code:
 
 ```
-/eval-suite-planner I'm building an email triage agent that labels emails as urgent, not-urgent, or spam. It should never label a real customer email as spam.
+/eval-suite-planner I'm building a customer support agent for a premium hand-wash t-shirt product. It answers questions about product care (washing, drying, ironing), sizing, storage, warranty claims, and escalates issues it cannot resolve.
 ```
 
 Wait for the scenario plan table. Then in the **same session**:
@@ -221,7 +221,7 @@ Ask early arrivals: "Who has Claude Code CLI installed?" Count hands. If <50%, p
 ### The Live Demo (Slide 11, 0:13-0:23)
 
 Script:
-1. **Plan** (2 min): Run `/eval-suite-planner` with email triage description. Point at one row in the scenario table.
+1. **Plan** (2 min): Run `/eval-suite-planner` with T-shirt customer service agent description. Point at one row in the scenario table.
 2. **Generate** (3 min): Run `/eval-generator` in same session. Show the Copilot Studio table. Highlight how it references the plan's Scenario IDs.
 3. **Show synthetic CSV** (1 min): Open synthetic-eval-results.csv. Point out the structure — scenarios, expected vs. actual, pass/fail columns.
 4. **Interpret** (3 min): Run `/eval-result-interpreter` on the CSV. Pick one pass and one fail from the output. Land the insight: "Failing an eval doesn't mean your AI is broken — it means you have information."

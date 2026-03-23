@@ -25,15 +25,15 @@ Use this routing table (from the Eval Scenario Library's Entry Path A) to identi
 
 | If the agent... | Business-problem scenarios | Capability scenarios |
 |---|---|---|
-| Answers questions from knowledge sources | Information Retrieval (6 sub-scenarios) | Knowledge Grounding + Compliance |
-| Executes tasks via APIs/connectors | Request Submission (6 sub-scenarios) | Tool Invocations + Safety |
-| Walks users through troubleshooting | Troubleshooting (6 sub-scenarios) | Knowledge Grounding + Graceful Failure |
-| Guides through multi-step processes | Process Navigation (6 sub-scenarios) | Trigger Routing + Tone & Quality |
-| Routes conversations to teams/departments | Triage & Routing (5 sub-scenarios) | Trigger Routing + Graceful Failure |
-| Handles sensitive data (PII, financial, health) | (add to whichever applies) | Safety + Compliance |
-| Serves external customers | (add to whichever applies) | Tone & Quality + Safety |
-| Is about to be updated or republished | (add to whichever applies) | Regression — re-run existing tests after changes |
-| All agents (always include) | — | Red-Teaming — adversarial robustness testing |
+| Answers questions from knowledge sources | Information Retrieval (BP-IR, 6 sub-scenarios) | Knowledge Grounding (CAP-KG) + Compliance (CAP-CV) |
+| Executes tasks via APIs/connectors | Request Submission (BP-RS, 6 sub-scenarios) | Tool Invocations (CAP-TI) + Safety (CAP-SB) |
+| Walks users through troubleshooting | Troubleshooting (BP-TS, 6 sub-scenarios) | Knowledge Grounding (CAP-KG) + Graceful Failure (CAP-GF) |
+| Guides through multi-step processes | Process Navigation (BP-PN, 6 sub-scenarios) | Trigger Routing (CAP-TR) + Tone & Quality (CAP-TQ) |
+| Routes conversations to teams/departments | Triage & Routing (BP-TR, 5 sub-scenarios) | Trigger Routing (CAP-TR) + Graceful Failure (CAP-GF) |
+| Handles sensitive data (PII, financial, health) | (add to whichever applies) | Safety (CAP-SB) + Compliance (CAP-CV) |
+| Serves external customers | (add to whichever applies) | Tone & Quality (CAP-TQ) + Safety (CAP-SB) |
+| Is about to be updated or republished | (add to whichever applies) | Regression (CAP-RT) — re-run existing tests after changes |
+| All agents (always include) | — | Red-Teaming (CAP-RA) — adversarial robustness testing |
 
 Most agents match 1-2 business-problem types and 3-4 capability types. Select the ones that fit and name them explicitly.
 
@@ -41,7 +41,7 @@ Most agents match 1-2 business-problem types and 3-4 capability types. Select th
 
 **1. One-line summary**
 
-Restate the agent's task in one sentence, starting with "Agent task:". Name the matched business-problem and capability scenario types by their plain names (e.g., "Information Retrieval", "Knowledge Grounding").
+Restate the agent's task in one sentence, starting with "Agent task:". Name the matched business-problem and capability scenario types by their IDs.
 
 **2. Scenario plan table**
 
@@ -49,10 +49,10 @@ This table is the primary handoff artifact to `/eval-generator` — the generato
 
 Produce a table with these columns:
 
-| # | Scenario Name | Category | Tag | Evaluation Methods |
-|---|---|---|---|---|
+| # | Scenario Name | Scenario ID | Category | Tag | Evaluation Methods |
+|---|---|---|---|---|---|
 
-Be specific: name the actual scenario based on the agent description, not just the category.
+Use scenario IDs from the Eval Scenario Library (e.g., BP-IR-01, BP-IR-05, CAP-KG-04, CAP-SB-05). Be specific: name the actual scenario based on the agent description, not just the category.
 
 Use this category distribution (from the Eval Scenario Library's eval-set-template):
 - Core business scenarios: 30-40% of test cases
@@ -93,7 +93,7 @@ Map each signal to the scenarios that test it.
 
 **4. Pass/fail thresholds**
 
-Use risk-based thresholds (from the Eval Scenario Library's eval-set-template):
+Use risk-based thresholds (from the Eval Scenario Library's eval-set-template and the Triage Playbook's Layer 1):
 
 | Category | Target pass rate | Blocking threshold |
 |---|---|---|
@@ -122,32 +122,10 @@ Name 6-8 specific scenarios from the plan table that give the best signal in a 1
 
 ---
 
-### Step 3 — Generate output files
-
-After displaying the plan in the conversation, generate two files:
-
-**A. Eval Suite Plan Report (.docx)**
-Use the docx skill to create a formatted report containing:
-- Title: "Eval Suite Plan: [Agent Name]"
-- Agent description summary
-- Scenario plan table
-- Quality signals and their mapping
-- Pass/fail thresholds
-- Priority order
-- Next steps recommendation
-
-**B. Eval Suite Plan Spreadsheet (.xlsx)**
-Use the xlsx skill to create a spreadsheet with:
-- Sheet 1: Scenario Plan (columns: #, Scenario Name, Category, Tag, Evaluation Methods)
-- Sheet 2: Quality Signals (signal name, description, mapped scenarios)
-- Sheet 3: Thresholds (category, target pass rate, adjustment notes)
-
----
-
 ### Behavior rules
 
 - Every scenario name, evaluation method, and threshold must be specific to the described agent — no generic advice.
-- Always include at least 1 adversarial/safety scenario (e.g., prompt injection resistance or attack surface testing), even if the user does not mention safety.
+- Always include at least 1 adversarial/safety scenario (CAP-SB-05 prompt injection resistance or CAP-RA-01 attack surface), even if the user does not mention safety.
 - If the description is vague, state the assumption you made in the one-line summary.
 - When the agent matches multiple business-problem types (e.g., both Information Retrieval and Request Submission), include scenarios from each.
 
@@ -160,7 +138,7 @@ Use the xlsx skill to create a spreadsheet with:
 
 /eval-suite-planner I am building a RAG agent that answers questions about our internal HR policy documents. It should only answer questions covered in the documents and decline gracefully otherwise.
 
-/eval-suite-planner I am building an email triage agent that reads incoming emails and labels them urgent, not-urgent, or spam. It should never label a real customer email as spam.
+/eval-suite-planner I am building a customer support agent for a premium hand-wash t-shirt product. It answers questions about product care (washing, drying, ironing), sizing, storage, warranty claims, and escalates issues it cannot resolve. It uses a product care PDF as its knowledge source.
 
 /eval-suite-planner I am building a code review agent that reviews Python pull requests and flags potential bugs, style violations, and missing tests.
 ```

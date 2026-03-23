@@ -74,8 +74,8 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
       → Interpret (/eval-result-interpreter)
 </code></pre>
 
-<p><strong>Copilot Studio test set format hint</strong></p>
-<p>The generated test set is a table with columns for test case ID, input, expected output, and tags. Copy the table and paste it into Copilot Studio's test set upload to run evaluations against your agent.</p>
+<p><strong>Copilot Studio test set CSV format</strong></p>
+<p>The generated CSV has three columns: <code>Question</code>, <code>Expected response</code>, <code>Testing method</code>. Testing methods: General quality, Compare meaning, Similarity, Exact match, Keyword match. Save as .csv and import into Copilot Studio &gt; Evaluation &gt; New evaluation.</p>
 <p><strong>Three debrief questions (answer before 0:50)</strong></p>
 <ol>
 <li>What verdict did the interpreter give, and do you agree?</li>
@@ -114,9 +114,8 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 - The names of specific scenario types or grader types mentioned
 - Any thresholds or rules of thumb (numbers, percentages, counts)
 - Anything that surprises you or contradicts an assumption you had</p>
-<p><strong>4.</strong> Pick an agent to evaluate (see the options table in Stage B) and run <code>/eval-suite-planner</code> with a brief description of it.</p>
-<pre class="codehilite"><code>/eval-suite-planner I am building a meeting notes agent that takes
-a raw meeting transcript and produces a structured summary with action items.
+<p><strong>4.</strong> Pick an agent to evaluate (see the options table in Stage B) and run <code>/eval-suite-planner</code> with a brief description of it. We recommend starting with the T-shirt customer service agent — it's the same one used in the live demo and all the example files.</p>
+<pre class="codehilite"><code>/eval-suite-planner I am building a customer support agent for a premium hand-wash t-shirt product. It answers questions about product care (washing, drying, ironing), sizing, storage, warranty claims, and escalates issues it cannot resolve. It uses a product care PDF as its knowledge source.
 </code></pre>
 
 <blockquote>
@@ -139,20 +138,8 @@ a raw meeting transcript and produces a structured summary with action items.
 </thead>
 <tbody>
 <tr>
-<td><strong>Email triage</strong></td>
-<td>Reads incoming emails and labels them as urgent, not urgent, or spam</td>
-</tr>
-<tr>
-<td><strong>Code review</strong></td>
-<td>Reads a code diff and identifies potential bugs or style issues</td>
-</tr>
-<tr>
-<td><strong>Meeting notes</strong></td>
-<td>Takes a raw meeting transcript and produces a structured summary with action items</td>
-</tr>
-<tr>
-<td><strong>Product description</strong></td>
-<td>Takes a product name and specs and writes a short marketing blurb</td>
+<td><strong>T-shirt customer service (recommended)</strong></td>
+<td>Answers customer questions about Premium Hand-Wash T-shirt product care (washing, drying, ironing), sizing, storage, warranty, and escalates issues it cannot resolve. Uses a product care PDF as its knowledge source.</td>
 </tr>
 <tr>
 <td><strong>IT helpdesk</strong></td>
@@ -171,8 +158,7 @@ a raw meeting transcript and produces a structured summary with action items.
 <p>Write down your choice. You will reference it in every prompt you send.</p>
 <h3 id="step-2-run-eval-suite-planner">Step 2 — Run <code>/eval-suite-planner</code></h3>
 <p>If you already ran <code>/eval-suite-planner</code> in Stage A, skip this step — your plan is already in the session. Otherwise, run it now with a description of your chosen agent.</p>
-<pre class="codehilite"><code>/eval-suite-planner I am building an email triage agent that reads
-incoming emails and labels them as urgent, not urgent, or spam.
+<pre class="codehilite"><code>/eval-suite-planner I am building a customer support agent for a premium hand-wash t-shirt product. It answers questions about product care (washing, drying, ironing), sizing, storage, warranty claims, and escalates issues it cannot resolve.
 </code></pre>
 
 <p>Review the plan output. It will include recommended scenario categories (happy-path, edge cases, adversarial) and suggested grader criteria.</p>
@@ -183,7 +169,7 @@ incoming emails and labels them as urgent, not urgent, or spam.
 
 <p>Wait for the output. The generator will produce a Copilot Studio test set as a structured table.</p>
 <blockquote>
-<p><strong>Important:</strong> Stay in the same Claude Code session (same window — don't type <code>/exit</code> or close the terminal). The generator reads the plan from your conversation context. If you accidentally closed your session, open a new terminal, run <code>cd camp-air-eval-harness &amp;&amp; claude</code>, and re-run <code>/eval-suite-planner</code> with your agent description before continuing. Or run <code>/eval-generator</code> followed by your agent description — it can generate from scratch.</p>
+<p><strong>Important:</strong> Stay in the same Claude Code session. The generator reads the plan from your conversation context. If you start a new session, you will need to re-run <code>/eval-suite-planner</code> first or re-describe your agent.</p>
 </blockquote>
 <h3 id="step-4-review-the-generated-test-set">Step 4 — Review the generated test set</h3>
 <p>Read through the generated Copilot Studio test set table. Ask yourself:
@@ -207,9 +193,9 @@ incoming emails and labels them as urgent, not urgent, or spam.
 <hr />
 <h2 id="stage-c-interpret-eval-results">Stage C — Interpret Eval Results</h2>
 <p><strong>Time box: 5 minutes (0:45–0:50)</strong></p>
-<p>Since we do not have live Copilot Studio access in this session, you will use a provided synthetic results file to practice interpreting eval output. <strong>You can start a new Claude Code session for this stage</strong> — the interpreter reads from a file, not from your conversation history.</p>
+<p>Since we do not have live Copilot Studio access in this session, you will use a provided synthetic results file to practice interpreting eval output.</p>
 <h3 id="step-1-open-the-synthetic-results">Step 1 — Open the synthetic results</h3>
-<p>Locate the provided file <code>docs/synthetic-eval-results.csv</code> (in the cloned repo). Open it and review the contents — it contains simulated pass/fail results, scores, and failure reasons for a set of eval cases.</p>
+<p>Locate the provided file <code>synthetic-eval-results.csv</code>. Open it and review the contents — it contains simulated pass/fail results, scores, and failure reasons for a set of eval cases.</p>
 <h3 id="step-2-run-eval-result-interpreter">Step 2 — Run <code>/eval-result-interpreter</code></h3>
 <p>Run the interpreter skill and paste the CSV content when prompted.</p>
 <pre class="codehilite"><code>/eval-result-interpreter
@@ -235,8 +221,8 @@ incoming emails and labels them as urgent, not urgent, or spam.
 If <code>/eval-faq</code>, <code>/eval-suite-planner</code>, <code>/eval-generator</code>, or <code>/eval-result-interpreter</code> are not recognized, restart Claude Code and try again. Skills are loaded on session start.</p>
 <p><strong>Generator does not detect the plan</strong>
 The generator reads the plan from your conversation context. If you started a new Claude Code session, either re-run <code>/eval-suite-planner</code> first or re-describe your agent directly in the <code>/eval-generator</code> prompt.</p>
-<p><strong>JSON copy/paste issues</strong>
-If the generated test set has formatting issues when you paste it, use <a href="https://jsonlint.com">jsonlint.com</a> to validate and fix the JSON.</p>
+<p><strong>CSV import issues</strong>
+If the generated CSV has formatting issues when you import it to Copilot Studio, open it in Excel, verify the three columns (Question, Expected response, Testing method), and re-save as CSV.</p>
 <p><strong>Auth error when running skills</strong>
 Your Claude Code session may have timed out. Run <code>claude auth login</code> to re-authenticate, then re-run the slash command.</p>
 <hr />
@@ -248,8 +234,9 @@ multiple topics. What eval strategies help catch this?
 </code></pre>
 
 <p><strong>Add more scenarios to your plan.</strong> Run <code>/eval-suite-planner</code> again with a more specific focus:</p>
-<pre class="codehilite"><code>/eval-suite-planner Add adversarial scenarios for my email triage
-agent where the email body is intentionally misleading about urgency.
+<pre class="codehilite"><code>/eval-suite-planner Add adversarial scenarios for my t-shirt support
+agent where the customer tries to get the agent to make warranty promises
+that are not in the product documentation.
 </code></pre>
 
 <p><strong>Try interpreting the synthetic results with different questions.</strong> Ask the interpreter to focus on a specific category or threshold:</p>

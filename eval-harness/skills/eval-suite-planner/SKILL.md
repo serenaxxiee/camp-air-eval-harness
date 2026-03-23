@@ -138,7 +138,7 @@ Name 6-8 specific scenarios from the plan table that give the best signal in a 1
 
 /eval-suite-planner I am building a RAG agent that answers questions about our internal HR policy documents. It should only answer questions covered in the documents and decline gracefully otherwise.
 
-/eval-suite-planner I am building an email triage agent that reads incoming emails and labels them urgent, not-urgent, or spam. It should never label a real customer email as spam.
+/eval-suite-planner I am building a customer support agent for a premium hand-wash t-shirt product. It answers questions about product care (washing, drying, ironing), sizing, storage, warranty claims, and escalates issues it cannot resolve. It uses a product care PDF as its knowledge source.
 
 /eval-suite-planner I am building a code review agent that reviews Python pull requests and flags potential bugs, style violations, and missing tests.
 ```

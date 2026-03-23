@@ -668,11 +668,11 @@
       <div class="card">
         <div class="card-title blue">Input</div>
         <p>A description of your AI agent in plain English:</p>
-        <pre style="font-size: 0.8em;">/eval-suite-planner I am building an
-email triage agent that reads incoming
-emails and labels them urgent, not-urgent,
-or spam. It should never label a real
-customer email as spam.</pre>
+        <pre style="font-size: 0.8em;">/eval-suite-planner I am building a
+customer support agent for a premium
+hand-wash t-shirt product. It answers
+care, sizing, storage, and warranty
+questions using a product care PDF.</pre>
       </div>
       <div class="card">
         <div class="card-title blue">Outputs (3 artifacts)</div>
@@ -777,7 +777,7 @@ customer email as spam.</pre>
     <div class="example-box">
       <div class="example-header">Example Prompts to Try</div>
       <div class="example-body">
-<pre style="border: none; margin: 0; padding: 0; background: transparent;">/eval-suite-planner I am building an email triage agent that reads incoming emails and labels them urgent, not-urgent, or spam. It should never label a real customer email as spam.
+<pre style="border: none; margin: 0; padding: 0; background: transparent;">/eval-suite-planner I am building a customer support agent for a premium hand-wash t-shirt product. It answers questions about product care (washing, drying, ironing), sizing, storage, warranty claims, and escalates issues it cannot resolve.
 
 /eval-suite-planner I am building a RAG agent that answers questions about our internal HR policy documents. It should only answer questions covered in the documents.
 
@@ -855,48 +855,53 @@ customer email as spam.</pre>
 
     <div class="card">
       <div class="card-title orange">Copilot Studio Test Set Table Format</div>
-      <p>The primary output is a markdown table matching Copilot Studio's format:</p>
+      <p>The primary output is a markdown table matching Copilot Studio's CSV import format (<a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/analytics-agent-evaluation-create#create-a-test-set-file-to-import" style="color: var(--blue);">MS Learn reference</a>):</p>
       <table style="margin-top: 0.5em;">
-        <thead><tr><th>#</th><th>Question</th><th>Expected Response</th><th>Test Method</th><th>Pass Score</th></tr></thead>
+        <thead><tr><th>#</th><th>Question</th><th>Expected Response</th><th>Testing Method</th></tr></thead>
         <tbody>
-          <tr><td>1</td><td><em>Realistic user input</em></td><td><em>Expected answer</em></td><td><span class="badge badge-orange">General Quality</span></td><td>&mdash;</td></tr>
-          <tr><td>2</td><td><em>Realistic user input</em></td><td><em>Expected for comparison</em></td><td><span class="badge badge-blue">Compare Meaning</span></td><td>50</td></tr>
-          <tr><td>3</td><td><em>Realistic user input</em></td><td><em>Keywords to check</em></td><td><span class="badge badge-green">Keyword Match</span></td><td>&mdash;</td></tr>
+          <tr><td>1</td><td><em>How should I wash my t-shirt?</em></td><td><em>(blank for General quality)</em></td><td><span class="badge badge-orange">General quality</span></td></tr>
+          <tr><td>2</td><td><em>Can I use bleach on this?</em></td><td><em>No. Bleach is prohibited&hellip;</em></td><td><span class="badge badge-blue">Compare meaning</span></td></tr>
+          <tr><td>3</td><td><em>Can I machine wash it?</em></td><td><em>machine washing is not allowed, hand wash</em></td><td><span class="badge badge-green">Keyword match</span></td></tr>
         </tbody>
       </table>
+      <p class="muted" style="font-size: 0.82em; margin-top: 0.4em;">The CSV file has exactly 3 columns: <code>Question</code>, <code>Expected response</code>, <code>Testing method</code>. Pass scores and additional methods (Tool Use, Custom) are configured in the Copilot Studio UI after import.</p>
     </div>
 
     <div class="card">
-      <div class="card-title orange">7 Test Methods Mapped</div>
-      <p>The skill knows all 7 Copilot Studio test methods and when to use each:</p>
+      <div class="card-title orange">5 CSV-Importable Testing Methods + 2 UI-Only</div>
+      <p>The skill maps scenarios to Copilot Studio's testing methods. <strong>5 methods</strong> can be set via CSV import; 2 additional methods are configured in the UI after import.</p>
+      <p class="muted" style="font-size: 0.82em; margin-top: 0.3em;"><strong>CSV-importable</strong> (set in the Testing method column):</p>
       <div class="grid-2" style="margin-top: 0.5em; gap: 0.5em;">
         <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
-          <span class="badge badge-orange">General Quality</span>
+          <span class="badge badge-orange">General quality</span>
           <span class="muted" style="font-size: 0.82em;"> &mdash; overall response quality (no expected response needed)</span>
         </div>
         <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
-          <span class="badge badge-blue">Compare Meaning</span>
-          <span class="muted" style="font-size: 0.82em;"> &mdash; semantic similarity (pass score, default 50)</span>
+          <span class="badge badge-blue">Compare meaning</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; semantic similarity to expected answer</span>
         </div>
         <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
-          <span class="badge badge-purple">Tool Use</span>
-          <span class="muted" style="font-size: 0.82em;"> &mdash; correct tool invocation</span>
+          <span class="badge badge-teal">Similarity</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; text similarity (phrasing-sensitive)</span>
         </div>
         <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
-          <span class="badge badge-green">Keyword Match</span>
-          <span class="muted" style="font-size: 0.82em;"> &mdash; must-include / must-not-include</span>
-        </div>
-        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
-          <span class="badge badge-teal">Text Similarity</span>
-          <span class="muted" style="font-size: 0.82em;"> &mdash; phrasing-sensitive comparison</span>
-        </div>
-        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
-          <span class="badge badge-yellow">Exact Match</span>
-          <span class="muted" style="font-size: 0.82em;"> &mdash; classification labels, structured outputs</span>
+          <span class="badge badge-green">Keyword match</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; must-include / must-not-include checks</span>
         </div>
         <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px; grid-column: span 2;">
+          <span class="badge badge-yellow">Exact match</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; classification labels, structured outputs</span>
+        </div>
+      </div>
+      <p class="muted" style="font-size: 0.82em; margin-top: 0.6em;"><strong>UI-only</strong> (configure after import in Copilot Studio):</p>
+      <div class="grid-2" style="margin-top: 0.3em; gap: 0.5em;">
+        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px; border: 1px dashed var(--border);">
+          <span class="badge badge-purple">Tool Use</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; correct tool/topic invocation</span>
+        </div>
+        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px; border: 1px dashed var(--border);">
           <span class="badge badge-red">Custom</span>
-          <span class="muted" style="font-size: 0.82em;"> &mdash; your own evaluation logic when none of the above fit</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; your own evaluation criteria + labels</span>
         </div>
       </div>
     </div>
@@ -915,7 +920,7 @@ customer email as spam.</pre>
       <div class="grid-2" style="margin-top: 0.5em;">
         <div style="padding: 0.8em; background: var(--bg-highlight); border-radius: 6px;">
           <div class="bold white">CSV for Copilot Studio Import</div>
-          <p class="muted" style="font-size: 0.82em;">Two columns: <code>question</code> and <code>expectedResponse</code>. Ready for direct import &mdash; no manual editing needed.</p>
+          <p class="muted" style="font-size: 0.82em;">Three columns: <code>Question</code>, <code>Expected response</code>, <code>Testing method</code>. Ready for direct import into Copilot Studio Evaluation.</p>
         </div>
         <div style="padding: 0.8em; background: var(--bg-highlight); border-radius: 6px;">
           <div class="bold white">.docx Report for Human Review</div>
@@ -936,15 +941,17 @@ customer email as spam.</pre>
       <div class="example-header">Example: Run After the Planner</div>
       <div class="example-body">
 <pre style="border: none; margin: 0; padding: 0; background: transparent;"><span class="comment"># Step 1: Run the planner first</span>
-<span class="cmd">/eval-suite-planner</span> I am building an email triage agent that labels
-emails as urgent, not-urgent, or spam.
+<span class="cmd">/eval-suite-planner</span> I am building a customer support agent for a
+premium hand-wash t-shirt product. It answers care, sizing, storage,
+and warranty questions using a product care PDF.
 
 <span class="comment"># Step 2: Wait for the plan table, then immediately run:</span>
 <span class="cmd">/eval-generator</span>
 
 <span class="comment"># Or, generate from scratch without a plan:</span>
-<span class="cmd">/eval-generator</span> I am building a meeting notes agent that takes
-a raw transcript and produces a structured summary with action items.</pre>
+<span class="cmd">/eval-generator</span> I am building a customer support agent that helps
+customers with product care instructions, sizing questions, and
+warranty claims for a premium hand-wash t-shirt product.</pre>
       </div>
     </div>
   </div>
@@ -1233,7 +1240,7 @@ case 11 (real email classified as spam).
         <tr>
           <td><code>eval-generator</code></td>
           <td>~135 lines</td>
-          <td>Dual-mode input detection, 7 test method mappings, CSV format spec, reviewer note requirements</td>
+          <td>Dual-mode input detection, 5 CSV-importable + 2 UI-only test methods, 3-column CSV format per MS Learn, dynamic guidance fetch, reviewer note requirements</td>
         </tr>
         <tr>
           <td><code>eval-result-interpreter</code></td>
