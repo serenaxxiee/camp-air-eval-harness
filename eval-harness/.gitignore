@@ -4,9 +4,10 @@ results/
 *.js.map
 
 # Participant datasets (may contain sensitive production inputs)
-datasets/
-!datasets/README.md
+my-evals/datasets/*.json
+!my-evals/datasets/.gitkeep
+
+# Example datasets are tracked (needed for npm test)
 
 # Compiled participant files
 my-evals/*.js
-my-evals/datasets/*.js
