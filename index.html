@@ -103,7 +103,7 @@
       <tr><td class="blue"><strong>Test Case</strong></td><td>A single prompt + expected behavior pair. The atomic unit of evaluation.</td><td class="muted mono small">&ldquo;How many PTO days?&rdquo; &rarr; correct policy + citation</td></tr>
       <tr><td class="blue"><strong>Acceptance Criteria</strong></td><td>What &ldquo;good&rdquo; looks like. Specific enough that two people agree on pass/fail.</td><td class="muted mono small">&ldquo;Must state 15 days and cite the Handbook&rdquo;</td></tr>
       <tr><td class="blue"><strong>Quality Signal</strong></td><td>A named dimension of quality derived from patterns. Agent-specific, not generic.</td><td class="muted mono small">Policy Accuracy, Source Attribution, Escalation Judgment</td></tr>
-      <tr><td class="blue"><strong>Grader</strong></td><td>Applies criteria to a response. Deterministic (Keyword Match, Exact Match) or model-graded (General Quality).</td><td class="muted mono small">Keyword Match: &ldquo;hand wash&rdquo; | General Quality: empathetic tone</td></tr>
+      <tr><td class="blue"><strong>Grader</strong></td><td>Applies criteria to a response. Deterministic (Keyword match, Exact match) or model-graded (General quality).</td><td class="muted mono small">Keyword match: &ldquo;hand wash&rdquo; | General quality: empathetic tone</td></tr>
       <tr><td class="blue"><strong>Eval Set</strong></td><td>A collection of test cases measuring quality dimensions. Your reusable, growing asset.</td><td class="muted mono small">20 cases across core, variations, edge, adversarial</td></tr>
     </tbody>
   </table>
@@ -262,7 +262,7 @@ questions using a product care PDF.</code></pre>
       </div>
       <div class="card">
         <div class="card-title green">Key behavior</div>
-        <p class="small"><strong>Specific, not generic.</strong> Names actual scenarios and maps each to evaluation methods (Keyword Match, Compare Meaning, Tool Use, General Quality). The scenario plan table is the blueprint for <code>/eval-generator</code>.</p>
+        <p class="small"><strong>Specific, not generic.</strong> Names actual scenarios and maps each to evaluation methods (Keyword match, Compare meaning, Tool Use, General quality). The scenario plan table is the blueprint for <code>/eval-generator</code>.</p>
       </div>
     </div>
   </div>
@@ -465,7 +465,7 @@ claude</code></pre>
   <div class="card">
     <div class="card-title">Step 1 &mdash; Warm up with /eval-faq</div>
     <pre style="font-size:0.6em"><code>/eval-faq How many test cases do I need for a workshop eval?
-/eval-faq What's the difference between Keyword Match and Compare Meaning?</code></pre>
+/eval-faq What's the difference between Keyword match and Compare meaning?</code></pre>
   </div>
   <div class="card">
     <div class="card-title">Step 2 &mdash; Plan your eval suite</div>

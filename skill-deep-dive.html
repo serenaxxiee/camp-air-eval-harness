@@ -731,13 +731,13 @@ questions using a product care PDF.</pre>
       <table style="margin-top: 0.5em;">
         <thead><tr><th>What You're Testing</th><th>Primary Method</th><th>Secondary Method</th></tr></thead>
         <tbody>
-          <tr><td>Factual accuracy (specific facts, numbers)</td><td><span class="badge badge-green">Keyword Match (All)</span></td><td>Compare Meaning</td></tr>
-          <tr><td>Factual accuracy (flexible phrasing)</td><td><span class="badge badge-blue">Compare Meaning</span></td><td>Keyword Match (Any)</td></tr>
-          <tr><td>Policy compliance (mandatory language)</td><td><span class="badge badge-green">Keyword Match (All)</span></td><td>General Quality</td></tr>
-          <tr><td>Tool invocation correctness</td><td><span class="badge badge-purple">Tool Use</span></td><td>Keyword Match (Any)</td></tr>
-          <tr><td>Response quality, tone, empathy</td><td><span class="badge badge-orange">General Quality</span></td><td>Compare Meaning</td></tr>
-          <tr><td>Hallucination prevention</td><td><span class="badge badge-blue">Compare Meaning</span></td><td>General Quality</td></tr>
-          <tr><td>Negative tests (must NOT do X)</td><td><span class="badge badge-red">Keyword Match &mdash; negative</span></td><td>Tool Use &mdash; negative</td></tr>
+          <tr><td>Factual accuracy (specific facts, numbers)</td><td><span class="badge badge-green">Keyword match (All)</span></td><td>Compare meaning</td></tr>
+          <tr><td>Factual accuracy (flexible phrasing)</td><td><span class="badge badge-blue">Compare meaning</span></td><td>Keyword match (Any)</td></tr>
+          <tr><td>Policy compliance (mandatory language)</td><td><span class="badge badge-green">Keyword match (All)</span></td><td>General quality</td></tr>
+          <tr><td>Tool invocation correctness</td><td><span class="badge badge-purple">Tool Use</span></td><td>Keyword match (Any)</td></tr>
+          <tr><td>Response quality, tone, empathy</td><td><span class="badge badge-orange">General quality</span></td><td>Compare meaning</td></tr>
+          <tr><td>Hallucination prevention</td><td><span class="badge badge-blue">Compare meaning</span></td><td>General quality</td></tr>
+          <tr><td>Negative tests (must NOT do X)</td><td><span class="badge badge-red">Keyword match &mdash; negative</span></td><td>Tool Use &mdash; negative</td></tr>
         </tbody>
       </table>
     </div>
@@ -847,8 +847,8 @@ questions using a product care PDF.</pre>
       <ul>
         <li><strong>Every "Question" must be realistic</strong> &mdash; specific, not a placeholder. Uses names, dates, product references.</li>
         <li><strong>Every "Expected Response" must be testable</strong> &mdash; never vague.</li>
-        <li><strong>For General Quality tests</strong> &mdash; Expected Response is left blank (LLM judge evaluates without one)</li>
-        <li><strong>For Keyword Match tests</strong> &mdash; Expected Response contains the required keywords</li>
+        <li><strong>For General quality tests</strong> &mdash; Expected Response is left blank (LLM judge evaluates without one)</li>
+        <li><strong>For Keyword match tests</strong> &mdash; Expected Response contains the required keywords</li>
         <li><strong>For adversarial cases</strong> &mdash; Expected Response describes what the agent should NOT do</li>
       </ul>
     </div>

@@ -13,26 +13,30 @@ Use arrow keys or swipe to navigate. Press `f` for facilitator guide, `h` for ha
 | Path | What |
 |---|---|
 | `index.html` | Interactive slide deck (reveal.js) |
-| `docs/` | Session outline, facilitator guide, hands-on exercises, moltbook |
+| `skill-deep-dive.html` | Detailed skill reference page |
+| `docs/` | Session outline, facilitator guide, hands-on exercises, participant guide |
+| `docs/synthetic-eval-results.csv` | Pre-built eval results for a T-shirt customer service agent (12 cases, 67% pass rate) |
+| `docs/tshirt-support-*.csv/.docx/.xlsx` | Fallback examples for every demo stage (plan, test set, triage report) |
 | `eval-harness/` | Working TypeScript eval harness participants run |
 | `skills/` | 4 installable Claude Code skills |
 
 ## Quick Start for Participants
 
 ```bash
+# Clone the repo (use Git Bash on Windows, not PowerShell)
 git clone https://github.com/serenaxxiee/camp-air-eval-harness
-cd camp-air-eval-harness/eval-harness
-npm install
+cd camp-air-eval-harness
 
 # Install the 4 AI skills
-cp -r ../skills/eval-faq ~/.claude/skills/
-cp -r ../skills/eval-generator ~/.claude/skills/
-cp -r ../skills/eval-result-interpreter ~/.claude/skills/
-cp -r ../skills/eval-suite-planner ~/.claude/skills/
+mkdir -p ~/.claude/skills
+cp -r skills/eval-faq ~/.claude/skills/
+cp -r skills/eval-generator ~/.claude/skills/
+cp -r skills/eval-result-interpreter ~/.claude/skills/
+cp -r skills/eval-suite-planner ~/.claude/skills/
 
-# Set API key and verify
-export ANTHROPIC_API_KEY=sk-ant-...
-npm test
+# Restart Claude Code, then verify
+claude
+# Type: /eval-faq what is eval
 ```
 
 ## The 4 AI Skills
