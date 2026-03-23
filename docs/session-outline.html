@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session Outline</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #c9d1d9; padding: 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
+h1 { color: #fff; margin: 1em 0 0.5em; font-size: 1.8em; }
+h2 { color: #58a6ff; margin: 1.5em 0 0.5em; font-size: 1.4em; border-bottom: 1px solid #21262d; padding-bottom: 0.3em; }
+h3 { color: #bc8cff; margin: 1.2em 0 0.4em; font-size: 1.1em; }
+p { margin: 0.5em 0; }
+a { color: #58a6ff; }
+code { font-family: 'Cascadia Code', 'Fira Code', monospace; background: #161b22; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; }
+pre { background: #161b22; border-radius: 8px; padding: 1em; overflow-x: auto; margin: 0.8em 0; }
+pre code { background: none; padding: 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.8em 0; }
+th { color: #58a6ff; text-align: left; padding: 0.5em 0.8em; border-bottom: 2px solid #30363d; }
+td { padding: 0.5em 0.8em; border-bottom: 1px solid #21262d; }
+tr:hover td { background: #161b22; }
+ul, ol { margin: 0.5em 0 0.5em 1.5em; }
+li { margin: 0.3em 0; }
+blockquote { border-left: 3px solid #58a6ff; padding: 0.5em 1em; margin: 0.8em 0; background: #161b22; border-radius: 0 6px 6px 0; }
+strong { color: #fff; }
+hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
+.nav { position: sticky; top: 0; background: #0d1117; border-bottom: 1px solid #21262d; padding: 0.6em 0; margin-bottom: 1em; z-index: 10; }
+.nav a { color: #58a6ff; text-decoration: none; margin-right: 1.5em; font-size: 0.85em; }
+.nav a:hover { text-decoration: underline; }
+</style>
+</head><body>
+<div class="nav">
+  <a href="../index.html">&larr; Slides</a>
+  <a href="session-outline.html">Session Outline</a>
+  <a href="facilitator-guide.html">Facilitator Guide</a>
+  <a href="hands-on-exercises.html">Hands-On Exercises</a>
+  <a href="moltbook.html">Moltbook</a>
+</div>
+<h1 id="camp-air-ai-agent-evaluation-best-practices">Camp AIR: AI Agent Evaluation Best Practices</h1>
+<h2 id="1-hour-workshop-facilitator-session-outline">1-Hour Workshop — Facilitator Session Outline</h2>
+<hr />
+<h2 id="session-at-a-glance">Session at a Glance</h2>
+<table>
+<thead>
+<tr>
+<th>Segment</th>
+<th>Start</th>
+<th>End</th>
+<th>Duration</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Opening / Framing</td>
+<td>0:00</td>
+<td>0:05</td>
+<td>5 min</td>
+<td>Presentation</td>
+</tr>
+<tr>
+<td>Core Concepts</td>
+<td>0:05</td>
+<td>0:15</td>
+<td>10 min</td>
+<td>Presentation + Q&amp;A</td>
+</tr>
+<tr>
+<td>Live Demo</td>
+<td>0:15</td>
+<td>0:25</td>
+<td>10 min</td>
+<td>Facilitator demo</td>
+</tr>
+<tr>
+<td>Hands-On Exercise</td>
+<td>0:25</td>
+<td>0:50</td>
+<td>25 min</td>
+<td>Participant work</td>
+</tr>
+<tr>
+<td>Debrief &amp; Wrap-Up</td>
+<td>0:50</td>
+<td>1:00</td>
+<td>10 min</td>
+<td>Group discussion</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total: 60 minutes</strong></p>
+<p>Participant-to-facilitator ratio: up to 30:1 recommended. One roving assistant is ideal but not required.</p>
+<hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Participants must complete these steps before arriving. Send this list in the pre-session email at least 24 hours in advance.</p>
+<p><strong>Required:</strong>
+- Node.js 18+ installed (<code>node --version</code> to confirm)
+- Claude Code CLI installed and authenticated (<code>claude --version</code> to confirm)
+- The eval harness repository cloned locally:
+  <code>git clone https://github.com/camp-air/eval-harness
+  cd eval-harness
+  npm install</code>
+- Two Claude Code slash command skills installed:
+  - <code>/eval-faq</code> — answers eval methodology questions
+  - <code>/eval-generator</code> — generates eval scenarios from a task description</p>
+<p><strong>Recommended:</strong>
+- A code editor open and ready (VS Code preferred)
+- Basic familiarity with TypeScript (participants don't need to write it from scratch, but should be able to read it)
+- Have run at least one AI agent before — participants should know what a prompt is and roughly what an LLM call looks like</p>
+<p><strong>Not required:</strong>
+- Prior experience writing evals
+- Deep TypeScript knowledge
+- Any specific domain knowledge</p>
+<hr />
+<h2 id="room-environment-setup-before-participants-arrive">Room / Environment Setup (Before Participants Arrive)</h2>
+<ul>
+<li>Project the eval harness repo on screen with a terminal split alongside</li>
+<li>Have the <code>/eval-faq</code> and <code>/eval-generator</code> slash commands pre-installed in your demo environment</li>
+<li>Run <code>npm test</code> once ahead of time to confirm the harness works end-to-end</li>
+<li>Prepare a working example eval (the <code>examples/summarizer-eval.ts</code> file in the repo works well)</li>
+<li>Have a shared doc or whiteboard ready for the debrief — participants will paste results into it</li>
+<li>If using a shared WiFi network, confirm npm install works or have node_modules cached</li>
+</ul>
+<hr />
+<h2 id="segment-1-opening-framing">Segment 1: Opening / Framing</h2>
+<p><strong>Time:</strong> 0:00 – 0:05 (5 minutes)</p>
+<p><strong>Learning objective:</strong> Participants understand why evals are not optional and feel the urgency of building them early, not late.</p>
+<hr />
+<h3 id="facilitator-talking-points">Facilitator Talking Points</h3>
+<p>Open with this question — say it out loud and pause for 3–4 seconds before continuing:</p>
+<blockquote>
+<p>"How many of you have shipped an AI feature and later found out it was silently broken for a week before anyone noticed?"</p>
+</blockquote>
+<p>Wait for hands or nods. Most audiences will respond.</p>
+<p>Continue:</p>
+<blockquote>
+<p>"That's the eval problem. When you don't have automated evals, you're flying blind. You're relying on someone noticing that the AI is doing something wrong. And in production, that often means a user noticed first."</p>
+</blockquote>
+<p>Then frame what evals actually are — not a QA afterthought, but an engineering discipline:</p>
+<blockquote>
+<p>"Evals are how you measure whether your AI is doing what you intend. They're automated tests, but the assertion logic is different — instead of checking if a value equals another value, you're checking if a response is good, grounded, safe, helpful, or whatever your success criteria are."</p>
+</blockquote>
+<p><strong>Key framing to land before moving on:</strong></p>
+<ul>
+<li>Evals are to AI agents what unit tests are to software — except harder, because the output space is open-ended</li>
+<li>Without evals, you cannot iterate confidently — every change to a prompt is a gamble</li>
+<li>With evals, you can move fast without breaking things</li>
+</ul>
+<p><strong>Set the agenda for the session.</strong> Walk through the session-at-a-glance table briefly — 30 seconds max. Participants should know they will write and run a real eval before they leave.</p>
+<hr />
+<h3 id="timing-notes">Timing Notes</h3>
+<ul>
+<li>Do not let the opening run over 5 minutes. The hook lands fast or not at all.</li>
+<li>If the audience is quiet after the opening question, move on immediately — do not wait for verbal responses.</li>
+<li>End this segment by saying: "Let's get grounded in the vocabulary first, then I'll show you a working example."</li>
+</ul>
+<hr />
+<h2 id="segment-2-core-concepts">Segment 2: Core Concepts</h2>
+<p><strong>Time:</strong> 0:05 – 0:15 (10 minutes)</p>
+<p><strong>Learning objective:</strong> Participants can define and distinguish: prompt, criteria, grader, dataset, and harness — and explain how they fit together in a single eval run.</p>
+<hr />
+<h3 id="facilitator-talking-points_1">Facilitator Talking Points</h3>
+<p>Walk through each term. Write them on the whiteboard or show a slide as you go. The goal is shared vocabulary, not deep theory.</p>
+<p><strong>Prompt</strong></p>
+<blockquote>
+<p>"The input to your AI system. In evals, you're not testing one prompt — you're testing a prompt template against many inputs. The template stays fixed; only the data changes."</p>
+</blockquote>
+<p>Example to say aloud:</p>
+<blockquote>
+<p>"If you're building a customer support agent, your prompt template might be: 'You are a helpful support agent. Answer this customer question: {{question}}'. The eval swaps in 20 different questions and checks the outputs."</p>
+</blockquote>
+<p><strong>Criteria</strong></p>
+<blockquote>
+<p>"What does 'good' look like for this task? Criteria make your success definition explicit and testable. They should be specific enough that two people would agree on a pass/fail judgment."</p>
+</blockquote>
+<p>Good criteria examples:
+- "The response does not mention competitor products by name"
+- "The summary is 3 sentences or fewer"
+- "The response answers the user's question without asking for clarification"</p>
+<p>Bad criteria examples (too vague):
+- "The response is good"
+- "The answer is helpful"</p>
+<p><strong>Grader</strong></p>
+<blockquote>
+<p>"The thing that applies your criteria to a response. Graders come in three flavors."</p>
+</blockquote>
+<p>List the three types:</p>
+<ol>
+<li><strong>Deterministic / rule-based</strong> — regex, string matching, JSON schema validation. Fast, cheap, reliable. Use these first.</li>
+<li><strong>Model-graded</strong> — you send the response to an LLM with your criteria and ask it to judge. Flexible, handles nuance, but adds cost and latency.</li>
+<li><strong>Human</strong> — a person reviews the output. Slowest, most expensive, highest quality. Use for calibration and edge-case triage.</li>
+</ol>
+<blockquote>
+<p>"In practice, you layer these. Fast rule-based graders run first and catch obvious failures. Model-graded graders handle the judgment calls."</p>
+</blockquote>
+<p><strong>Dataset</strong></p>
+<blockquote>
+<p>"The collection of inputs your eval runs against. A dataset is not a single test case — it's a representative sample of what your system will face in production."</p>
+</blockquote>
+<p>Key points:
+- Small is okay to start. 10–20 well-chosen cases beat 200 random ones.
+- Datasets should include happy-path cases, edge cases, and adversarial cases.
+- Your dataset grows over time — every time a user hits an unexpected behavior, that's a new dataset entry.</p>
+<p><strong>Harness</strong></p>
+<blockquote>
+<p>"The scaffolding that orchestrates the whole thing. A harness loads your dataset, runs each input through your system, applies your graders, and produces a report. It's the thing you run in CI."</p>
+</blockquote>
+<p>Draw a simple flow on the board:</p>
+<pre class="codehilite"><code>Dataset -&gt; [for each input] -&gt; System (prompt + model) -&gt; Grader -&gt; Results
+</code></pre>
+
+<blockquote>
+<p>"Everything we're doing today lives inside this loop."</p>
+</blockquote>
+<hr />
+<h3 id="qa-pause">Q&amp;A Pause</h3>
+<p>After covering all five terms, pause and ask:</p>
+<blockquote>
+<p>"Any of these feel unclear before we see them in action?"</p>
+</blockquote>
+<p>Take 1–2 questions maximum. If a question goes deep, say: "Great question — let's see if it comes up in the demo and we can address it then." Keep the clock moving.</p>
+<hr />
+<h3 id="timing-notes_1">Timing Notes</h3>
+<ul>
+<li>Budget roughly 2 minutes per concept. Do not go deeper on any single term — the demo will make them concrete.</li>
+<li>If you're running long, cut the Q&amp;A pause. The demo is more valuable than extra explanation time.</li>
+<li>Transition line: "Alright — let's stop talking about evals and look at one actually running."</li>
+</ul>
+<hr />
+<h2 id="segment-3-live-demo">Segment 3: Live Demo</h2>
+<p><strong>Time:</strong> 0:15 – 0:25 (10 minutes)</p>
+<p><strong>Learning objective:</strong> Participants see a complete eval cycle — from dataset to scored results — and can map what they see back to the five concepts from Segment 2.</p>
+<hr />
+<h3 id="setup">Setup</h3>
+<p>Before starting the demo, have these ready on screen:
+- Terminal at the root of the eval harness repo
+- <code>examples/summarizer-eval.ts</code> open in your editor
+- The <code>/eval-generator</code> slash command available in Claude Code</p>
+<hr />
+<h3 id="demo-script">Demo Script</h3>
+<p><strong>Step 1 — Show the dataset (1 min)</strong></p>
+<p>Open <code>examples/datasets/summarizer-cases.json</code>. Scroll through it briefly.</p>
+<p>Say:</p>
+<blockquote>
+<p>"Here's our dataset. Five inputs — each one is an article snippet the agent will summarize. Notice we've also got an expected length and a topic label per case. Those will feed into our graders."</p>
+</blockquote>
+<p><strong>Step 2 — Show the eval file (2 min)</strong></p>
+<p>Open <code>examples/summarizer-eval.ts</code>. Walk through it top to bottom, pointing out:</p>
+<ul>
+<li>Where the dataset is loaded</li>
+<li>The prompt template</li>
+<li>The two graders: a character-count check (deterministic) and a model-graded relevance check</li>
+<li>Where results are written out</li>
+</ul>
+<p>Say:</p>
+<blockquote>
+<p>"This is the whole thing. It's about 60 lines. The harness handles the loop — you just define the dataset, the prompt, and the graders."</p>
+</blockquote>
+<p><strong>Step 3 — Run it (2 min)</strong></p>
+<p>In the terminal, run:</p>
+<pre class="codehilite"><code>npm run eval -- --file examples/summarizer-eval.ts
+</code></pre>
+
+<p>Let it run. Narrate what's happening:</p>
+<blockquote>
+<p>"You'll see it process each case in sequence. The deterministic grader runs instantly. The model-graded grader makes an LLM call — that's where the latency is."</p>
+</blockquote>
+<p>When it finishes, show the output table in the terminal.</p>
+<p><strong>Step 4 — Interpret the results (2 min)</strong></p>
+<p>Point at the results. Pick one that passed and one that failed.</p>
+<p>Say:</p>
+<blockquote>
+<p>"Case 3 failed the length check — the summary was 412 characters, and our threshold was 400. That's a hard failure. Case 4 passed both graders. Case 2 passed the length check but got a 0.6 on relevance — borderline. We'd want to look at that one manually."</p>
+</blockquote>
+<p>This is a key teachable moment:</p>
+<blockquote>
+<p>"Notice that failing an eval doesn't mean your AI is broken. It means you have information. Maybe the length threshold is wrong. Maybe the model is genuinely off. The eval gives you something to act on."</p>
+</blockquote>
+<p><strong>Step 5 — Show eval-generator (2 min)</strong></p>
+<p>Open Claude Code and run:</p>
+<pre class="codehilite"><code>/eval-generator
+</code></pre>
+
+<p>Prompt it with:</p>
+<blockquote>
+<p>"Generate eval scenarios for a customer support agent that handles refund requests. The agent should be polite, follow the refund policy, and not make promises the policy doesn't allow."</p>
+</blockquote>
+<p>Show 3–4 of the generated scenarios. Point out that each one has an input, an expected behavior, and a suggested scoring criterion.</p>
+<p>Say:</p>
+<blockquote>
+<p>"This is how AI accelerates the eval-writing process. You describe the task and the success criteria in plain language, and the tool scaffolds your test cases. You review, edit, and add them to your dataset. You're not starting from a blank page."</p>
+</blockquote>
+<hr />
+<h3 id="timing-notes_2">Timing Notes</h3>
+<ul>
+<li>This demo must stay at 10 minutes. Practice it ahead of time with a timer.</li>
+<li>If the model-graded grader is slow (&gt;90 seconds), skip the live run and show a pre-recorded output — have a <code>results-snapshot.txt</code> file ready as backup.</li>
+<li>Do not get pulled into the TypeScript details. If someone asks about a specific line of code, say: "Good catch — you can dig into that during the hands-on section."</li>
+<li>Transition line: "Now it's your turn. You're going to write and run your own eval in the next 25 minutes."</li>
+</ul>
+<hr />
+<h2 id="segment-4-hands-on-exercise">Segment 4: Hands-On Exercise</h2>
+<p><strong>Time:</strong> 0:25 – 0:50 (25 minutes)</p>
+<p><strong>Learning objective:</strong> Participants write a working eval — dataset, prompt, at least one grader — and run it against the harness. They observe and interpret their own results.</p>
+<hr />
+<h3 id="overview">Overview</h3>
+<p>This is the core of the session. Participants work individually or in pairs. The exercise has three stages that build on each other.</p>
+<p><strong>Stage A</strong> — Use <code>/eval-faq</code> to get oriented (5 min)
+<strong>Stage B</strong> — Use <code>/eval-generator</code> to create scenarios, then write an eval (15 min)
+<strong>Stage C</strong> — Run the eval and interpret results (5 min)</p>
+<hr />
+<h3 id="stage-a-use-eval-faq-025-030-5-min">Stage A: Use eval-faq (0:25 – 0:30, 5 min)</h3>
+<p><strong>Facilitator action:</strong> Give these instructions verbally and display them on screen.</p>
+<p>Say:</p>
+<blockquote>
+<p>"First, open Claude Code and run the /eval-faq command. Ask it at least two questions about eval methodology. This is your onramp — use it to get clarity on anything from the concepts segment that wasn't fully clear."</p>
+</blockquote>
+<p><strong>Suggested questions participants can ask (display these on a slide):</strong>
+- "What makes a good eval dataset?"
+- "When should I use a model-graded grader vs. a rule-based one?"
+- "How do I write criteria that are specific enough to be testable?"
+- "What's the minimum viable eval I can write in 15 minutes?"
+- "How do I know if my eval is actually measuring what I think it is?"</p>
+<p><strong>Facilitator action during Stage A:</strong> Walk the room. Glance at what people are asking. If someone has a great question/answer exchange, make a mental note — you may call on them in the debrief.</p>
+<p><strong>Timing note:</strong> This stage is timeboxed at 5 minutes. At the 5-minute mark, give a verbal prompt: "Okay, wrap up your eval-faq questions — we're moving to scenario generation."</p>
+<hr />
+<h3 id="stage-b-generate-scenarios-and-write-an-eval-030-045-15-min">Stage B: Generate Scenarios and Write an Eval (0:30 – 0:45, 15 min)</h3>
+<p><strong>Facilitator action:</strong> Give participants their task. Display the task prompt on screen.</p>
+<hr />
+<p><strong>The Task (display verbatim):</strong></p>
+<blockquote>
+<p>Choose one of the following agent tasks — or propose your own if you have something in mind:</p>
+<ol>
+<li><strong>Email triage agent</strong> — reads incoming emails and labels them as urgent / not urgent / spam</li>
+<li><strong>Code review agent</strong> — reads a code diff and identifies potential bugs or style issues</li>
+<li><strong>Meeting notes agent</strong> — takes raw meeting transcript and produces a structured summary with action items</li>
+<li><strong>Product description agent</strong> — takes a product name and specs and writes a short marketing blurb</li>
+</ol>
+<p>Then:
+1. Run <code>/eval-generator</code> in Claude Code and describe your chosen agent task. Ask it to generate 5–8 eval scenarios.
+2. Review the generated scenarios. Edit or discard any that don't make sense. Add one scenario of your own.
+3. Save your scenarios to a file called <code>my-eval-dataset.json</code> in the harness <code>datasets/</code> directory.
+4. Open <code>examples/summarizer-eval.ts</code> as a starting template. Copy it to <code>my-eval.ts</code>.
+5. Edit <code>my-eval.ts</code> to:
+   - Point to your dataset
+   - Update the prompt template to match your agent task
+   - Add or modify at least one grader that reflects your criteria</p>
+</blockquote>
+<hr />
+<p><strong>What facilitators should watch for during Stage B:</strong></p>
+<ul>
+<li>Participants who are stuck on the TypeScript — point them to <code>examples/summarizer-eval.ts</code> and tell them to change as little as possible. The goal is one working eval, not a perfect one.</li>
+<li>Participants who finish early — prompt them to add a second grader (if they only have one) or add 3 more dataset cases.</li>
+<li>Participants who are generating scenarios but not editing them — encourage them to delete at least one generated scenario and write a replacement. This builds the habit of reviewing AI-generated test cases rather than accepting them wholesale.</li>
+<li>Common confusion: participants sometimes conflate the grader and the criteria. Remind them: the criteria is the rule in plain English; the grader is the code or model call that applies it.</li>
+</ul>
+<p><strong>Facilitator talking point to drop mid-stage (around the 10-minute mark):</strong></p>
+<p>Walk to the center of the room and say:</p>
+<blockquote>
+<p>"Quick check-in — raise your hand if you've got your dataset file saved and you're working on the eval file now."</p>
+</blockquote>
+<p>Count hands. If fewer than half have raised their hands, extend Stage B by 3 minutes and compress Stage C. If most are there, keep the pace.</p>
+<hr />
+<h3 id="stage-c-run-the-eval-and-interpret-results-045-050-5-min">Stage C: Run the Eval and Interpret Results (0:45 – 0:50, 5 min)</h3>
+<p><strong>Facilitator action:</strong> Give the run instruction verbally and display on screen.</p>
+<p>Say:</p>
+<blockquote>
+<p>"Time to run it. In your terminal, from the harness root, run:"
+<code>npm run eval -- --file my-eval.ts</code>
+"When it finishes, look at your results and answer these three questions — you'll share them in the debrief:"
+1. Which cases passed? Which failed?
+2. Does the failure make sense, or does it look like your grader is wrong?
+3. What's one thing you'd change — in the prompt, the dataset, or the grader — based on what you saw?</p>
+</blockquote>
+<p><strong>Facilitator action:</strong> Walk the room and look at results. Take note of 2–3 interesting or contrasting outcomes to highlight in the debrief.</p>
+<p><strong>If a participant's eval throws an error:</strong>
+- Check that the dataset JSON is valid (common issue: trailing commas)
+- Check that the file path in the eval matches the dataset filename exactly
+- If it's a TypeScript compilation error, have them compare their file against <code>examples/summarizer-eval.ts</code> line by line</p>
+<p><strong>Timing note:</strong> At 0:49, give a verbal 1-minute warning: "One more minute — wrap up what you're looking at, we're going to share results."</p>
+<hr />
+<h3 id="timing-contingency">Timing Contingency</h3>
+<p>If Stage B runs long and participants don't finish their eval by 0:45, shift Stage C to: "Run the eval, even if it's incomplete. A partial run is fine — look at whatever output you get and bring that to the debrief." Do not skip Stage C entirely — running the harness at least once is a core outcome of the session.</p>
+<hr />
+<h2 id="segment-5-debrief-wrap-up">Segment 5: Debrief &amp; Wrap-Up</h2>
+<p><strong>Time:</strong> 0:50 – 1:00 (10 minutes)</p>
+<p><strong>Learning objective:</strong> Participants can articulate one concrete change they'd make to their eval and leave with a clear next step for applying evals to their own projects.</p>
+<hr />
+<h3 id="debrief-050-057-7-min">Debrief (0:50 – 0:57, 7 min)</h3>
+<p><strong>Facilitator action:</strong> Bring the group back together. If there's a shared doc or whiteboard, ask participants to paste or write their three answers from Stage C.</p>
+<p>Work through the room by calling on 3–4 people (or pairs). For each one, ask:</p>
+<ol>
+<li>"What task did you pick?"</li>
+<li>"What did your results look like — mostly passing, mostly failing, mixed?"</li>
+<li>"What would you change based on what you saw?"</li>
+</ol>
+<p><strong>Talking points to weave into the debrief discussion:</strong></p>
+<p>On unexpected failures:</p>
+<blockquote>
+<p>"If your grader is flagging things that look correct to you, that's actually the most valuable outcome of this exercise. It means your criteria aren't precise enough yet — and the eval is telling you that before production does."</p>
+</blockquote>
+<p>On unexpected passes:</p>
+<blockquote>
+<p>"If everything passed on the first run, add a harder case. Evals that never fail aren't protecting you — they're just not covering the hard cases yet."</p>
+</blockquote>
+<p>On the eval-generator output:</p>
+<blockquote>
+<p>"How many of you edited or deleted at least one scenario the generator gave you?"</p>
+</blockquote>
+<p>Follow up with whoever raises a hand:</p>
+<blockquote>
+<p>"What made you change it?" — This surfaces the key lesson: AI-generated scenarios are a starting point, not a finished artifact. Reviewing them is part of the process.</p>
+</blockquote>
+<p>On the AI-first workflow:</p>
+<blockquote>
+<p>"Think about what just happened. You described a task in plain English, a tool gave you test scenarios, you ran them through a harness, and you have structured results to act on. That whole loop took 20 minutes. Without the AI tools, writing that dataset from scratch would have taken an afternoon. The velocity gain is real — but only if you stay in the loop as the reviewer."</p>
+</blockquote>
+<hr />
+<h3 id="key-takeaways-057-100-3-min">Key Takeaways (0:57 – 1:00, 3 min)</h3>
+<p>Read these aloud and display them on screen. Participants should leave with these five things in their heads.</p>
+<hr />
+<p><strong>1. Start with criteria, not code.</strong>
+Before writing a single line of eval code, write down what "good" means in plain English. Specific, testable criteria are the foundation everything else rests on.</p>
+<p><strong>2. Small datasets are fine. Representative datasets are essential.</strong>
+10 well-chosen cases that cover your real input distribution are worth more than 100 randomly generated ones. Include happy paths, edge cases, and at least one adversarial case.</p>
+<p><strong>3. Layer your graders.</strong>
+Start with fast, deterministic checks. Add model-graded scoring for the judgment calls. Save human review for calibration and triage — not for every run.</p>
+<p><strong>4. AI accelerates the scaffolding, not the thinking.</strong>
+Use <code>/eval-generator</code> to get scenarios quickly. Use <code>/eval-faq</code> to get unstuck. But you still have to define the criteria, review the cases, and interpret the results. The thinking stays with you.</p>
+<p><strong>5. Evals are living artifacts.</strong>
+A dataset you write today and never touch again will rot. Every production incident, every surprising model output, every edge case a user hits — these are all new dataset entries. Build the habit of growing your eval suite alongside your product.</p>
+<hr />
+<h3 id="closing">Closing</h3>
+<p>End with this line:</p>
+<blockquote>
+<p>"The best time to write an eval is before you write the prompt. The second best time is right now. You've all written one today — keep that file. That's your foundation."</p>
+</blockquote>
+<p>Thank participants. Point them to:
+- The eval harness repo (for reference and the example files)
+- The <code>/eval-faq</code> slash command (available any time in Claude Code)
+- The <code>/eval-generator</code> slash command (for their next project)</p>
+<hr />
+<h2 id="facilitator-reference-common-questions-and-how-to-handle-them">Facilitator Reference: Common Questions and How to Handle Them</h2>
+<p>These are real questions that come up in this session. Have answers ready.</p>
+<p><strong>"How do I know how many eval cases I need?"</strong>
+Start with enough to cover your input distribution — typically 15–30 for a focused task. If you're building a classifier, you need representation of each class. If you're building a summarizer, you need short inputs, long inputs, ambiguous inputs. The number matters less than the coverage.</p>
+<p><strong>"Can I use this for multi-turn agents, not just single-turn?"</strong>
+Yes, but it's harder. The harness supports multi-turn via conversation fixtures — see <code>examples/multi-turn-eval.ts</code>. The scoring logic stays the same; you're just scoring the final turn or a specific intermediate turn.</p>
+<p><strong>"Isn't model-graded scoring circular? The AI grading itself?"</strong>
+It's a fair concern. The grader model and the system-under-test don't have to be the same model — and usually shouldn't be. Also, the grader has a much simpler job: it's applying specific criteria to a specific output, which is far easier than generating the output itself. Treat grader scores as noisy labels, not ground truth. Calibrate them against human judgments on a sample.</p>
+<p><strong>"What do I do when my grader disagrees with my gut?"</strong>
+Trust the disagreement. Either your grader is wrong (the criteria are imprecise) or your gut is wrong (you have a blind spot). In both cases, the disagreement is signal. Investigate it, don't paper over it.</p>
+<p><strong>"How do I run evals in CI?"</strong>
+The harness supports a <code>--ci</code> flag that exits with a non-zero code if any grader falls below a threshold. Plug that into your GitHub Actions or equivalent. See <code>docs/ci-setup.md</code> in the repo for a step-by-step.</p>
+<p><strong>"How much does model-graded scoring cost?"</strong>
+For a 20-case eval with one model-graded grader, you're looking at roughly 20 extra LLM calls. At typical API pricing, that's cents per run. The bigger concern is latency — each call adds 1–3 seconds. If you're running evals frequently, consider batching grader calls or caching results for identical inputs.</p>
+<hr />
+<h2 id="facilitator-checklist">Facilitator Checklist</h2>
+<h3 id="48-hours-before">48 hours before</h3>
+<ul>
+<li>[ ] Send prerequisites email to participants</li>
+<li>[ ] Confirm eval harness repo is accessible</li>
+<li>[ ] Confirm <code>/eval-faq</code> and <code>/eval-generator</code> slash commands are available</li>
+<li>[ ] Run through the full demo script with a timer</li>
+</ul>
+<h3 id="day-of-before-participants-arrive">Day of, before participants arrive</h3>
+<ul>
+<li>[ ] Confirm WiFi / npm install works in the room</li>
+<li>[ ] Have <code>results-snapshot.txt</code> backup ready for the demo if live run is slow</li>
+<li>[ ] Display the session-at-a-glance table on screen as participants enter</li>
+<li>[ ] Set up shared doc or whiteboard for debrief</li>
+</ul>
+<h3 id="during-the-session">During the session</h3>
+<ul>
+<li>[ ] Hit the 5-minute mark for Segment 1</li>
+<li>[ ] Call a mid-Stage-B check-in (around minute 40)</li>
+<li>[ ] Give a 1-minute warning at minute 49</li>
+<li>[ ] Call on 3–4 people in the debrief — not just the loudest voices</li>
+</ul>
+<h3 id="after-the-session">After the session</h3>
+<ul>
+<li>[ ] Share the repo link and slash command install instructions in the chat/follow-up</li>
+<li>[ ] Note any questions that <code>/eval-faq</code> couldn't answer — those are gaps to fix</li>
+<li>[ ] Capture any participant eval files that were interesting — good source of future examples</li>
+</ul>
+<hr />
+<h2 id="appendix-sample-dataset-format">Appendix: Sample Dataset Format</h2>
+<p>Participants can reference this if they're unsure how to format <code>my-eval-dataset.json</code>.</p>
+<pre class="codehilite"><code class="language-json">[
+  {
+    &quot;id&quot;: &quot;case-001&quot;,
+    &quot;input&quot;: {
+      &quot;text&quot;: &quot;The quarterly revenue was $4.2M, up 18% from last quarter. Key drivers were enterprise deals and reduced churn.&quot;
+    },
+    &quot;expected&quot;: {
+      &quot;max_length&quot;: 400,
+      &quot;must_include_topic&quot;: &quot;revenue&quot;
+    },
+    &quot;tags&quot;: [&quot;happy-path&quot;, &quot;financial&quot;]
+  },
+  {
+    &quot;id&quot;: &quot;case-002&quot;,
+    &quot;input&quot;: {
+      &quot;text&quot;: &quot;Meeting adjourned.&quot;
+    },
+    &quot;expected&quot;: {
+      &quot;max_length&quot;: 100,
+      &quot;must_include_topic&quot;: null
+    },
+    &quot;tags&quot;: [&quot;edge-case&quot;, &quot;minimal-input&quot;]
+  }
+]
+</code></pre>
+
+<p>Fields:
+- <code>id</code> — unique identifier for the case. Used in result output.
+- <code>input</code> — the data passed to your prompt template. Shape depends on your template.
+- <code>expected</code> — the values your graders will check against. Can hold any fields your graders reference.
+- <code>tags</code> — optional. Useful for filtering results by category.</p>
+<hr />
+<h2 id="appendix-eval-harness-quick-reference">Appendix: Eval Harness Quick Reference</h2>
+<pre class="codehilite"><code>npm run eval -- --file &lt;path-to-eval-file&gt;     # Run a specific eval
+npm run eval -- --file &lt;path&gt; --ci             # CI mode: exits non-zero on failure
+npm run eval -- --file &lt;path&gt; --tags edge-case # Run only cases with a specific tag
+npm run eval -- --file &lt;path&gt; --verbose        # Show full model outputs in terminal
+</code></pre>
+
+<p>Results are written to <code>results/&lt;eval-filename&gt;-&lt;timestamp&gt;.json</code> after each run.</p>
+<hr />
+<p><em>Session outline version: 1.0 | Camp AIR 2026 | Prepared for a 60-minute workshop format</em></p>
+</body></html>

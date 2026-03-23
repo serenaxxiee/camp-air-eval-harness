@@ -1,0 +1,12 @@
+node_modules/
+dist/
+results/
+*.js.map
+
+# Participant datasets (may contain sensitive production inputs)
+datasets/
+!datasets/README.md
+
+# Compiled participant files
+my-evals/*.js
+my-evals/datasets/*.js

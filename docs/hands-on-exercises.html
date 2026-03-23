@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hands-On Exercises</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0d1117; color: #c9d1d9; padding: 2rem; max-width: 900px; margin: 0 auto; line-height: 1.6; }
+h1 { color: #fff; margin: 1em 0 0.5em; font-size: 1.8em; }
+h2 { color: #58a6ff; margin: 1.5em 0 0.5em; font-size: 1.4em; border-bottom: 1px solid #21262d; padding-bottom: 0.3em; }
+h3 { color: #bc8cff; margin: 1.2em 0 0.4em; font-size: 1.1em; }
+p { margin: 0.5em 0; }
+a { color: #58a6ff; }
+code { font-family: 'Cascadia Code', 'Fira Code', monospace; background: #161b22; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; }
+pre { background: #161b22; border-radius: 8px; padding: 1em; overflow-x: auto; margin: 0.8em 0; }
+pre code { background: none; padding: 0; }
+table { width: 100%; border-collapse: collapse; margin: 0.8em 0; }
+th { color: #58a6ff; text-align: left; padding: 0.5em 0.8em; border-bottom: 2px solid #30363d; }
+td { padding: 0.5em 0.8em; border-bottom: 1px solid #21262d; }
+tr:hover td { background: #161b22; }
+ul, ol { margin: 0.5em 0 0.5em 1.5em; }
+li { margin: 0.3em 0; }
+blockquote { border-left: 3px solid #58a6ff; padding: 0.5em 1em; margin: 0.8em 0; background: #161b22; border-radius: 0 6px 6px 0; }
+strong { color: #fff; }
+hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
+.nav { position: sticky; top: 0; background: #0d1117; border-bottom: 1px solid #21262d; padding: 0.6em 0; margin-bottom: 1em; z-index: 10; }
+.nav a { color: #58a6ff; text-decoration: none; margin-right: 1.5em; font-size: 0.85em; }
+.nav a:hover { text-decoration: underline; }
+</style>
+</head><body>
+<div class="nav">
+  <a href="../index.html">&larr; Slides</a>
+  <a href="session-outline.html">Session Outline</a>
+  <a href="facilitator-guide.html">Facilitator Guide</a>
+  <a href="hands-on-exercises.html">Hands-On Exercises</a>
+  <a href="moltbook.html">Moltbook</a>
+</div>
+<h1 id="camp-air-ai-agent-evaluation-hands-on-exercises">Camp AIR — AI Agent Evaluation: Hands-On Exercises</h1>
+<p><strong>Session block:</strong> 0:25–0:50 (25 minutes total)
+<strong>Format:</strong> Work individually or in pairs. A facilitator is circulating — raise your hand if you are stuck.</p>
+<hr />
+<h2 id="quick-reference-cheat-sheet">Quick-Reference Cheat Sheet</h2>
+<p>Keep this visible while you work.</p>
+<p><strong>Key commands</strong></p>
+<pre class="codehilite"><code class="language-bash"># Run your eval
+npm run eval -- --file my-eval.ts
+
+# Run in CI mode (exit code on failure)
+npm run eval -- --file my-eval.ts --ci
+
+# Filter by tag
+npm run eval -- --file my-eval.ts --tags edge-case
+
+# Verbose output (full model responses)
+npm run eval -- --file my-eval.ts --verbose
+</code></pre>
+
+<p><strong>Dataset case format</strong></p>
+<pre class="codehilite"><code class="language-json">{
+  &quot;id&quot;: &quot;case-001&quot;,
+  &quot;input&quot;: {
+    &quot;text&quot;: &quot;...&quot;
+  },
+  &quot;expected&quot;: {
+    &quot;max_length&quot;: 400,
+    &quot;must_include_topic&quot;: &quot;revenue&quot;
+  },
+  &quot;tags&quot;: [&quot;happy-path&quot;, &quot;financial&quot;]
+}
+</code></pre>
+
+<p><strong>Three debrief questions (answer before 0:50)</strong></p>
+<ol>
+<li>Which cases passed? Which failed?</li>
+<li>Does the failure make sense, or does it look like the grader is wrong?</li>
+<li>What is one thing you would change — in the prompt, the dataset, or the grader?</li>
+</ol>
+<hr />
+<h2 id="stage-a-get-oriented-with-eval-faq">Stage A — Get Oriented with <code>/eval-faq</code></h2>
+<p><strong>Time box: 5 minutes (0:25–0:30)</strong></p>
+<p>You have just watched the live demo. Before you build anything, use <code>/eval-faq</code> to internalize the methodology by asking it questions in plain English. The goal is to make the concepts concrete for your specific agent idea.</p>
+<h3 id="steps">Steps</h3>
+<p><strong>1.</strong> Open a new Claude Code session in your terminal.</p>
+<pre class="codehilite"><code class="language-bash">claude
+</code></pre>
+
+<p><strong>2.</strong> Install the eval-faq skill if you have not already.</p>
+<pre class="codehilite"><code>/install eval-faq
+</code></pre>
+
+<p><strong>3.</strong> Run <code>/eval-faq</code> and ask at least two of the questions below. Copy them verbatim or rephrase them in your own words.</p>
+<pre class="codehilite"><code>/eval-faq What eval scenarios should I use for a RAG agent?
+</code></pre>
+
+<pre class="codehilite"><code>/eval-faq How do I interpret a 75% knowledge grounding score?
+</code></pre>
+
+<pre class="codehilite"><code>/eval-faq What is the difference between business-problem and capability scenarios?
+</code></pre>
+
+<pre class="codehilite"><code>/eval-faq When should I use a model-graded grader instead of a deterministic one?
+</code></pre>
+
+<pre class="codehilite"><code>/eval-faq What makes a good adversarial test case?
+</code></pre>
+
+<pre class="codehilite"><code>/eval-faq How many cases do I need in a dataset to get meaningful signal?
+</code></pre>
+
+<p><strong>4.</strong> As you read each answer, look for:
+- The names of specific scenario types or grader types mentioned
+- Any thresholds or rules of thumb (numbers, percentages, counts)
+- Anything that surprises you or contradicts an assumption you had</p>
+<blockquote>
+<p><strong>Tip:</strong> You do not need to memorize anything. You are building intuition so the next two stages feel less abstract.</p>
+</blockquote>
+<h3 id="checkpoint">Checkpoint</h3>
+<p>Before moving to Stage B, you should be able to answer in one sentence: "For my chosen agent, the most important thing to measure is ___."</p>
+<hr />
+<h2 id="stage-b-generate-scenarios-and-write-your-eval-file">Stage B — Generate Scenarios and Write Your Eval File</h2>
+<p><strong>Time box: 15 minutes (0:30–0:45)</strong></p>
+<p>This is the main building block. You will pick an agent type, generate eval scenarios with AI assistance, save a dataset, and wire up an eval file.</p>
+<h3 id="step-1-choose-your-agent-task">Step 1 — Choose your agent task</h3>
+<p>Pick one of the four options below. If you have a real agent you work on, use that instead and adapt the instructions accordingly.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Agent description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Email triage</strong></td>
+<td>Reads incoming emails and labels them as urgent, not urgent, or spam</td>
+</tr>
+<tr>
+<td><strong>Code review</strong></td>
+<td>Reads a code diff and identifies potential bugs or style issues</td>
+</tr>
+<tr>
+<td><strong>Meeting notes</strong></td>
+<td>Takes a raw meeting transcript and produces a structured summary with action items</td>
+</tr>
+<tr>
+<td><strong>Product description</strong></td>
+<td>Takes a product name and specs and writes a short marketing blurb</td>
+</tr>
+</tbody>
+</table>
+<p>Write down your choice. You will reference it in every prompt you send.</p>
+<h3 id="step-2-generate-scenarios-with-eval-generator">Step 2 — Generate scenarios with <code>/eval-generator</code></h3>
+<p><strong>2a.</strong> In your Claude Code session, install the eval-generator skill.</p>
+<pre class="codehilite"><code>/install eval-generator
+</code></pre>
+
+<p><strong>2b.</strong> Run <code>/eval-generator</code> with a description of your agent. Use this pattern:</p>
+<pre class="codehilite"><code>/eval-generator I am building a [YOUR AGENT TYPE] agent.
+It [one sentence describing what it does].
+Generate eval scenarios covering happy-path, edge, and adversarial cases.
+</code></pre>
+
+<p>For example, for the meeting notes agent:</p>
+<pre class="codehilite"><code>/eval-generator I am building a meeting notes agent.
+It takes a raw meeting transcript and produces a structured summary with action items.
+Generate eval scenarios covering happy-path, edge, and adversarial cases.
+</code></pre>
+
+<p><strong>2c.</strong> Wait for the output. A good response includes:
+- At least 5–6 distinct scenario descriptions
+- A mix of case types: one or two happy-path, one or two edge cases (empty input, very long input, ambiguous content), one adversarial case (input designed to trip the agent up)
+- For each scenario: a description, a sample input, and a suggested expected outcome or criterion</p>
+<blockquote>
+<p><strong>Tip:</strong> If the output feels too generic, run it again with a more specific prompt. Add a sentence like: "Focus on cases where the input is ambiguous or the output format matters."</p>
+</blockquote>
+<h3 id="step-3-review-and-edit-the-generated-scenarios">Step 3 — Review and edit the generated scenarios</h3>
+<p><strong>3a.</strong> Read through each generated scenario. Ask yourself:
+- Is this realistic? Would this actually happen in production?
+- Is the expected outcome specific and testable, or vague?
+- Is there an important scenario that is missing?</p>
+<p><strong>3b.</strong> Delete any scenario that is too similar to another one. You want variety, not duplicates.</p>
+<p><strong>3c.</strong> Write one scenario yourself — one that the AI did not generate. This should be a case you personally think is important. Add it to your list.</p>
+<blockquote>
+<p><strong>Common mistake:</strong> Expected outcomes like "the summary should be good" are not testable. Rewrite them as specific constraints: a maximum length, a required topic, a required format, or a prohibited phrase.</p>
+</blockquote>
+<h3 id="step-4-save-your-dataset-file">Step 4 — Save your dataset file</h3>
+<p><strong>4a.</strong> Create the file <code>datasets/my-eval-dataset.json</code> in the harness repo. You can duplicate the reference dataset as a starting point.</p>
+<pre class="codehilite"><code class="language-bash">cp examples/datasets/summarizer-cases.json datasets/my-eval-dataset.json
+</code></pre>
+
+<p><strong>4b.</strong> Open <code>datasets/my-eval-dataset.json</code> and replace all of its contents with your own cases. Use this format for each case:</p>
+<pre class="codehilite"><code class="language-json">[
+  {
+    &quot;id&quot;: &quot;case-001&quot;,
+    &quot;input&quot;: {
+      &quot;text&quot;: &quot;Paste your sample input here.&quot;
+    },
+    &quot;expected&quot;: {
+      &quot;max_length&quot;: 300,
+      &quot;must_include_topic&quot;: &quot;action items&quot;
+    },
+    &quot;tags&quot;: [&quot;happy-path&quot;]
+  },
+  {
+    &quot;id&quot;: &quot;case-002&quot;,
+    &quot;input&quot;: {
+      &quot;text&quot;: &quot;Paste an edge-case input here.&quot;
+    },
+    &quot;expected&quot;: {
+      &quot;max_length&quot;: 300,
+      &quot;must_include_topic&quot;: &quot;action items&quot;
+    },
+    &quot;tags&quot;: [&quot;edge-case&quot;]
+  }
+]
+</code></pre>
+
+<p>Aim for at least three cases total: one happy-path, one edge case, one adversarial or tricky case.</p>
+<blockquote>
+<p><strong>Common mistake:</strong> JSON does not allow trailing commas. A comma after the last item in an array or object will cause a parse error. Double-check before saving.</p>
+</blockquote>
+<h3 id="step-5-copy-and-edit-the-eval-template">Step 5 — Copy and edit the eval template</h3>
+<p><strong>5a.</strong> Copy the reference eval file.</p>
+<pre class="codehilite"><code class="language-bash">cp examples/summarizer-eval.ts my-eval.ts
+</code></pre>
+
+<p><strong>5b.</strong> Open <code>my-eval.ts</code>. Make the following five edits:</p>
+<p><strong>Edit 1 — Dataset path.</strong> Find the line that loads the dataset and change the path to your file.</p>
+<pre class="codehilite"><code class="language-typescript">// Change this:
+const dataset = loadDataset(&quot;examples/datasets/summarizer-cases.json&quot;);
+
+// To this:
+const dataset = loadDataset(&quot;datasets/my-eval-dataset.json&quot;);
+</code></pre>
+
+<p><strong>Edit 2 — Eval name.</strong> Update the eval name so results are easy to identify.</p>
+<pre class="codehilite"><code class="language-typescript">// Change this:
+name: &quot;summarizer-eval&quot;,
+
+// To something like:
+name: &quot;meeting-notes-eval&quot;,
+</code></pre>
+
+<p><strong>Edit 3 — System prompt.</strong> Replace the summarizer system prompt with a prompt for your agent. Write it in plain English: what is the agent's job, what format should it produce, what should it never do?</p>
+<p><strong>Edit 4 — Input template.</strong> Update the template variable that maps <code>input.text</code> into the prompt. If your dataset uses a different input field name, match it here.</p>
+<p><strong>Edit 5 — Grader criteria.</strong> Update the grader to reflect your expected outcomes. If you are using a deterministic grader, check that the field names (like <code>max_length</code> or <code>must_include_topic</code>) match what you put in your dataset's <code>expected</code> block. If you are using a model-graded grader, rewrite the criteria string to describe what "good" looks like for your agent.</p>
+<blockquote>
+<p><strong>Tip:</strong> You do not need to write a perfect grader. Get it working first, then refine it. A grader that is slightly wrong is more useful than no eval at all.</p>
+</blockquote>
+<h3 id="checkpoint_1">Checkpoint</h3>
+<p>Before moving to Stage C, verify:
+- <code>datasets/my-eval-dataset.json</code> exists and is valid JSON (no trailing commas)
+- <code>my-eval.ts</code> compiles without errors: <code>npx tsc --noEmit my-eval.ts</code>
+- You can describe in one sentence what your grader is checking</p>
+<hr />
+<h2 id="stage-c-run-the-eval-and-interpret-results">Stage C — Run the Eval and Interpret Results</h2>
+<p><strong>Time box: 5 minutes (0:45–0:50)</strong></p>
+<h3 id="step-1-run-your-eval">Step 1 — Run your eval</h3>
+<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-eval.ts
+</code></pre>
+
+<p>Watch the output as it runs. You will see each case execute and a pass/fail result per case.</p>
+<h3 id="step-2-find-the-results-file">Step 2 — Find the results file</h3>
+<p>Results are written to:</p>
+<pre class="codehilite"><code>results/my-eval-&lt;timestamp&gt;.json
+</code></pre>
+
+<p>Open that file or read the terminal summary.</p>
+<h3 id="step-3-answer-the-three-debrief-questions">Step 3 — Answer the three debrief questions</h3>
+<p>Write down your answers before the group debrief at 0:50. You will be asked to share.</p>
+<ol>
+<li><strong>Which cases passed? Which failed?</strong></li>
+<li><strong>Does the failure make sense, or does it look like the grader is wrong?</strong></li>
+<li><strong>What is one thing you would change — in the prompt, the dataset, or the grader?</strong></li>
+</ol>
+<blockquote>
+<p><strong>Tip:</strong> A failing case is not a bad outcome. It means you found signal. The interesting question is always: is this an agent problem, a grader problem, or a dataset problem?</p>
+</blockquote>
+<hr />
+<h2 id="troubleshooting">Troubleshooting</h2>
+<p><strong>Invalid JSON error when running the eval</strong>
+Almost always a trailing comma. Open <code>datasets/my-eval-dataset.json</code>, look for a comma on the last line before a <code>]</code> or <code>}</code>, and remove it. Use a JSON validator if needed: paste your content into <code>jsonlint.com</code>.</p>
+<p><strong>File not found / path mismatch</strong>
+Check that the path in <code>my-eval.ts</code> exactly matches where you saved the file. Paths are relative to the harness root directory. Run <code>ls datasets/</code> to confirm the file exists.</p>
+<p><strong>TypeScript compilation error</strong>
+Run <code>npx tsc --noEmit my-eval.ts</code> to see the exact error. Most common cause: a field name in the grader does not match a field name in the <code>expected</code> block of the dataset. Check spelling and casing.</p>
+<p><strong>Auth error when running <code>/eval-faq</code> or <code>/eval-generator</code></strong>
+Your Claude Code session may have timed out. Run <code>claude auth status</code> and re-authenticate if needed, then re-run the slash command.</p>
+<p><strong><code>npm run eval</code> — cannot find module</strong>
+You are likely running the command from the wrong directory. Navigate to the harness root (the directory containing <code>package.json</code>) and try again.</p>
+<pre class="codehilite"><code class="language-bash">cd /path/to/eval-harness
+npm run eval -- --file my-eval.ts
+</code></pre>
+
+<hr />
+<h2 id="stretch-goals">Stretch Goals</h2>
+<p>Finished early? Try one or more of these extensions.</p>
+<p><strong>Add a second grader.</strong> Your eval file likely has one grader. Add a second one that checks something different — for example, if your first grader checks length, add a model-graded grader that checks tone or completeness. Run the eval again and see if the results change.</p>
+<p><strong>Add harder cases.</strong> Go back to <code>datasets/my-eval-dataset.json</code> and add two adversarial cases: one where the input is malformed or empty, and one where the input is designed to produce an output that looks correct but is actually wrong. Re-run and see how your agent handles them.</p>
+<p><strong>Filter by tag.</strong> Add a <code>"tags": ["adversarial"]</code> field to your hardest cases, then run:</p>
+<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-eval.ts --tags adversarial
+</code></pre>
+
+<p>Compare the pass rate on adversarial cases versus happy-path cases.</p>
+<p><strong>Use verbose mode.</strong> Run with <code>--verbose</code> to see the full model output for each case:</p>
+<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-eval.ts --verbose
+</code></pre>
+
+<p>Read the actual outputs. Do they look right to a human, even when the grader marks them as failing? If yes, your grader criteria may be too strict.</p>
+<p><strong>Go back to <code>/eval-faq</code> with a specific result.</strong> Take a failing case and ask:</p>
+<pre class="codehilite"><code>/eval-faq My knowledge grounding grader is failing on cases where the
+input contains multiple topics. What might be causing this?
+</code></pre>
+
+<p>Use the answer to refine either your grader or your dataset.</p>
+</body></html>

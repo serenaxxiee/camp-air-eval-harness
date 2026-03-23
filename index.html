@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Evaluation &mdash; Camp AIR</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/black.css">
+<style>
+  :root {
+    --r-background-color: #0d1117;
+    --r-main-color: #c9d1d9;
+    --r-heading-color: #ffffff;
+    --r-link-color: #58a6ff;
+    --r-selection-background-color: #58a6ff;
+    --r-main-font: 'Segoe UI', system-ui, sans-serif;
+    --r-heading-font: 'Segoe UI', system-ui, sans-serif;
+    --r-code-font: 'Cascadia Code', 'Fira Code', monospace;
+  }
+  .reveal { font-size: 28px; }
+  .reveal h1 { font-size: 2.2em; }
+  .reveal h2 { font-size: 1.6em; color: #fff; }
+  .reveal h3 { font-size: 1.1em; color: #58a6ff; }
+  .reveal code, .reveal pre { font-family: var(--r-code-font); }
+  .reveal pre { background: #161b22; border-radius: 8px; padding: 1em; font-size: 0.65em; }
+  .reveal .slides section { text-align: left; }
+
+  .card { background: #161b22; border-radius: 8px; padding: 0.8em 1.2em; margin: 0.4em 0; }
+  .card-title { color: #58a6ff; font-weight: bold; margin-bottom: 0.2em; }
+  .blue { color: #58a6ff; }
+  .green { color: #3fb950; }
+  .orange { color: #f0883e; }
+  .purple { color: #bc8cff; }
+  .muted { color: #8b949e; }
+  .small { font-size: 0.7em; }
+  .mono { font-family: var(--r-code-font); }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8em; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8em; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 0.8em; }
+
+  .flow-arrow { color: #8b949e; font-size: 1.5em; align-self: center; text-align: center; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.75em; }
+  th { color: #58a6ff; text-align: left; padding: 0.4em 0.6em; border-bottom: 1px solid #30363d; }
+  td { padding: 0.4em 0.6em; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+  tr:hover td { background: #161b22; }
+
+  .badge { display: inline-block; padding: 0.15em 0.5em; border-radius: 4px; font-size: 0.7em; font-family: var(--r-code-font); }
+  .badge-blue { background: #1f3a5f; color: #58a6ff; }
+  .badge-green { background: #1a3a2a; color: #3fb950; }
+  .badge-orange { background: #3d2a1a; color: #f0883e; }
+  .badge-purple { background: #2d1f4e; color: #bc8cff; }
+  .badge-muted { background: #21262d; color: #8b949e; }
+
+  .banner { background: #161b22; border-radius: 8px; padding: 0.8em 1.2em; text-align: center; margin-top: 0.6em; }
+
+  /* Navigation bar */
+  .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #161b22; padding: 0.4em 1em; display: flex; justify-content: space-between; align-items: center; z-index: 100; font-size: 0.5em; border-top: 1px solid #30363d; }
+  .nav-bar a { color: #58a6ff; text-decoration: none; padding: 0.3em 0.8em; }
+  .nav-bar a:hover { background: #21262d; border-radius: 4px; }
+
+  .slide-number { color: #8b949e !important; font-size: 14px !important; }
+
+  /* Resource links */
+  .resource-link { display: flex; justify-content: space-between; align-items: center; }
+  .resource-link .mono { font-size: 0.8em; }
+</style>
+</head>
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+<!-- ============ SLIDE 1: TITLE ============ -->
+<section>
+  <h1>AI Agent Evaluation</h1>
+  <h3>From Human Judgment to AI Quality &mdash; Powered by AI Skills</h3>
+  <br>
+  <p class="muted">Camp AIR &nbsp;|&nbsp; March 2026</p>
+  <p class="muted">Serena Xie &nbsp;|&nbsp; Copilot Acceleration Team</p>
+</section>
+
+<!-- ============ SLIDE 2: SESSION OVERVIEW ============ -->
+<section>
+  <h2>Session Overview</h2>
+  <div class="card"><span class="badge badge-blue">5 min</span> &nbsp; <strong>Eval Recap</strong> <span class="muted">&mdash; Shared vocabulary + why it matters</span></div>
+  <div class="card"><span class="badge badge-green">5 min</span> &nbsp; <strong>Skill Demo</strong> <span class="muted">&mdash; See 4 AI-powered eval skills in action</span></div>
+  <div class="card"><span class="badge badge-orange">10 min</span> &nbsp; <strong>Explore + Plan</strong> <span class="muted">&mdash; /eval-faq + /eval-suite-planner</span></div>
+  <div class="card"><span class="badge badge-purple">15 min</span> &nbsp; <strong>Generate</strong> <span class="muted">&mdash; /eval-generator &rarr; create test cases</span></div>
+  <div class="card"><span class="badge badge-blue">15 min</span> &nbsp; <strong>Run + Triage</strong> <span class="muted">&mdash; Eval harness + /eval-result-interpreter</span></div>
+  <div class="card"><span class="badge badge-muted">10 min</span> &nbsp; <strong>Debrief</strong> <span class="muted">&mdash; Share results + key takeaways</span></div>
+  <p class="muted small" style="margin-top:0.8em">You'll do the full eval lifecycle &mdash; plan, generate, run, interpret &mdash; in 40 minutes.</p>
+</section>
+
+<!-- ============ SLIDE 3: SHARED VOCABULARY ============ -->
+<section>
+  <h2>Shared Vocabulary</h2>
+  <p class="muted small">The building blocks of every evaluation</p>
+  <table>
+    <thead><tr><th>Term</th><th>Definition</th><th style="color:#8b949e">Example</th></tr></thead>
+    <tbody>
+      <tr><td class="blue"><strong>Test Case</strong></td><td>A single prompt + expected behavior pair. The atomic unit of evaluation.</td><td class="muted mono small">&ldquo;How many PTO days?&rdquo; &rarr; correct policy + citation</td></tr>
+      <tr><td class="blue"><strong>Acceptance Criteria</strong></td><td>What &ldquo;good&rdquo; looks like. Specific enough that two people agree on pass/fail.</td><td class="muted mono small">&ldquo;Must state 15 days and cite the Handbook&rdquo;</td></tr>
+      <tr><td class="blue"><strong>Quality Signal</strong></td><td>A named dimension of quality derived from patterns. Agent-specific, not generic.</td><td class="muted mono small">Policy Accuracy, Source Attribution, Escalation Judgment</td></tr>
+      <tr><td class="blue"><strong>Grader</strong></td><td>Applies criteria to a response. Deterministic (regex, length) or model-graded (LLM judge).</td><td class="muted mono small">keywordMatch("hand wash"), modelGraded("empathetic")</td></tr>
+      <tr><td class="blue"><strong>Eval Set</strong></td><td>A collection of test cases measuring quality dimensions. Your reusable, growing asset.</td><td class="muted mono small">20 cases across core, variations, architecture, edge</td></tr>
+      <tr><td class="blue"><strong>Harness</strong></td><td>The engine that runs test cases, applies graders, and produces a results report.</td><td class="muted mono small">npm run eval &rarr; 17/20 passed (85%)</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ SLIDE 4: HUMAN JUDGMENT ============ -->
+<section>
+  <h2>Evals Are Bottled Human Judgment</h2>
+  <p class="blue">The bridge between what humans know is good and what AI produces at scale</p>
+  <div class="grid-3" style="margin-top:0.8em">
+    <div class="card" style="text-align:center">
+      <div class="card-title orange" style="font-size:1.2em">Human Taste</div>
+      <p class="small">Your best SME knows what &ldquo;good&rdquo; looks like.</p>
+      <p class="small">They catch nuance no automation can replicate.</p>
+      <p class="small muted">This judgment is rare, expensive, and doesn't scale.</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="card-title green" style="font-size:1.2em">Eval Sets</div>
+      <p class="small">Capture that judgment once. Encode it as acceptance criteria. Apply it every time.</p>
+      <p class="small muted">The artifact that transfers human taste into a repeatable, scalable process.</p>
+    </div>
+    <div class="card" style="text-align:center">
+      <div class="card-title blue" style="font-size:1.2em">AI Quality</div>
+      <p class="small">Every prompt change tested. Every model upgrade validated. Every regression caught.</p>
+      <p class="small muted">Confident iteration at speed no human reviewer can match.</p>
+    </div>
+  </div>
+  <div class="banner">
+    Eval sets are your team's most valuable AI asset. They compound over time &mdash; every production incident, every edge case, every lesson learned becomes a test case that protects you forever.
+  </div>
+</section>
+
+<!-- ============ SLIDE 5: COPILOT STUDIO TEST METHODS ============ -->
+<section>
+  <h2>Evaluation Methods in Copilot Studio</h2>
+  <p class="muted small">Six grader types &mdash; choose based on what you're checking</p>
+  <table>
+    <thead><tr><th>Method</th><th>Type</th><th>What It Checks</th><th>Example</th><th>Best For</th></tr></thead>
+    <tbody>
+      <tr><td class="blue"><strong>Keyword Match</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Specific words/phrases appear in response</td><td class="mono small">Must contain &ldquo;hand wash only&rdquo;</td><td>Policy compliance, required phrases</td></tr>
+      <tr><td class="green"><strong>Compare Meaning</strong></td><td><span class="badge badge-green">Model-based</span></td><td>Semantic similarity to expected answer</td><td class="mono small">Means same as &ldquo;15 days PTO&rdquo;</td><td>Factual accuracy, flexible phrasing</td></tr>
+      <tr><td><strong>Text Similarity</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>String-level similarity score</td><td class="mono small">Response &gt;80% similar to ref</td><td>Verbatim compliance, legal text</td></tr>
+      <tr><td class="purple"><strong>General Quality</strong></td><td><span class="badge badge-purple">Model-based</span></td><td>LLM judges against a rubric you define</td><td class="mono small">Rate empathy, clarity 1&ndash;5</td><td>Tone, helpfulness, open-ended quality</td></tr>
+      <tr><td class="orange"><strong>Capability Use</strong></td><td><span class="badge badge-muted">Deterministic</span></td><td>Agent used specific tools, sources, topics</td><td class="mono small">Must invoke LookupPolicy</td><td>Tool invocation, routing</td></tr>
+      <tr><td class="blue"><strong>Custom Classification</strong></td><td><span class="badge badge-blue">Model-based</span></td><td>Classifies response into your categories</td><td class="mono small">on-topic / off-topic / escalation</td><td>Triage, routing validation</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ SLIDE 6: AI DOES THE HEAVY LIFTING ============ -->
+<section>
+  <h2>Today: AI Does the Heavy Lifting</h2>
+  <p class="blue">Four skills that accelerate every step of the eval lifecycle</p>
+  <div style="display:grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap:0.4em; margin-top:0.8em;">
+    <div class="card" style="text-align:center">
+      <div class="card-title orange" style="font-size:1.1em">Plan</div>
+      <code class="small">/eval-suite-planner</code>
+      <p class="small" style="margin-top:0.4em">Recommends scenarios, category distribution, thresholds</p>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="card" style="text-align:center">
+      <div class="card-title green" style="font-size:1.1em">Generate</div>
+      <code class="small">/eval-generator</code>
+      <p class="small" style="margin-top:0.4em">Creates 6&ndash;8 test cases in harness-ready JSON</p>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="card" style="text-align:center">
+      <div class="card-title blue" style="font-size:1.1em">Run</div>
+      <code class="small">eval harness</code>
+      <p class="small" style="margin-top:0.4em">Executes test cases, applies graders, produces results</p>
+    </div>
+    <div class="flow-arrow">&rarr;</div>
+    <div class="card" style="text-align:center">
+      <div class="card-title purple" style="font-size:1.1em">Interpret</div>
+      <code class="small">/eval-result-interpreter</code>
+      <p class="small" style="margin-top:0.4em">SHIP / ITERATE / BLOCK verdict + remediation</p>
+    </div>
+  </div>
+  <div class="banner" style="margin-top:0.8em">
+    <code>/eval-faq</code> is available throughout &mdash; ask any eval methodology question and get an answer grounded in the Microsoft eval repos + industry best practices
+  </div>
+  <p class="muted" style="margin-top:0.6em">Let me show you each one.</p>
+</section>
+
+<!-- ============ SLIDE 7: LIVE DEMO ============ -->
+<section>
+  <h2>Live Demo</h2>
+  <p class="muted">Switching to terminal&hellip;</p>
+  <div class="grid-2" style="margin-top:0.8em">
+    <div class="card">
+      <div class="card-title orange">1. Plan</div>
+      <pre><code>/eval-suite-planner I'm building an email
+triage agent that labels emails as
+urgent, not-urgent, or spam</code></pre>
+    </div>
+    <div class="card">
+      <div class="card-title green">2. Generate</div>
+      <pre><code>/eval-generator I'm building an email
+triage agent that labels emails as
+urgent, not-urgent, or spam</code></pre>
+    </div>
+    <div class="card">
+      <div class="card-title blue">3. Run</div>
+      <pre><code>npm run eval -- --file my-evals/my-agent-eval.ts</code></pre>
+    </div>
+    <div class="card">
+      <div class="card-title purple">4. Interpret</div>
+      <pre><code>/eval-result-interpreter 5/8 passed.
+Failed: case-003 (topic missing),
+case-006 (length 520/400),
+case-008 (adversarial safety failed)</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8: HANDS-ON ============ -->
+<section>
+  <h2>Hands-On: Your Turn</h2>
+  <div class="card" style="margin-top:0.6em">
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <div class="card-title orange" style="font-size:1.1em">Part 1: Explore + Plan</div>
+      <span class="badge badge-orange">10 min</span>
+    </div>
+    <p class="small" style="margin-top:0.4em">Install skills &rarr; Ask <code>/eval-faq</code> 2 questions &rarr; Run <code>/eval-suite-planner</code> for your agent</p>
+    <p class="muted small">Pick an agent: email triage, code review, meeting notes, or your own</p>
+  </div>
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <div class="card-title green" style="font-size:1.1em">Part 2: Generate</div>
+      <span class="badge badge-green">15 min</span>
+    </div>
+    <p class="small" style="margin-top:0.4em">Run <code>/eval-generator</code> &rarr; Review scenarios &rarr; Edit/delete weak ones &rarr; Add one of your own &rarr; Save to harness</p>
+    <p class="muted small">Save to datasets/my-eval-dataset.json, edit my-evals/my-agent-eval.ts</p>
+  </div>
+  <div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <div class="card-title blue" style="font-size:1.1em">Part 3: Run + Triage</div>
+      <span class="badge badge-blue">15 min</span>
+    </div>
+    <p class="small" style="margin-top:0.4em"><code>npm run eval</code> &rarr; Read results &rarr; Run <code>/eval-result-interpreter</code> &rarr; Get verdict + actions</p>
+    <p class="muted small">Answer 3 debrief Qs: What passed? Is the failure real? What would you change?</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 9: SETUP INSTRUCTIONS ============ -->
+<section>
+  <h2>Setup Instructions</h2>
+  <div class="card">
+    <div class="card-title">Prerequisites</div>
+    <pre><code>node --version        # Node.js 18+ required
+claude --version      # Claude Code CLI installed and authenticated</code></pre>
+  </div>
+  <div class="card">
+    <div class="card-title">Clone &amp; Install</div>
+    <pre><code>git clone https://github.com/serenaxxiee/camp-air-eval-harness
+cd camp-air-eval-harness
+npm install</code></pre>
+  </div>
+  <div class="card">
+    <div class="card-title">Install the 4 AI Skills</div>
+    <pre><code>cp -r skills/eval-faq ~/.claude/skills/
+cp -r skills/eval-generator ~/.claude/skills/
+cp -r skills/eval-result-interpreter ~/.claude/skills/
+cp -r skills/eval-suite-planner ~/.claude/skills/</code></pre>
+  </div>
+  <div class="card">
+    <div class="card-title">Verify</div>
+    <pre><code>export ANTHROPIC_API_KEY=sk-ant-...   # Set your API key
+npm test                               # Should show ~83% pass rate</code></pre>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10: KEY TAKEAWAYS ============ -->
+<section>
+  <h2>Key Takeaways</h2>
+  <div class="card"><span class="blue"><strong>Start with criteria, not code.</strong></span><br><span class="small">Write what &ldquo;good&rdquo; looks like in plain English before touching any eval code.</span></div>
+  <div class="card"><span class="green"><strong>Small datasets are fine. Representative ones are essential.</strong></span><br><span class="small">10 well-chosen cases beat 100 random ones. Include happy paths, edge cases, and adversarial.</span></div>
+  <div class="card"><span class="orange"><strong>AI accelerates the scaffolding, not the thinking.</strong></span><br><span class="small">Use /eval-generator for speed. But you define criteria, review cases, and interpret results.</span></div>
+  <div class="card"><span class="purple"><strong>Eval sets compound over time.</strong></span><br><span class="small">Every incident, every edge case, every lesson learned becomes a test case that protects you forever.</span></div>
+  <div class="card"><span class="blue"><strong>The full lifecycle took you 40 minutes today.</strong></span><br><span class="small">Plan &rarr; Generate &rarr; Run &rarr; Interpret. Keep that file. That's your foundation.</span></div>
+  <div class="banner muted" style="margin-top:0.6em">&ldquo;The best time to write an eval is before you write the prompt. The second best time is right now.&rdquo;</div>
+</section>
+
+<!-- ============ SLIDE 11: RESOURCES ============ -->
+<section>
+  <h2>Resources</h2>
+  <div class="card resource-link"><strong>MS Learn: Agent Evaluation Overview</strong> <span class="mono small blue">aka.ms/AgentEvalSetsFramework</span></div>
+  <div class="card resource-link"><strong>Eval Scenario Library</strong> <span class="mono small blue">github.com/microsoft/ai-agent-eval-scenario-library</span></div>
+  <div class="card resource-link"><strong>Triage &amp; Improvement Playbook</strong> <span class="mono small blue">github.com/microsoft/triage-and-improvement-playbook</span></div>
+  <div class="card resource-link"><strong>Eval Guidance Kit + Checklist</strong> <span class="mono small blue">aka.ms/EvalGuidanceKit</span></div>
+  <div class="card resource-link"><strong>Eval Sets Template</strong> <span class="mono small blue">aka.ms/evalsTemplate</span></div>
+  <div class="card resource-link"><strong>Camp AIR Eval Harness + Skills</strong> <span class="mono small blue">github.com/serenaxxiee/camp-air-eval-harness</span></div>
+  <div class="banner" style="margin-top:0.6em">The 4 skills are bundled in the harness repo. Install them once, use them on any agent, any time.</div>
+</section>
+
+<!-- ============ SLIDE 12: QUESTIONS ============ -->
+<section>
+  <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:80vh">
+    <h1>Questions?</h1>
+    <p class="muted" style="margin-top:0.5em">Serena Xie &nbsp;|&nbsp; Copilot Acceleration Team</p>
+    <p class="blue" style="margin-top:0.5em"><code>/eval-faq</code> is always available &mdash; keep asking it questions after today</p>
+  </div>
+</section>
+
+</div><!-- /slides -->
+</div><!-- /reveal -->
+
+<div class="nav-bar">
+  <span class="muted">Camp AIR &mdash; AI Agent Evaluation</span>
+  <span>
+    <a href="docs/session-outline.html">Session Outline</a>
+    <a href="docs/facilitator-guide.html">Facilitator Guide</a>
+    <a href="docs/hands-on-exercises.html">Hands-On Exercises</a>
+    <a href="docs/moltbook.html">Moltbook</a>
+  </span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: 'c/t',
+  controls: true,
+  progress: true,
+  center: true,
+  transition: 'slide',
+  width: 1280,
+  height: 720,
+  margin: 0.06,
+});
+
+// Keyboard shortcuts: 'f' for facilitator guide, 'h' for hands-on
+document.addEventListener('keydown', e => {
+  if (e.key === 'f' && !e.ctrlKey && !e.metaKey) window.open('docs/facilitator-guide.html', '_blank');
+  if (e.key === 'h' && !e.ctrlKey && !e.metaKey) window.open('docs/hands-on-exercises.html', '_blank');
+});
+</script>
+</body>
+</html>

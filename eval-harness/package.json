@@ -1,0 +1,32 @@
+{
+  "name": "camp-air-eval-harness",
+  "version": "1.0.0",
+  "description": "Eval harness for Camp AIR AI Agent Evaluation workshop",
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "eval": "npx tsx src/index.ts",
+    "test": "npx tsx src/index.ts --file examples/summarizer-eval.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "check": "tsc --noEmit",
+    "eval:workshop": "npx tsx src/index.ts --file my-evals/my-agent-eval.ts",
+    "eval:workshop:verbose": "npx tsx src/index.ts --file my-evals/my-agent-eval.ts --verbose",
+    "eval:workshop:happy-path": "npx tsx src/index.ts --file my-evals/my-agent-eval.ts --tags happy-path",
+    "eval:workshop:adversarial": "npx tsx src/index.ts --file my-evals/my-agent-eval.ts --tags adversarial",
+    "eval:workshop:ci": "npx tsx src/index.ts --file my-evals/my-agent-eval.ts --ci",
+    "check-setup": "npx tsx scripts/check-setup.ts",
+    "validate": "npx tsx scripts/validate-dataset.ts",
+    "validate:workshop": "npx tsx scripts/validate-dataset.ts my-evals/datasets/my-eval-cases.json"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.20.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.4.0"
+  }
+}
