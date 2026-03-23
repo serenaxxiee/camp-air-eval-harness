@@ -1,6 +1,6 @@
 ---
 name: eval-suite-planner
-description: Produces a concrete eval suite plan grounded in Microsoft's Eval Scenario Library and MS Learn agent evaluation guidance — scenario types, evaluation methods, quality signals, thresholds, and priority order — before any test cases are generated or evals are run.
+description: Produces a concrete eval suite plan grounded in Microsoft's Eval Scenario Library and MS Learn agent evaluation guidance — scenario types, evaluation methods, quality signals, thresholds, and priority order — before any test cases are generated or evals are run. Automatically generates a .docx report and .xlsx spreadsheet.
 ---
 
 ## Purpose
@@ -119,6 +119,38 @@ Deviate only when the agent description implies safety-critical use (move safety
 **6. Workshop shortcut**
 
 Name 6-8 specific scenarios from the plan table that give the best signal in a 15-minute exercise: 3-4 core business, 1-2 capability, 1 edge case, 1 adversarial/safety minimum. Reference the scenario numbers from the table.
+
+---
+
+### Output files — MUST generate automatically
+
+After displaying the plan in the conversation, you MUST generate the following files without being asked. Do not skip these.
+
+**A. Eval Suite Plan Report (.docx) — REQUIRED**
+
+Use the `/docx` skill to create a professional, shareable report. This report is the permanent record of the eval plan and a fallback artifact for the workshop demo.
+
+Contents (in this order):
+
+1. **Title page:** "Eval Suite Plan: [Agent Name]" with date.
+2. **Agent description:** 2-3 sentence summary including purpose, knowledge sources, key capabilities.
+3. **One-line summary:** The agent task restatement with matched scenario types.
+4. **Scenario plan table:** The full table with columns: #, Scenario Name, Category, Tag, Evaluation Methods.
+5. **Quality signals:** Each signal with description and mapped scenarios.
+6. **Pass/fail thresholds:** The risk-based thresholds table with adjustment notes.
+7. **Priority order:** Which categories to write first and why.
+8. **Workshop shortcut:** The 6-8 scenarios selected for a 15-minute exercise.
+9. **Next steps:** Guidance to run `/eval-generator` next in the same session.
+
+The docx must be a complete, standalone document readable without conversation context.
+
+**B. Eval Suite Plan Spreadsheet (.xlsx) — REQUIRED**
+
+Use the `/xlsx` skill to create a spreadsheet with:
+
+- **Sheet 1 "Scenario Plan":** Columns: #, Scenario Name, Category, Tag, Evaluation Methods
+- **Sheet 2 "Quality Signals":** Signal name, description, mapped scenarios
+- **Sheet 3 "Thresholds":** Category, target pass rate, blocking threshold, adjustment notes
 
 ---
 

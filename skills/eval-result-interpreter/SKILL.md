@@ -1,6 +1,6 @@
 ---
 name: eval-result-interpreter
-description: Analyzes Copilot Studio evaluation CSV results using Microsoft's Triage & Improvement Playbook. Returns a SHIP / ITERATE / BLOCK verdict with root cause classification, diagnostic triage, prioritized remediation, and pattern analysis.
+description: Analyzes Copilot Studio evaluation CSV results using Microsoft's Triage & Improvement Playbook. Returns a SHIP / ITERATE / BLOCK verdict with root cause classification, diagnostic triage, prioritized remediation, and pattern analysis. Automatically generates a .docx triage report.
 ---
 
 ## Purpose
@@ -183,6 +183,33 @@ End with one sentence naming exactly what to re-run after making changes. Per th
 | Agent config change | Affected test cases + spot-check one unrelated set |
 | System prompt change | Full eval suite |
 | Knowledge source update | All knowledge-grounding and factual-accuracy cases |
+
+---
+
+### Output file — MUST generate automatically
+
+After displaying the triage report in the conversation, you MUST generate the following file without being asked. Do not skip this.
+
+**Eval Results Triage Report (.docx) — REQUIRED**
+
+Use the `/docx` skill to create a professional, shareable triage report. This report is the permanent record of the eval interpretation and a fallback artifact for the workshop demo.
+
+Contents (in this order):
+
+1. **Title page:** "Eval Results Triage Report: [Agent Name]" with date. If agent name is unknown, use "Agent Evaluation".
+2. **Verdict banner:** The SHIP / ITERATE / BLOCK verdict prominently displayed with a one-sentence explanation of why.
+3. **Score summary table:** Total test cases, passed, failed, pass rate, test methods used. If multiple methods, include per-method pass rates.
+4. **Failure triage:** For each failing test case (or cluster):
+   - Case number and question
+   - Test method and score
+   - Root cause classification (Eval Setup Issue / Agent Configuration Issue / Platform Limitation)
+   - Specific explanation of what went wrong
+   - Recommended fix
+5. **Top 3 actions:** Each with the Change → Re-run → Expect pattern.
+6. **Pattern analysis:** Cross-signal patterns identified (e.g., "all failures share 'Question not answered'").
+7. **Next-run recommendation:** What to re-run after making changes, based on what changed.
+
+The docx must be a complete, standalone document that someone could read and act on without access to the conversation history or the original CSV.
 
 ---
 
