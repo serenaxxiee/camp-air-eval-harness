@@ -237,14 +237,14 @@ on case-003, how do I debug it?</code></pre>
     <div>
       <div class="card">
         <div class="card-title">What it does</div>
-        <p class="small">Takes a plain-English agent description and uses <strong>Entry Path A</strong> from the Eval Scenario Library to match your agent to the right business-problem (BP-IR, BP-TS, BP-RS, BP-PN, BP-TR) and capability (CAP-KG through CAP-RA) scenario types. Outputs a scenario plan table that feeds directly into <code>/eval-generator</code>.</p>
+        <p class="small">Takes a plain-English agent description and uses the Eval Scenario Library to match your agent to the right business-problem and capability scenario types. Outputs a scenario plan table that feeds directly into <code>/eval-generator</code>.</p>
       </div>
       <div class="card">
         <div class="card-title blue">Output &rarr; handoff to /eval-generator</div>
         <table style="font-size:0.65em">
           <thead><tr><th>Section</th><th>Content</th></tr></thead>
           <tbody>
-            <tr><td>Scenario plan table</td><td>Named scenarios with IDs (BP-IR-01, CAP-SB-05), tags, evaluation methods</td></tr>
+            <tr><td>Scenario plan table</td><td>Named scenarios, tags, evaluation methods</td></tr>
             <tr><td>Quality signals</td><td>Policy Accuracy, Source Attribution, Personalization, Action Enablement, Privacy</td></tr>
             <tr><td>Thresholds</td><td>Risk-based: &ge;90% core, &ge;95% safety, &ge;70% edge</td></tr>
             <tr><td>Workshop shortcut</td><td>6&ndash;8 highest-signal cases for a 15-minute exercise</td></tr>
@@ -263,7 +263,7 @@ label a real customer email as spam.</code></pre>
       </div>
       <div class="card">
         <div class="card-title green">Key behavior</div>
-        <p class="small"><strong>Specific, not generic.</strong> Names actual scenarios with Eval Scenario Library IDs. Maps each to evaluation methods (Keyword Match, Compare Meaning, Tool Use, General Quality). The scenario plan table is the blueprint for <code>/eval-generator</code>.</p>
+        <p class="small"><strong>Specific, not generic.</strong> Names actual scenarios and maps each to evaluation methods (Keyword Match, Compare Meaning, Tool Use, General Quality). The scenario plan table is the blueprint for <code>/eval-generator</code>.</p>
       </div>
     </div>
   </div>
@@ -277,13 +277,13 @@ label a real customer email as spam.</code></pre>
     <div>
       <div class="card">
         <div class="card-title">Two modes</div>
-        <p class="small"><span class="green"><strong>Plan mode:</strong></span> Reads the scenario plan table from <code>/eval-suite-planner</code> in the conversation. Generates one test case per scenario &mdash; preserving Scenario IDs, tags, and evaluation methods.</p>
+        <p class="small"><span class="green"><strong>Plan mode:</strong></span> Reads the scenario plan table from <code>/eval-suite-planner</code> in the conversation. Generates one test case per scenario &mdash; preserving scenario names, tags, and evaluation methods.</p>
         <p class="small" style="margin-top:0.3em"><span class="orange"><strong>Standalone:</strong></span> Accepts a plain-English agent description and generates 6&ndash;8 cases from scratch.</p>
       </div>
       <div class="card">
         <div class="card-title blue">Two output formats</div>
         <p class="small"><span class="blue">&bull;</span> <strong>Copilot Studio table</strong> (primary) &mdash; Question, Expected Response, Test Method, Pass Score</p>
-        <p class="small"><span class="green">&bull;</span> <strong>Camp AIR harness JSON</strong> (secondary) &mdash; <code>id</code>, <code>input.text</code>, <code>expected</code>, <code>tags</code></p>
+        <p class="small"><span class="green">&bull;</span> <strong>CSV + docx</strong> (secondary) &mdash; for offline review and sharing</p>
       </div>
       <div class="card">
         <div class="card-title purple">Smart guard</div>
@@ -303,7 +303,7 @@ customer support agent...
       <div class="card">
         <div class="card-title">Output includes</div>
         <p class="small"><span class="green">&bull;</span> Copilot Studio test set table (copy-paste ready)</p>
-        <p class="small"><span class="green">&bull;</span> Camp AIR JSON with Scenario IDs as case IDs</p>
+        <p class="small"><span class="green">&bull;</span> CSV + docx output for offline review and sharing</p>
         <p class="small"><span class="green">&bull;</span> Reviewer notes: hardest case, one more to add, human review reminder</p>
       </div>
     </div>
@@ -395,7 +395,7 @@ Run evaluation &rarr; Export CSV
   <div class="grid-3" style="margin-top:0.8em">
     <div class="card" style="text-align:center">
       <div class="card-title orange" style="font-size:1.1em">Eval Suite Plan</div>
-      <p class="small">A scenario plan table with named scenarios, Eval Scenario Library IDs, evaluation methods, and pass/fail thresholds for your agent.</p>
+      <p class="small">A scenario plan table with named scenarios, evaluation methods, and pass/fail thresholds for your agent.</p>
       <p class="muted small" style="margin-top:0.3em">from <code>/eval-suite-planner</code></p>
     </div>
     <div class="card" style="text-align:center">
@@ -412,79 +412,7 @@ Run evaluation &rarr; Export CSV
   <div class="banner" style="margin-top:0.6em">These three artifacts form your <strong>eval foundation</strong>. Upload your test set to Copilot Studio, run it against your real agent, and keep expanding. Every production incident becomes a new test case.</div>
 </section>
 
-<!-- ============ SLIDE 9: HANDS-ON PART 1 ============ -->
-<section>
-  <h2>Hands-On Part 1: Explore + Plan <span class="badge badge-orange">10 min</span></h2>
-  <p class="muted small">Stay in the <strong>same Claude Code session</strong> for Parts 1 and 2 (the generator reads the planner's output from conversation history)</p>
-  <div class="card">
-    <div class="card-title">Step 1 &mdash; Warm up with /eval-faq</div>
-    <pre style="font-size:0.6em"><code>/eval-faq How many test cases do I need for a workshop eval?
-/eval-faq What's the difference between Keyword Match and Compare Meaning?</code></pre>
-  </div>
-  <div class="card">
-    <div class="card-title">Step 2 &mdash; Plan your eval suite</div>
-    <p class="small">Pick an agent (your own Copilot Studio agent, or one of these examples):</p>
-    <pre style="font-size:0.6em"><code>/eval-suite-planner I am building a customer support agent that answers
-questions about our product return policy and helps customers submit
-return requests. It should follow the return policy and never promise
-things the policy does not allow.</code></pre>
-  </div>
-  <div class="card">
-    <div class="card-title green">Done when</div>
-    <p class="small">You have a <strong>scenario plan table</strong> in your Claude conversation with named scenarios, tags, and evaluation methods. Do NOT close this session.</p>
-  </div>
-</section>
-
-<!-- ============ SLIDE 10: HANDS-ON PART 2 ============ -->
-<section>
-  <h2>Hands-On Part 2: Generate <span class="badge badge-green">15 min</span></h2>
-  <p class="muted small">Run this in the <strong>same session</strong> as Part 1 &mdash; the generator reads your plan automatically</p>
-  <div class="card">
-    <div class="card-title">Step 1 &mdash; Generate test cases from your plan</div>
-    <pre style="font-size:0.6em"><code>/eval-generator</code></pre>
-    <p class="small" style="margin-top:0.3em">The generator detects the planner output and produces one test case per scenario. Output: <span class="blue">Copilot Studio table</span> ready for upload.</p>
-  </div>
-  <div class="card">
-    <div class="card-title">Step 2 &mdash; Review and refine</div>
-    <p class="small"><span class="orange">&bull;</span> Read each test case. Delete any that would never happen in production.</p>
-    <p class="small"><span class="orange">&bull;</span> Add at least one test case of your own (an edge case or adversarial scenario you know about).</p>
-    <p class="small"><span class="orange">&bull;</span> Check that adversarial cases test something meaningful (prompt injection, out-of-scope request).</p>
-  </div>
-  <div class="card">
-    <div class="card-title">Step 3 &mdash; Save your test set</div>
-    <p class="small">Copy the Copilot Studio table from the generator output. This is your complete eval test set, ready for upload to Copilot Studio when you're back at your desk.</p>
-  </div>
-  <div class="card">
-    <div class="card-title green">Done when</div>
-    <p class="small">You have 6&ndash;8 reviewed test cases in a Copilot Studio table format. Save the scenario plan table as a reference &mdash; CSV exports lose this metadata.</p>
-  </div>
-</section>
-
-<!-- ============ SLIDE 11: HANDS-ON PART 3 ============ -->
-<section>
-  <h2>Hands-On Part 3: Interpret + Triage <span class="badge badge-blue">15 min</span></h2>
-  <div class="card">
-    <div class="card-title">Step 1 &mdash; Get the synthetic results CSV</div>
-    <p class="small">We provide a pre-built Copilot Studio eval results CSV with realistic pass/fail data. This is the same format you'll get when you run your own test set in Copilot Studio later.</p>
-    <pre style="font-size:0.6em"><code>synthetic-eval-results.csv   # provided in the repo</code></pre>
-  </div>
-  <div class="card">
-    <div class="card-title">Step 2 &mdash; Interpret results</div>
-    <pre style="font-size:0.6em"><code>/eval-result-interpreter synthetic-eval-results.csv</code></pre>
-  </div>
-  <div class="card">
-    <div class="card-title">Step 3 &mdash; Reflect (3 debrief questions)</div>
-    <p class="small"><span class="blue">1.</span> What passed? Does it make sense, or are your tests too easy?</p>
-    <p class="small"><span class="orange">2.</span> For each failure: is it an <strong>eval setup issue</strong> (grader/test is wrong) or an <strong>agent issue</strong> (agent needs fixing)?</p>
-    <p class="small"><span class="purple">3.</span> What is the #1 thing you would change before re-running?</p>
-  </div>
-  <div class="card">
-    <div class="card-title green">Done when</div>
-    <p class="small">You have a SHIP / ITERATE / BLOCK verdict and know whether your failures are eval problems or agent problems. <strong>If 100% passed, your eval is too easy &mdash; add harder cases.</strong></p>
-  </div>
-</section>
-
-<!-- ============ SLIDE 12: SETUP INSTRUCTIONS ============ -->
+<!-- ============ SLIDE 9: SETUP INSTRUCTIONS ============ -->
 <section>
   <h2>Setup Instructions</h2>
   <div class="card">
@@ -510,7 +438,7 @@ cp -r skills/eval-suite-planner ~/.claude/skills/</code></pre>
   </div>
 </section>
 
-<!-- ============ SLIDE 13: TROUBLESHOOTING ============ -->
+<!-- ============ SLIDE 10: TROUBLESHOOTING ============ -->
 <section>
   <h2>Troubleshooting</h2>
   <p class="muted small">Common issues and fixes</p>
@@ -524,6 +452,78 @@ cp -r skills/eval-suite-planner ~/.claude/skills/</code></pre>
       <tr><td class="blue">Windows <code>cp -r</code> fails</td><td>Use Git Bash (not PowerShell or CMD). Or manually copy the 4 skill folders to <code>%USERPROFILE%\.claude\skills\</code></td></tr>
     </tbody>
   </table>
+</section>
+
+<!-- ============ SLIDE 11: HANDS-ON PART 1 ============ -->
+<section>
+  <h2>Hands-On Part 1: Explore + Plan <span class="badge badge-orange">10 min</span></h2>
+  <p class="muted small">Stay in the <strong>same Claude Code session</strong> for Parts 1 and 2 (the generator reads the planner's output from conversation history)</p>
+  <div class="card">
+    <div class="card-title">Step 1 &mdash; Warm up with /eval-faq</div>
+    <pre style="font-size:0.6em"><code>/eval-faq How many test cases do I need for a workshop eval?
+/eval-faq What's the difference between Keyword Match and Compare Meaning?</code></pre>
+  </div>
+  <div class="card">
+    <div class="card-title">Step 2 &mdash; Plan your eval suite</div>
+    <p class="small">Pick an agent (your own Copilot Studio agent, or one of these examples):</p>
+    <pre style="font-size:0.6em"><code>/eval-suite-planner I am building a customer support agent that answers
+questions about our product return policy and helps customers submit
+return requests. It should follow the return policy and never promise
+things the policy does not allow.</code></pre>
+  </div>
+  <div class="card">
+    <div class="card-title green">Done when</div>
+    <p class="small">You have a <strong>scenario plan table</strong> in your Claude conversation with named scenarios, tags, and evaluation methods. Do NOT close this session.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12: HANDS-ON PART 2 ============ -->
+<section>
+  <h2>Hands-On Part 2: Generate <span class="badge badge-green">15 min</span></h2>
+  <p class="muted small">Run this in the <strong>same session</strong> as Part 1 &mdash; the generator reads your plan automatically</p>
+  <div class="card">
+    <div class="card-title">Step 1 &mdash; Generate test cases from your plan</div>
+    <pre style="font-size:0.6em"><code>/eval-generator</code></pre>
+    <p class="small" style="margin-top:0.3em">The generator detects the planner output and produces one test case per scenario. Output: <span class="blue">Copilot Studio table</span> ready for upload.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Step 2 &mdash; Review and refine</div>
+    <p class="small"><span class="orange">&bull;</span> Read each test case. Delete any that would never happen in production.</p>
+    <p class="small"><span class="orange">&bull;</span> Add at least one test case of your own (an edge case or adversarial scenario you know about).</p>
+    <p class="small"><span class="orange">&bull;</span> Check that adversarial cases test something meaningful (prompt injection, out-of-scope request).</p>
+  </div>
+  <div class="card">
+    <div class="card-title">Step 3 &mdash; Save your test set</div>
+    <p class="small">Copy the Copilot Studio table from the generator output. This is your complete eval test set, ready for upload to Copilot Studio when you're back at your desk.</p>
+  </div>
+  <div class="card">
+    <div class="card-title green">Done when</div>
+    <p class="small">You have 6&ndash;8 reviewed test cases in a Copilot Studio table format. Save the scenario plan table as a reference &mdash; CSV exports lose this metadata.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 13: HANDS-ON PART 3 ============ -->
+<section>
+  <h2>Hands-On Part 3: Interpret + Triage <span class="badge badge-blue">15 min</span></h2>
+  <div class="card">
+    <div class="card-title">Step 1 &mdash; Get the synthetic results CSV</div>
+    <p class="small">We provide a pre-built Copilot Studio eval results CSV with realistic pass/fail data. This is the same format you'll get when you run your own test set in Copilot Studio later.</p>
+    <pre style="font-size:0.6em"><code>synthetic-eval-results.csv   # provided in the repo</code></pre>
+  </div>
+  <div class="card">
+    <div class="card-title">Step 2 &mdash; Interpret results</div>
+    <pre style="font-size:0.6em"><code>/eval-result-interpreter synthetic-eval-results.csv</code></pre>
+  </div>
+  <div class="card">
+    <div class="card-title">Step 3 &mdash; Reflect (3 debrief questions)</div>
+    <p class="small"><span class="blue">1.</span> What passed? Does it make sense, or are your tests too easy?</p>
+    <p class="small"><span class="orange">2.</span> For each failure: is it an <strong>eval setup issue</strong> (grader/test is wrong) or an <strong>agent issue</strong> (agent needs fixing)?</p>
+    <p class="small"><span class="purple">3.</span> What is the #1 thing you would change before re-running?</p>
+  </div>
+  <div class="card">
+    <div class="card-title green">Done when</div>
+    <p class="small">You have a SHIP / ITERATE / BLOCK verdict and know whether your failures are eval problems or agent problems. <strong>If 100% passed, your eval is too easy &mdash; add harder cases.</strong></p>
+  </div>
 </section>
 
 <!-- ============ SLIDE 14: KEY TAKEAWAYS ============ -->

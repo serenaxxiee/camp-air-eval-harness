@@ -35,11 +35,7 @@ When the user provides a file path, read the CSV and parse it. Count Pass/Fail t
 
 A pasted pass/fail count, list of failures, or verbal description of results.
 
-**Format 3 — Camp AIR harness output**
-
-The terminal summary or JSON results file from the Camp AIR eval harness.
-
-**Format 4 — Scenario plan reference** (optional, improves accuracy)
+**Format 3 — Scenario plan reference** (optional, improves accuracy)
 
 If the user also provides the scenario plan table from `/eval-suite-planner`, use it to map each CSV row to its original category (core business, capability, safety, edge case) and Scenario ID. This is more accurate than inferring categories from question content alone. Say: "Using your scenario plan for category mapping."
 
@@ -183,6 +179,23 @@ End with one sentence naming exactly what to re-run after making changes. Per th
 | Agent config change | Affected test cases + spot-check one unrelated set |
 | System prompt change | Full eval suite |
 | Knowledge source update | All knowledge-grounding and factual-accuracy cases |
+
+---
+
+### Step 3 — Generate output file
+
+After displaying the triage report in conversation, generate a formatted report:
+
+**Eval Results Triage Report (.docx)**
+Use the docx skill to create a formatted document containing:
+- Title: "Eval Results Triage Report"
+- Date and agent name (if known)
+- Score summary table
+- Verdict (SHIP/ITERATE/BLOCK) with explanation
+- Failure triage details for each failing case
+- Top 3 prioritized actions
+- Pattern analysis
+- Next-run recommendation
 
 ---
 

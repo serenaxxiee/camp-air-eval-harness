@@ -1,11 +1,11 @@
 ---
 name: eval-faq
-description: Answers AI agent evaluation methodology questions with practical, opinionated guidance grounded primarily in Microsoft's agent evaluation ecosystem (MS Learn, Eval Scenario Library, Triage & Improvement Playbook, Eval Guidance Kit) supplemented by select industry sources. Includes a built-in Camp AIR harness quick reference.
+description: Answers AI agent evaluation methodology questions with practical, opinionated guidance grounded primarily in Microsoft's agent evaluation ecosystem (MS Learn, Eval Scenario Library, Triage & Improvement Playbook, Eval Guidance Kit) supplemented by select industry sources.
 ---
 
 ## Purpose
 
-Answer any question about eval methodology, grader types, dataset design, criteria writing, non-determinism, tool-call evaluation, multi-turn agent evaluation, eval tooling, capability vs. regression evals, and interpreting results — specifically in the context of AI agent evaluation. Guidance is grounded primarily in **Microsoft's agent evaluation documentation** (MS Learn agent evaluation pages, the Eval Scenario Library, the Triage & Improvement Playbook, and the Eval Guidance Kit), supplemented by select industry sources for topics Microsoft does not cover deeply. The knowledge base includes a **Camp AIR harness quick reference** section that answers harness-specific questions without requiring a network fetch.
+Answer any question about eval methodology, grader types, dataset design, criteria writing, non-determinism, tool-call evaluation, multi-turn agent evaluation, eval tooling, capability vs. regression evals, and interpreting results — specifically in the context of AI agent evaluation. Guidance is grounded primarily in **Microsoft's agent evaluation documentation** (MS Learn agent evaluation pages, the Eval Scenario Library, the Triage & Improvement Playbook, and the Eval Guidance Kit), supplemented by select industry sources for topics Microsoft does not cover deeply.
 
 ## Instructions
 
@@ -14,8 +14,6 @@ When invoked as `/eval-faq <question>`, follow this process exactly:
 ### Step 1 — Fetch authoritative context before answering
 
 Use this topic-to-URL routing table to decide what to fetch. Fetch FIRST, then answer. Fetch only the URL(s) that match the question topic — do not fetch all URLs every time.
-
-**For Camp AIR harness-specific questions (eval file structure, CLI flags, expected block format, where to put files, field names, threshold values, what fields a case needs) — do NOT attempt a network fetch. Go directly to the knowledge base section "Camp AIR harness quick reference" below.**
 
 | Question topic | Fetch this URL | Section to extract | Notes |
 |---|---|---|---|
@@ -62,7 +60,6 @@ Synthesize the fetched content with the knowledge base below. Microsoft fetched 
 - Answer in 3-5 sentences maximum. No padding, no preamble, no "great question."
 - Give opinionated, direct guidance. Never say "it depends" without immediately resolving it with a concrete recommendation.
 - Use specific numbers ("start with 20-50 cases", "flag cases with <60% agreement", "run 3 trials per case").
-- Reference the harness structure when relevant: "put this in the `expected` block", "use the `--tags` flag", "set `trials: 3` in your eval config."
 - Do not ask clarifying questions. Make a reasonable assumption and answer.
 - Cite which source you used at the end of the answer.
 
@@ -70,86 +67,7 @@ Synthesize the fetched content with the knowledge base below. Microsoft fetched 
 
 ## Knowledge Base
 
-Use the sections below as your primary reference when fetched content does not cover the question, or to supplement fetched content with harness-specific details.
-
-### Camp AIR harness quick reference
-
-This section is the authoritative source for all questions about the Camp AIR eval harness. Use it directly — no network fetch required.
-
-#### Eval file structure
-
-Each eval file is a YAML or JSON file defining an `EvalConfig` object. The required and optional top-level fields are:
-
-```yaml
-name: "my-eval"                  # required — short identifier
-description: "What this tests"   # required — one sentence
-dataset: "datasets/my-cases.json" # required — path relative to my-evals/
-grader: "my-grader"              # required — grader name or inline grader config
-tags: ["capability", "tone"]     # optional — used with --tags flag to filter runs
-trials: 1                        # optional — number of times to run each case (default 1; use 3 for non-determinism testing)
-```
-
-Put custom eval files in the `my-evals/` directory. Put dataset files in `my-evals/datasets/`.
-
-#### Dataset case format
-
-Each case in your dataset is a JSON object with these fields:
-
-```json
-{
-  "id": "case-001",              // required — unique string identifier
-  "input": "User message here",  // required — the input sent to the agent
-  "expected": {                  // required — the criteria this case must meet
-    "max_length": 400,           // optional — response must be at most N characters
-    "must_include_topic": "refund policy", // optional — response must mention this topic
-    "must_not_include": "sorry", // optional — response must NOT contain this string
-    "min_score": 0.7,            // optional — minimum LLM judge score (0.0–1.0)
-    "expected_content": "..."    // optional — reference answer for reference-aware judging
-  },
-  "tags": ["happy-path", "tone"] // optional — used with --tags flag
-}
-```
-
-The `expected` block is your criterion definition. You can combine multiple fields — e.g., both `max_length` and `must_include_topic` — and all must pass for the case to pass.
-
-#### Key CLI flags
-
-| Flag | What it does |
-|---|---|
-| `--file my-evals/my-eval.yaml` | Run a specific eval file |
-| `--tags capability` | Run only cases tagged with this value |
-| `--verbose` | Print each case result with full transcript |
-| `--ci` | Exit with non-zero code on any failure (use in CI pipelines) |
-
-#### Where to put files
-
-- Custom eval configs: `my-evals/my-eval-name.yaml`
-- Dataset files: `my-evals/datasets/my-dataset.json`
-- Do not modify files outside `my-evals/` during the workshop
-
-#### Threshold guidelines (Camp AIR defaults)
-
-| Pass rate | Decision |
-|---|---|
-| 85% or above | SHIP — agent meets the bar for this capability |
-| 60–84% | ITERATE — meaningful failures exist; fix before shipping |
-| Below 60% | BLOCK — fundamental problem; do not ship this capability |
-
-These thresholds apply to capability evals on customer-facing tasks. For internal tools, the ITERATE threshold drops to 70%. For safety-critical tasks, the SHIP threshold rises to 95%.
-
-**If 100% of cases pass on your first run:** your cases are too easy. Add harder edge and adversarial cases immediately. 100% on day one is a red flag, not a success.
-
-#### Minimum viable eval for the 40-minute workshop
-
-If you are running out of time, this is the minimum set that provides real signal:
-1. 3-5 happy-path cases covering the core use case
-2. 2-3 edge cases (empty input, very long input, ambiguous input)
-3. 1-2 adversarial cases (out-of-scope request, prompt injection attempt)
-4. At least one `must_not_include` criterion to catch obvious failures
-
-That is 6-10 cases. Run with `--verbose` so you can read each result. Fix the first failure you find, re-run, repeat.
-
----
+Use the sections below as your primary reference when fetched content does not cover the question, or to supplement fetched content with additional details.
 
 ### Microsoft's 4-stage iterative evaluation framework
 
@@ -202,8 +120,6 @@ Per MS Learn agent evaluation guidance, seven test methods cover different evalu
 6. **Exact Match** — Strict string equality. Use for classification, routing labels, and structured outputs.
 7. **Custom** — User-defined evaluation logic. Use when none of the built-in methods fit.
 
-In the harness: these map to `expected` block fields — `must_include_topic` (Keyword Match), `expected_content` with similarity (Compare Meaning), `min_score` (General Quality).
-
 ### Evaluation approaches
 
 Per MS Learn (common-evaluation-approaches), three approaches for generating test interactions:
@@ -234,8 +150,6 @@ Per the Triage Playbook, score interpretation follows a 4-layer framework:
 Per the Triage Playbook: agents are non-deterministic. Run a minimum of 3 trials per case. Score variance of +/-5% across runs is normal. Variance of +/-10% or more requires investigation — either the eval is flaky or the agent has a genuine instability.
 
 **Additional industry context from Anthropic:** pass@k ("succeeded at least once in k runs") vs. pass^k ("succeeded every time in k runs") diverge massively at scale. At k=10 with 70% per-trial success: pass@k is approximately 97%, pass^k is approximately 3%. The same agent looks excellent or catastrophic depending on which metric you report. For customer-facing agents, pass^k is the right question. A 0% pass@100 is almost always a task specification problem, not an agent problem — fix the task definition before blaming the model.
-
-In the harness: set `trials: 3` in your eval config. Require 2/3 passes as your starting point.
 
 ### Red-teaming
 
@@ -271,14 +185,13 @@ Per the Eval Scenario Library, use the `eval-set-template.md` to structure your 
 - Datasets are living artifacts. A frozen dataset is a regression suite, not an eval.
 - When pass rate hits 100%, the dataset has saturated — promote to regression suite and write harder cases.
 
-**Scoring conventions:** Standardize scoring across your eval suite from the start. Choose ONE convention (binary pass/fail, numeric 0-1, or numeric 0-10) and normalize across all evaluators. For workshop agents, binary pass/fail is the correct default. Per the 7 test methods, General Quality uses sub-dimension scoring while Keyword Match and Exact Match are inherently binary.
+**Scoring conventions:** Standardize scoring across your eval suite from the start. Choose ONE convention (binary pass/fail, numeric 0-1, or numeric 0-10) and normalize across all evaluators. For most agents, binary pass/fail is the correct default. Per the 7 test methods, General Quality uses sub-dimension scoring while Keyword Match and Exact Match are inherently binary.
 
 ### Criteria writing
 
 - Criteria must be specific enough that two people reading them independently would agree on pass or fail. Per the Triage Playbook's Layer 2, ambiguous criteria are a top eval setup failure sub-type.
 - Bad: "the response is helpful." Good: "the response is under 300 characters and mentions the refund policy by name."
 - Write criteria before writing code. If you cannot write a testable criterion, you do not understand what the agent should do.
-- In the harness, criteria map to the `expected` block.
 - **One dimension per score.** Do not combine factuality, tone, and conciseness into a single score. Multi-dimension composite scores hide regressions.
 - **Avoid Likert scales (1-5).** Use binary pass/fail. Binary forces clarity. If you must use multi-point, cap at 3: fail / partial / pass.
 - **Version your grader prompts.** A grader change produces incomparable scores. Track grader versions alongside dataset versions.
@@ -316,7 +229,6 @@ Per the Eval Scenario Library's Tool Invocations capability scenario and MS Lear
 - **Three questions per tool invocation:** (1) Was it the right tool? (2) Were arguments correct and complete? (3) Was the invocation necessary?
 - Do not grade tool-call sequences rigidly. Grade outcomes, not paths. If the agent reached the right answer via a different tool sequence, that should pass.
 - Unnecessary tool calls are a cost and latency issue in production. Catch them in eval.
-- In the harness: add a `tool_calls` field to your `expected` block. Verify count and type.
 
 ### Multi-turn and trajectory evaluation
 
@@ -365,7 +277,6 @@ Per the Eval Scenario Library's Knowledge Grounding capability scenario and the 
 - Knowledge grounding score measures whether each factual claim is supported by retrieved context.
 - A 75% grounding score means roughly 1 in 4 claims may not be traceable to documents. Set threshold at 90%+ for high-stakes factual tasks.
 - Low grounding score almost always means the retrieval step is failing, not the generation step. Fix chunking and retrieval before tuning the prompt.
-- In the harness: use General Quality's Groundedness sub-dimension or implement a reference-aware judge with `expected_content`.
 
 ### Production continuity
 
@@ -393,11 +304,10 @@ Per the Triage Playbook's Layer 4 (Pattern Analysis): look for failure concentra
 - **Capability evals** measure what the agent can do. They start at low pass rates — a 30% rate on a new capability eval is useful signal, not a failure. Per the Eval Scenario Library, capability scenarios test isolated abilities.
 - **Regression suites** maintain near-100% pass rate to detect degradation. Per the Scenario Library's Regression capability scenario type, these protect against backsliding.
 - **When to promote:** When a capability eval saturates (consistently 90%+), promote those cases to the regression suite and write harder capability cases.
-- In the harness: capability evals belong in `--tags capability`, regression evals in `--tags regression`. Never mix them — they have opposite pass-rate expectations.
 
 ### Eval tooling (supplementary)
 
-For tooling questions, the primary recommendation is the Camp AIR eval harness for workshop use and Microsoft's Copilot Studio evaluation features for production Copilot agents. For teams needing third-party platforms:
+For tooling questions, the primary recommendation is Microsoft's Copilot Studio evaluation features for production Copilot agents. For teams needing third-party platforms:
 
 - **Braintrust:** Good default for production agents. Free tier handles 1M spans/month.
 - **LangSmith:** Best if already using LangChain. Native tracing.
@@ -447,7 +357,6 @@ For tooling questions, the primary recommendation is the Camp AIR eval harness f
 /eval-faq Should I use a 1-5 scale or pass/fail for my LLM judge?
 /eval-faq How do I continuously red-team my agent in CI/CD?
 /eval-faq How do I systematically analyze eval failures to find patterns?
-/eval-faq I'm running out of time in the workshop — what's the minimum viable eval suite?
 /eval-faq How do I know if my eval is too easy?
 /eval-faq How do I write an LLM grader prompt that actually works?
 /eval-faq Should I score factuality and tone in the same eval criterion?

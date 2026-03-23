@@ -1,6 +1,6 @@
 ---
 name: eval-generator
-description: Generates eval test cases from an eval suite plan (output of /eval-suite-planner) or a plain-English agent description. Outputs a Copilot Studio test set table and valid JSON for the Camp AIR eval harness.
+description: Generates eval test cases from an eval suite plan (output of /eval-suite-planner) or a plain-English agent description. Outputs a Copilot Studio test set table, a CSV file for import, and a docx report for human review.
 ---
 
 ## Purpose
@@ -17,7 +17,7 @@ When invoked as `/eval-generator` (with or without additional input):
 
 ### Step 1 — Detect input mode
 
-Check the conversation history for output from `/eval-suite-planner`. Look for the scenario plan table (a markdown table with columns: #, Scenario Name, Scenario ID, Category, Tag, Evaluation Methods).
+Check the conversation history for output from `/eval-suite-planner`. Look for the scenario plan table (a markdown table with columns: #, Scenario Name, Category, Tag, Evaluation Methods).
 
 - **Plan found**: Use it as the blueprint. Say: "Generating test cases from your eval suite plan (X scenarios)." Generate one test case per row.
 - **No plan, but user provides an agent description**: Generate from scratch. Say: "Generating eval scenarios for: [agent task in your own words]." If the description is fewer than two sentences or doesn't mention success criteria, ask exactly one clarifying question, then wait.
@@ -34,9 +34,9 @@ Check the conversation history for output from `/eval-suite-planner`. Look for t
 - At least 1 adversarial case (prompt injection, out-of-scope request, policy violation attempt)
 - Fill remaining with whatever gives the most signal for this agent
 
-### Output — produce both formats
+### Output
 
-**Format A — Copilot Studio Test Set Table**
+**Copilot Studio Test Set Table (displayed in conversation)**
 
 This is the primary output. Produce a markdown table matching the Copilot Studio test set format:
 
@@ -62,41 +62,46 @@ Rules for inputs:
 - For Keyword Match, put the required keywords in Expected Response
 - For adversarial cases, the Expected Response should describe what the agent should NOT do
 
-**Format B — Camp AIR Harness JSON**
+### Output files
 
-After the Copilot Studio table, output a valid JSON array for the Camp AIR eval harness:
+After displaying the test cases in conversation, generate two files:
 
-```json
-[
-  {
-    "id": "case-001",
-    "input": { "text": "..." },
-    "expected": {
-      "must_include_topic": "..."
-    },
-    "tags": ["happy-path"]
-  }
-]
+**A. Copilot Studio Import CSV (.csv)**
+
+Generate a CSV file ready for direct import into Copilot Studio Evaluation. Use the `/xlsx` skill to write the file, or write a CSV file directly with proper quoting. Format:
+
+```csv
+"question","expectedResponse"
+"How do I return an item?","The agent should explain the return policy..."
+"I want to speak to a manager NOW","The agent should de-escalate and offer to connect to a human agent..."
 ```
 
-Rules for JSON:
-- `id`: `"case-001"` through `"case-0XX"` (zero-padded, sequential)
-- `input.text`: Same as the Question from the Copilot Studio table
-- `expected`: Map evaluation methods to harness fields:
-  - Keyword Match → `must_include_topic` and/or `must_not_contain`
-  - Compare Meaning → include reference text via `must_include_topic`
-  - General Quality → use `max_length` or let the `modelGradedGrader` handle it
-  - Exact Match → `classification`
-  - Tool Use → note in tags (harness doesn't have native tool-use grading)
-- `tags`: Use tags from the plan if available. Otherwise: `"happy-path"`, `"edge-case"`, `"adversarial"`, `"capability"`, `"safety"`.
+Rules for the CSV:
+- Two columns only: `question` and `expectedResponse`
+- Every value must be enclosed in double quotes
+- Any double quotes inside a value must be escaped as `""`
+- `question` maps to the Question column from the table
+- `expectedResponse` maps to the Expected Response column from the table (leave empty string `""` for General Quality rows)
 
-**Scenario ID preservation:** When generating from a plan, use the Scenario ID from the plan as the Camp AIR JSON `id` field (e.g., `"id": "BP-IR-01"` instead of `"case-001"`). This preserves traceability back to the Eval Scenario Library.
+**B. Eval Test Set Report (.docx)**
 
-**Important — save your plan before running evals:** Copilot Studio CSV exports do not include scenario categories, tags, or IDs. Before running evals in Copilot Studio, save the scenario plan table from `/eval-suite-planner` as a reference document. You will need it when interpreting results with `/eval-result-interpreter`.
+Generate a formatted .docx document for human review using the `/docx` skill. Contents:
+
+- **Title:** "Eval Test Set: [Agent Name]" (derive agent name from the plan or description)
+- **Plan summary:** Brief summary of the eval suite plan this was generated from (or the agent description if generated from scratch)
+- **Test cases:** Each test case formatted clearly with:
+  - Scenario name
+  - Input / question
+  - Expected response
+  - Test method
+  - Pass score (if applicable)
+- **Reviewer notes:** The three reviewer notes from Step 3 below
+
+**Important — save your plan before running evals:** Copilot Studio CSV exports do not include scenario categories or tags. Before running evals in Copilot Studio, save the scenario plan table from `/eval-suite-planner` as a reference document. You will need it when interpreting results with `/eval-result-interpreter`.
 
 ### Step 3 — Reviewer notes
 
-After both formats, write exactly three items:
+After the table and before generating the output files, write exactly three items:
 
 1. **Most likely to fail:** Name the case number and explain why it's the hardest case in this set.
 2. **One more scenario to consider:** Describe an additional scenario worth adding manually — something that didn't fit but is realistic.
@@ -107,10 +112,10 @@ After both formats, write exactly three items:
 ### Behavior rules
 
 - Each case must be independently understandable — no references to "the previous case"
-- JSON must be syntactically valid (no trailing commas, no comments)
 - When using a plan, generate exactly the scenarios listed — do not add or remove scenarios without saying why
-- The Copilot Studio table is the primary output (users will copy it into Copilot Studio); the Camp AIR JSON is secondary (for workshop participants using the harness)
+- The Copilot Studio table is the primary output displayed in conversation; the CSV and docx files are generated afterward
 - Make inputs realistic and specific: use names, dates, product references, and context that a real user would provide
+- The CSV must be valid and importable into Copilot Studio without manual editing
 
 ---
 
