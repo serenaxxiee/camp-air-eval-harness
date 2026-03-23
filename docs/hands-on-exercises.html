@@ -70,9 +70,10 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p><strong>Workflow</strong></p>
 <pre class="codehilite"><code>Plan (/eval-suite-planner)
   → Generate (/eval-generator)
-    → Upload to Copilot Studio
+    → Upload to Copilot Studio  ← skipped in this workshop
       → Interpret (/eval-result-interpreter)
 </code></pre>
+<p class="small" style="color:#8b949e; margin-top:-0.5em">(In this workshop, we skip the upload step and use a pre-built synthetic results CSV instead.)</p>
 
 <p><strong>Copilot Studio test set CSV format</strong></p>
 <p>The generated CSV has three columns: <code>Question</code>, <code>Expected response</code>, <code>Testing method</code>. Testing methods: General quality, Compare meaning, Similarity, Exact match, Keyword match. Save as .csv and import into Copilot Studio &gt; Evaluation &gt; New evaluation.</p>
@@ -87,8 +88,9 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p><strong>Time box: 5 minutes (0:25–0:30)</strong></p>
 <p>You have just watched the live demo. Before you build anything, use <code>/eval-faq</code> to internalize the methodology and <code>/eval-suite-planner</code> to start shaping your eval plan. Stay in this same Claude Code session for all three stages.</p>
 <h3 id="steps">Steps</h3>
-<p><strong>1.</strong> Open a new Claude Code session in your terminal.</p>
-<pre class="codehilite"><code class="language-bash">claude
+<p><strong>1.</strong> If you don't already have Claude Code open, start it now. You will stay in this same session for all three stages.</p>
+<pre class="codehilite"><code class="language-bash">cd camp-air-eval-harness
+claude
 </code></pre>
 
 <p><strong>2.</strong> Run <code>/eval-faq</code> and ask at least two of the questions below. Copy them verbatim or rephrase them in your own words.</p>
@@ -180,10 +182,10 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <blockquote>
 <p><strong>Common mistake:</strong> Expected outcomes like "the summary should be good" are not testable. Look for specific constraints: a required label, a maximum length, a required topic, or a prohibited phrase.</p>
 </blockquote>
-<h3 id="step-5-copy-the-test-set">Step 5 — Copy the test set</h3>
-<p>Select and copy the generated test set table from the Claude Code output. This is what you would upload to Copilot Studio to run evaluations against your agent.</p>
+<h3 id="step-5-copy-the-test-set">Step 5 — Save your test set</h3>
+<p>Select and copy the generated test set table from the Claude Code output into a text file or note. You will not upload it to Copilot Studio during this workshop, but you will have it ready for when you return to your desk.</p>
 <blockquote>
-<p><strong>Tip:</strong> If you want to tweak the test set before uploading, paste it into a text editor first, make your edits, and then upload to Copilot Studio.</p>
+<p><strong>Tip:</strong> The generator also creates a CSV file you can import directly into Copilot Studio &gt; Evaluation &gt; New evaluation. Save that file for later.</p>
 </blockquote>
 <h3 id="checkpoint_1">Checkpoint</h3>
 <p>Before moving to Stage C, verify:
@@ -195,10 +197,20 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p><strong>Time box: 5 minutes (0:45–0:50)</strong></p>
 <p>Since we do not have live Copilot Studio access in this session, you will use a provided synthetic results file to practice interpreting eval output.</p>
 <h3 id="step-1-open-the-synthetic-results">Step 1 — Open the synthetic results</h3>
-<p>Locate the provided file <code>synthetic-eval-results.csv</code>. Open it and review the contents — it contains simulated pass/fail results, scores, and failure reasons for a set of eval cases.</p>
+<p>Open the file <code>docs/synthetic-eval-results.csv</code> in the cloned repo (<code>camp-air-eval-harness/docs/synthetic-eval-results.csv</code>). It contains simulated pass/fail results for 12 test cases against the T-shirt customer service agent. The columns are:</p>
+<ul>
+<li><code>question</code> — the test input sent to the agent</li>
+<li><code>expectedResponse</code> — what the agent should have said</li>
+<li><code>actualResponse</code> — what the agent actually said</li>
+<li><code>testMethodType_1</code> — the grading method (CompareMeaning, KeywordMatch, GeneralQuality)</li>
+<li><code>result_1</code> — Pass or Fail</li>
+<li><code>passingScore_1</code> — the threshold (0.7 = similarity score, 1 = all keywords found, 4 = general quality rubric)</li>
+<li><code>explanation_1</code> — the grader's reasoning</li>
+</ul>
+<p class="small" style="color:#8b949e">Note: Copilot Studio exports use CamelCase method names (e.g., <code>CompareMeaning</code>) while the import CSV uses spaces (e.g., <code>Compare meaning</code>). Both refer to the same methods.</p>
 <h3 id="step-2-run-eval-result-interpreter">Step 2 — Run <code>/eval-result-interpreter</code></h3>
-<p>Run the interpreter skill and paste the CSV content when prompted.</p>
-<pre class="codehilite"><code>/eval-result-interpreter
+<p>Run the interpreter skill and point it at the synthetic results CSV:</p>
+<pre class="codehilite"><code>/eval-result-interpreter docs/synthetic-eval-results.csv
 </code></pre>
 
 <p>The interpreter will analyze the results and produce:
@@ -217,14 +229,16 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 </blockquote>
 <hr />
 <h2 id="troubleshooting">Troubleshooting</h2>
+<p><strong>Nothing works / I'm completely lost</strong>
+Raise your hand. A facilitator will come to your desk. You can also pair up with a neighbor who has it working — two people, one screen is a perfectly valid way to do this workshop.</p>
 <p><strong>Skills not found</strong>
-If <code>/eval-faq</code>, <code>/eval-suite-planner</code>, <code>/eval-generator</code>, or <code>/eval-result-interpreter</code> are not recognized, restart Claude Code and try again. Skills are loaded on session start.</p>
+If <code>/eval-faq</code>, <code>/eval-suite-planner</code>, <code>/eval-generator</code>, or <code>/eval-result-interpreter</code> are not recognized, restart Claude Code (type <code>/exit</code>, then run <code>claude</code> again). Skills load on startup.</p>
 <p><strong>Generator does not detect the plan</strong>
 The generator reads the plan from your conversation context. If you started a new Claude Code session, either re-run <code>/eval-suite-planner</code> first or re-describe your agent directly in the <code>/eval-generator</code> prompt.</p>
 <p><strong>CSV import issues</strong>
 If the generated CSV has formatting issues when you import it to Copilot Studio, open it in Excel, verify the three columns (Question, Expected response, Testing method), and re-save as CSV.</p>
 <p><strong>Auth error when running skills</strong>
-Your Claude Code session may have timed out. Run <code>claude auth login</code> to re-authenticate, then re-run the slash command.</p>
+Your Claude Code session may have timed out. Try: (1) type <code>/exit</code>, (2) run <code>claude</code> again. If that doesn't work, ask the facilitator for help.</p>
 <hr />
 <h2 id="stretch-goals">Stretch Goals</h2>
 <p>Finished early? Try one or more of these extensions.</p>

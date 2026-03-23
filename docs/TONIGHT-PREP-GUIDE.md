@@ -35,10 +35,10 @@ If the `skills/` directory is missing or incomplete, the repo clone is broken. R
 mkdir -p ~/.claude/skills
 
 # Copy skills
-cp -r ../skills/eval-faq ~/.claude/skills/
-cp -r ../skills/eval-generator ~/.claude/skills/
-cp -r ../skills/eval-result-interpreter ~/.claude/skills/
-cp -r ../skills/eval-suite-planner ~/.claude/skills/
+cp -r skills/eval-faq ~/.claude/skills/
+cp -r skills/eval-generator ~/.claude/skills/
+cp -r skills/eval-result-interpreter ~/.claude/skills/
+cp -r skills/eval-suite-planner ~/.claude/skills/
 
 # Verify
 ls ~/.claude/skills/eval-*/SKILL.md
@@ -93,7 +93,7 @@ Participants will need this file for the interpretation step. Confirm your distr
 >
 > To get the most out of tomorrow's hands-on workshop, please complete these steps before arriving (10 min):
 >
-> **Step 1:** Install Claude Code CLI and authenticate — verify with `claude --version`
+> **Step 1:** Install Claude Code CLI: `npm install -g @anthropic-ai/claude-code` (requires Node.js 18+). Then authenticate: `claude auth login`. Verify with `claude --version`.
 >
 > **Step 2:** Clone the repo (use **Git Bash** on Windows, not PowerShell):
 > ```
@@ -262,7 +262,7 @@ From the struggling-participant roleplay:
 | 1 | **Opens PowerShell instead of Git Bash** (breaks cp -r, ~, mkdir) | "Everyone on Windows: open Git Bash, not PowerShell. Start Menu, search Git Bash. You should see a $ prompt." |
 | 2 | **~/.claude/skills/ doesn't exist** (cp -r fails) | "Run `mkdir -p ~/.claude/skills` first, then the copy commands." |
 | 3 | **Doesn't restart Claude Code** (skills not detected) | "Type `/exit` then `claude` to restart. Skills load on startup." |
-| 4 | **Closes session between planner and generator** (plan lost) | "No problem — just type `/eval-generator` followed by your agent description again." |
+| 4 | **Closes session between planner and generator** (plan lost) | "No problem — type `/eval-generator I am building a customer support agent for a premium hand-wash t-shirt product that answers care, sizing, and warranty questions.` It can generate from scratch." |
 | 5 | **Forgets to stay in the same session** (plan context lost for generator) | "The generator needs the planner's output in the same session. Start fresh: run the planner, then immediately run the generator without exiting." |
 
 ---

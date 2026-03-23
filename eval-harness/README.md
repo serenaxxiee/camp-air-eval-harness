@@ -1,5 +1,7 @@
 # Camp AIR — Eval Harness
 
+> **Workshop participants:** This harness is NOT used during the Camp AIR hands-on exercises. For the workshop, follow the instructions in the [hands-on exercises](../docs/hands-on-exercises.html) which use slash commands and a synthetic CSV only. This harness is a reference implementation for post-workshop use.
+
 This harness is **step 3** of the 4-skill Camp AIR eval lifecycle: `/eval-suite-planner` plans your suite (categories, counts, graders, thresholds); `/eval-generator` produces dataset JSON from that plan; **this harness** runs each case against your agent and scores the outputs; `/eval-result-interpreter` reads the results and returns a SHIP / ITERATE / BLOCK verdict with triage notes.
 
 ## Skill lifecycle
