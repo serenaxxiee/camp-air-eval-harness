@@ -339,9 +339,9 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p>Then:
 1. Run <code>/eval-generator</code> in Claude Code and describe your chosen agent task. Ask it to generate 5–8 eval scenarios.
 2. Review the generated scenarios. Edit or discard any that don't make sense. Add one scenario of your own.
-3. Save your scenarios to a file called <code>my-eval-dataset.json</code> in the harness <code>datasets/</code> directory.
-4. Open <code>examples/summarizer-eval.ts</code> as a starting template. Copy it to <code>my-eval.ts</code>.
-5. Edit <code>my-eval.ts</code> to:
+3. Save your scenarios to <code>my-evals/datasets/my-eval-cases.json</code>.
+4. Open <code>examples/summarizer-eval.ts</code> as a starting template. Copy it to <code>my-evals/my-agent-eval.ts</code>.
+5. Edit <code>my-evals/my-agent-eval.ts</code> to:
    - Point to your dataset
    - Update the prompt template to match your agent task
    - Add or modify at least one grader that reflects your criteria</p>
@@ -366,7 +366,7 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p>Say:</p>
 <blockquote>
 <p>"Time to run it. In your terminal, from the harness root, run:"
-<code>npm run eval -- --file my-eval.ts</code>
+<code>npm run eval -- --file my-evals/my-agent-eval.ts</code>
 "When it finishes, look at your results and answer these three questions — you'll share them in the debrief:"
 1. Which cases passed? Which failed?
 2. Does the failure make sense, or does it look like your grader is wrong?
@@ -485,7 +485,7 @@ For a 20-case eval with one model-graded grader, you're looking at roughly 20 ex
 </ul>
 <hr />
 <h2 id="appendix-sample-dataset-format">Appendix: Sample Dataset Format</h2>
-<p>Participants can reference this if they're unsure how to format <code>my-eval-dataset.json</code>.</p>
+<p>Participants can reference this if they're unsure how to format <code>my-evals/datasets/my-eval-cases.json</code>.</p>
 <pre class="codehilite"><code class="language-json">[
   {
     &quot;id&quot;: &quot;case-001&quot;,

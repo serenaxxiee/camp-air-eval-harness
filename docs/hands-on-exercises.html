@@ -42,16 +42,16 @@ hr { border: none; border-top: 1px solid #21262d; margin: 2em 0; }
 <p>Keep this visible while you work.</p>
 <p><strong>Key commands</strong></p>
 <pre class="codehilite"><code class="language-bash"># Run your eval
-npm run eval -- --file my-eval.ts
+npm run eval -- --file my-evals/my-agent-eval.ts
 
 # Run in CI mode (exit code on failure)
-npm run eval -- --file my-eval.ts --ci
+npm run eval -- --file my-evals/my-agent-eval.ts --ci
 
 # Filter by tag
-npm run eval -- --file my-eval.ts --tags edge-case
+npm run eval -- --file my-evals/my-agent-eval.ts --tags edge-case
 
 # Verbose output (full model responses)
-npm run eval -- --file my-eval.ts --verbose
+npm run eval -- --file my-evals/my-agent-eval.ts --verbose
 </code></pre>
 
 <p><strong>Dataset case format</strong></p>
@@ -223,7 +223,7 @@ cp examples/datasets/summarizer-cases.json my-evals/datasets/my-eval-cases.json
 <pre class="codehilite"><code class="language-bash">cp examples/summarizer-eval.ts my-evals/my-agent-eval.ts
 </code></pre>
 
-<p><strong>5b.</strong> Open <code>my-eval.ts</code>. Make the following five edits:</p>
+<p><strong>5b.</strong> Open <code>my-evals/my-agent-eval.ts</code>. Make the following five edits:</p>
 <p><strong>Edit 1 — Dataset path.</strong> Find the line that loads the dataset and change the path to your file.</p>
 <pre class="codehilite"><code class="language-typescript">// Change this:
 const dataset = loadDataset(&quot;examples/datasets/summarizer-cases.json&quot;);
@@ -284,31 +284,31 @@ missing), case-006 (length 520/400), case-008 (adversarial safety failed)
 <hr />
 <h2 id="troubleshooting">Troubleshooting</h2>
 <p><strong>Invalid JSON error when running the eval</strong>
-Almost always a trailing comma. Open <code>datasets/my-eval-dataset.json</code>, look for a comma on the last line before a <code>]</code> or <code>}</code>, and remove it. Use a JSON validator if needed: paste your content into <code>jsonlint.com</code>.</p>
+Almost always a trailing comma. Open <code>my-evals/datasets/my-eval-cases.json</code>, look for a comma on the last line before a <code>]</code> or <code>}</code>, and remove it. Use a JSON validator if needed: paste your content into <code>jsonlint.com</code>.</p>
 <p><strong>File not found / path mismatch</strong>
-Check that the path in <code>my-eval.ts</code> exactly matches where you saved the file. Paths are relative to the harness root directory. Run <code>ls datasets/</code> to confirm the file exists.</p>
+Check that the path in <code>my-evals/my-agent-eval.ts</code> exactly matches where you saved the file. Paths are relative to the harness root directory. Run <code>ls datasets/</code> to confirm the file exists.</p>
 <p><strong>TypeScript compilation error</strong>
-Run <code>npx tsc --noEmit my-eval.ts</code> to see the exact error. Most common cause: a field name in the grader does not match a field name in the <code>expected</code> block of the dataset. Check spelling and casing.</p>
+Run <code>npx tsc --noEmit my-evals/my-agent-eval.ts</code> to see the exact error. Most common cause: a field name in the grader does not match a field name in the <code>expected</code> block of the dataset. Check spelling and casing.</p>
 <p><strong>Auth error when running <code>/eval-faq</code> or <code>/eval-generator</code></strong>
 Your Claude Code session may have timed out. Run <code>claude auth status</code> and re-authenticate if needed, then re-run the slash command.</p>
 <p><strong><code>npm run eval</code> — cannot find module</strong>
 You are likely running the command from the wrong directory. Navigate to the harness root (the directory containing <code>package.json</code>) and try again.</p>
 <pre class="codehilite"><code class="language-bash">cd /path/to/eval-harness
-npm run eval -- --file my-eval.ts
+npm run eval -- --file my-evals/my-agent-eval.ts
 </code></pre>
 
 <hr />
 <h2 id="stretch-goals">Stretch Goals</h2>
 <p>Finished early? Try one or more of these extensions.</p>
 <p><strong>Add a second grader.</strong> Your eval file likely has one grader. Add a second one that checks something different — for example, if your first grader checks length, add a model-graded grader that checks tone or completeness. Run the eval again and see if the results change.</p>
-<p><strong>Add harder cases.</strong> Go back to <code>datasets/my-eval-dataset.json</code> and add two adversarial cases: one where the input is malformed or empty, and one where the input is designed to produce an output that looks correct but is actually wrong. Re-run and see how your agent handles them.</p>
+<p><strong>Add harder cases.</strong> Go back to <code>my-evals/datasets/my-eval-cases.json</code> and add two adversarial cases: one where the input is malformed or empty, and one where the input is designed to produce an output that looks correct but is actually wrong. Re-run and see how your agent handles them.</p>
 <p><strong>Filter by tag.</strong> Add a <code>"tags": ["adversarial"]</code> field to your hardest cases, then run:</p>
-<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-eval.ts --tags adversarial
+<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-evals/my-agent-eval.ts --tags adversarial
 </code></pre>
 
 <p>Compare the pass rate on adversarial cases versus happy-path cases.</p>
 <p><strong>Use verbose mode.</strong> Run with <code>--verbose</code> to see the full model output for each case:</p>
-<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-eval.ts --verbose
+<pre class="codehilite"><code class="language-bash">npm run eval -- --file my-evals/my-agent-eval.ts --verbose
 </code></pre>
 
 <p>Read the actual outputs. Do they look right to a human, even when the grader marks them as failing? If yes, your grader criteria may be too strict.</p>
