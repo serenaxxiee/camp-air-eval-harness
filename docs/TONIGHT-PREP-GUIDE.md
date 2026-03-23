@@ -69,7 +69,7 @@ Confirm it detects the plan and generates test cases with Scenario IDs.
 
 Then test the interpreter with the synthetic results CSV:
 ```
-/eval-result-interpreter Review the results in synthetic-eval-results.csv
+/eval-result-interpreter Review the results in docs/synthetic-eval-results.csv
 ```
 
 Confirm it reads the CSV and produces a structured breakdown of pass/fail patterns and recommendations.

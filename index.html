@@ -103,9 +103,8 @@
       <tr><td class="blue"><strong>Test Case</strong></td><td>A single prompt + expected behavior pair. The atomic unit of evaluation.</td><td class="muted mono small">&ldquo;How many PTO days?&rdquo; &rarr; correct policy + citation</td></tr>
       <tr><td class="blue"><strong>Acceptance Criteria</strong></td><td>What &ldquo;good&rdquo; looks like. Specific enough that two people agree on pass/fail.</td><td class="muted mono small">&ldquo;Must state 15 days and cite the Handbook&rdquo;</td></tr>
       <tr><td class="blue"><strong>Quality Signal</strong></td><td>A named dimension of quality derived from patterns. Agent-specific, not generic.</td><td class="muted mono small">Policy Accuracy, Source Attribution, Escalation Judgment</td></tr>
-      <tr><td class="blue"><strong>Grader</strong></td><td>Applies criteria to a response. Deterministic (regex, length) or model-graded (LLM judge).</td><td class="muted mono small">keywordMatch("hand wash"), modelGraded("empathetic")</td></tr>
-      <tr><td class="blue"><strong>Eval Set</strong></td><td>A collection of test cases measuring quality dimensions. Your reusable, growing asset.</td><td class="muted mono small">20 cases across core, variations, architecture, edge</td></tr>
-      <tr><td class="blue"><strong>Harness</strong></td><td>The engine that runs test cases, applies graders, and produces a results report.</td><td class="muted mono small">Copilot Studio &rarr; 7/12 passed (58%)</td></tr>
+      <tr><td class="blue"><strong>Grader</strong></td><td>Applies criteria to a response. Deterministic (Keyword Match, Exact Match) or model-graded (General Quality).</td><td class="muted mono small">Keyword Match: &ldquo;hand wash&rdquo; | General Quality: empathetic tone</td></tr>
+      <tr><td class="blue"><strong>Eval Set</strong></td><td>A collection of test cases measuring quality dimensions. Your reusable, growing asset.</td><td class="muted mono small">20 cases across core, variations, edge, adversarial</td></tr>
     </tbody>
   </table>
 </section>
@@ -204,8 +203,7 @@
         <div class="card-title">Primary sources</div>
         <p class="small"><span class="blue">&bull;</span> <strong>MS Learn</strong> &mdash; 4-stage framework, 7 test methods<br>
         <span class="blue">&bull;</span> <strong>Eval Scenario Library</strong> &mdash; 80 scenarios, quality signals<br>
-        <span class="blue">&bull;</span> <strong>Triage Playbook</strong> &mdash; SHIP/ITERATE/BLOCK, root causes<br>
-        <span class="blue">&bull;</span> <strong>Camp AIR harness</strong> &mdash; CLI flags, fields, thresholds</p>
+        <span class="blue">&bull;</span> <strong>Triage Playbook</strong> &mdash; SHIP/ITERATE/BLOCK, root causes</p>
       </div>
     </div>
     <div>
@@ -376,7 +374,7 @@ urgent, not-urgent, or spam</code></pre>
     <div class="card">
       <div class="card-title purple">3. Interpret synthetic CSV</div>
       <pre><code>/eval-result-interpreter
-synthetic-eval-results.csv
+docs/synthetic-eval-results.csv
 &rarr; SHIP / ITERATE / BLOCK verdict</code></pre>
     </div>
     <div class="card">
@@ -417,7 +415,7 @@ Run evaluation &rarr; Export CSV
   <h2>Setup Instructions</h2>
   <div class="card">
     <div class="card-title">Prerequisites</div>
-    <p class="small"><span class="blue">&bull;</span> Claude Code CLI (<code>claude --version</code>) &nbsp; <span class="blue">&bull;</span> Git Bash (for Windows)</p>
+    <p class="small"><span class="blue">&bull;</span> Claude Code CLI (<code>claude --version</code>) &nbsp; <span class="blue">&bull;</span> Git Bash for Windows (Start Menu &rarr; search &ldquo;Git Bash&rdquo; &mdash; look for a <code>$</code> prompt, NOT <code>PS C:\&gt;</code>)</p>
   </div>
   <div class="card">
     <div class="card-title">Clone the repo (in Git Bash)</div>
@@ -426,15 +424,18 @@ cd camp-air-eval-harness</code></pre>
   </div>
   <div class="card">
     <div class="card-title">Install the 4 AI Skills (in Git Bash)</div>
-    <pre><code>cp -r skills/eval-faq ~/.claude/skills/
+    <pre><code>mkdir -p ~/.claude/skills
+cp -r skills/eval-faq ~/.claude/skills/
 cp -r skills/eval-generator ~/.claude/skills/
 cp -r skills/eval-result-interpreter ~/.claude/skills/
 cp -r skills/eval-suite-planner ~/.claude/skills/</code></pre>
-    <p class="small muted" style="margin-top:0.3em">Then <strong>restart Claude Code</strong> for skills to take effect. Verify: <code>ls ~/.claude/skills/eval-*/SKILL.md</code> &mdash; should show 4 files.</p>
+    <p class="small muted" style="margin-top:0.3em"><code>mkdir -p</code> creates the skills folder if it doesn&rsquo;t exist (won&rsquo;t affect any skills you already have). Then <strong>restart Claude Code</strong> for new skills to take effect.</p>
   </div>
   <div class="card">
-    <div class="card-title">Verify skills are working</div>
-    <p class="small">In Claude Code, type <code>/eval-faq what is eval</code> &mdash; if you see a structured answer, skills are loaded and working.</p>
+    <div class="card-title">Launch Claude Code and verify</div>
+    <pre><code>cd camp-air-eval-harness
+claude</code></pre>
+    <p class="small" style="margin-top:0.3em">Then type <code>/eval-faq what is eval</code> &mdash; if you see a short, source-cited answer (3&ndash;5 sentences), skills are working. If you get a long generic response, skills did not load &mdash; re-copy the folders and restart.</p>
   </div>
 </section>
 
@@ -457,7 +458,7 @@ cp -r skills/eval-suite-planner ~/.claude/skills/</code></pre>
 <!-- ============ SLIDE 11: HANDS-ON PART 1 ============ -->
 <section>
   <h2>Hands-On Part 1: Explore + Plan <span class="badge badge-orange">10 min</span></h2>
-  <p class="muted small">Stay in the <strong>same Claude Code session</strong> for Parts 1 and 2 (the generator reads the planner's output from conversation history)</p>
+  <p class="muted small"><strong>Slash commands</strong> like <code>/eval-faq</code> trigger AI skills &mdash; type them at the Claude Code prompt and press Enter. Stay in the <strong>same Claude Code session</strong> for Parts 1 and 2.</p>
   <div class="card">
     <div class="card-title">Step 1 &mdash; Warm up with /eval-faq</div>
     <pre style="font-size:0.6em"><code>/eval-faq How many test cases do I need for a workshop eval?
@@ -470,6 +471,10 @@ cp -r skills/eval-suite-planner ~/.claude/skills/</code></pre>
 questions about our product return policy and helps customers submit
 return requests. It should follow the return policy and never promise
 things the policy does not allow.</code></pre>
+    <p class="small muted" style="margin-top:0.3em"><strong>More examples:</strong></p>
+    <p class="small muted">&bull; <em>&ldquo;I am building an IT helpdesk agent that troubleshoots VPN issues, password resets, and software installation requests for employees.&rdquo;</em></p>
+    <p class="small muted">&bull; <em>&ldquo;I am building an HR FAQ agent that answers questions about company policies like PTO, benefits, and onboarding.&rdquo;</em></p>
+    <p class="small muted">&bull; <em>&ldquo;I am building a sales lead qualification agent that asks prospects about their needs and routes them to the right team.&rdquo;</em></p>
   </div>
   <div class="card">
     <div class="card-title green">Done when</div>
@@ -480,7 +485,7 @@ things the policy does not allow.</code></pre>
 <!-- ============ SLIDE 12: HANDS-ON PART 2 ============ -->
 <section>
   <h2>Hands-On Part 2: Generate <span class="badge badge-green">15 min</span></h2>
-  <p class="muted small">Run this in the <strong>same session</strong> as Part 1 &mdash; the generator reads your plan automatically</p>
+  <p class="muted small">Run this in the <strong>same session</strong> as Part 1 (same Claude Code window &mdash; don&rsquo;t type <code>/exit</code> or close the terminal). If you accidentally closed it, run <code>/eval-generator</code> followed by your agent description &mdash; it can generate from scratch.</p>
   <div class="card">
     <div class="card-title">Step 1 &mdash; Generate test cases from your plan</div>
     <pre style="font-size:0.6em"><code>/eval-generator</code></pre>
@@ -508,11 +513,12 @@ things the policy does not allow.</code></pre>
   <div class="card">
     <div class="card-title">Step 1 &mdash; Get the synthetic results CSV</div>
     <p class="small">We provide a pre-built Copilot Studio eval results CSV with realistic pass/fail data. This is the same format you'll get when you run your own test set in Copilot Studio later.</p>
-    <pre style="font-size:0.6em"><code>synthetic-eval-results.csv   # provided in the repo</code></pre>
+    <pre style="font-size:0.6em"><code>docs/synthetic-eval-results.csv   # in the cloned repo</code></pre>
   </div>
   <div class="card">
     <div class="card-title">Step 2 &mdash; Interpret results</div>
-    <pre style="font-size:0.6em"><code>/eval-result-interpreter synthetic-eval-results.csv</code></pre>
+    <p class="small muted" style="margin-bottom:0.3em">You can start a new Claude Code session for this part &mdash; the interpreter reads from a file, not conversation history.</p>
+    <pre style="font-size:0.6em"><code>/eval-result-interpreter docs/synthetic-eval-results.csv</code></pre>
   </div>
   <div class="card">
     <div class="card-title">Step 3 &mdash; Reflect (3 debrief questions)</div>
@@ -545,7 +551,7 @@ things the policy does not allow.</code></pre>
   <div class="card"><span class="green"><strong>Run evals on every change.</strong></span><br><span class="small">Change the prompt? Run the eval. Update knowledge sources? Run the eval. Upgrade the model? Run the full suite. Make it a habit.</span></div>
   <div class="card"><span class="orange"><strong>Turn production incidents into test cases.</strong></span><br><span class="small">Every time a user reports a bad response, add it as a test case within 24 hours. Your eval set grows from real-world signal.</span></div>
   <div class="card"><span class="purple"><strong>Keep using the skills.</strong></span><br><span class="small"><code>/eval-faq</code> for methodology questions. <code>/eval-suite-planner</code> when adding new agent capabilities. <code>/eval-result-interpreter</code> after every eval run.</span></div>
-  <div class="card"><span class="blue"><strong>Share what you learned.</strong></span><br><span class="small">The skills and harness are in the repo. Share with your team. The eval flywheel works best when everyone contributes test cases.</span></div>
+  <div class="card"><span class="blue"><strong>Share what you learned.</strong></span><br><span class="small">The skills are in the repo. Share with your team. The eval flywheel works best when everyone contributes test cases.</span></div>
 </section>
 
 <!-- ============ SLIDE 16: RESOURCES ============ -->
@@ -556,8 +562,8 @@ things the policy does not allow.</code></pre>
   <div class="card resource-link"><strong>Triage &amp; Improvement Playbook</strong> <span class="mono small blue">github.com/microsoft/triage-and-improvement-playbook</span></div>
   <div class="card resource-link"><strong>Eval Guidance Kit + Checklist</strong> <span class="mono small blue">aka.ms/EvalGuidanceKit</span></div>
   <div class="card resource-link"><strong>Eval Sets Template</strong> <span class="mono small blue">aka.ms/evalsTemplate</span></div>
-  <div class="card resource-link"><strong>Camp AIR Eval Harness + Skills</strong> <span class="mono small blue">github.com/serenaxxiee/camp-air-eval-harness</span></div>
-  <div class="banner" style="margin-top:0.6em">The 4 skills are bundled in the harness repo. Install them once, use them on any agent, any time.</div>
+  <div class="card resource-link"><strong>Camp AIR Eval Skills Repo</strong> <span class="mono small blue">github.com/serenaxxiee/camp-air-eval-harness</span></div>
+  <div class="banner" style="margin-top:0.6em">The 4 skills are bundled in the repo. Install them once, use them on any agent, any time.</div>
 </section>
 
 <!-- ============ SLIDE 17: QUESTIONS ============ -->
@@ -575,10 +581,9 @@ things the policy does not allow.</code></pre>
 <div class="nav-bar">
   <span class="muted">Camp AIR &mdash; AI Agent Evaluation</span>
   <span>
-    <a href="docs/session-outline.html">Session Outline</a>
-    <a href="docs/facilitator-guide.html">Facilitator Guide</a>
-    <a href="docs/hands-on-exercises.html">Hands-On Exercises</a>
-    <a href="docs/moltbook.html">Moltbook</a>
+    <a href="../docs/session-outline.html">Session Outline</a>
+    <a href="../docs/facilitator-guide.html">Facilitator Guide</a>
+    <a href="../docs/hands-on-exercises.html">Hands-On Exercises</a>
   </span>
 </div>
 

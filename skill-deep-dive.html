@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Deep Dive &mdash; Camp AIR</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --bg-card: #161b22;
+    --bg-code: #1c2128;
+    --bg-highlight: #1f2937;
+    --border: #30363d;
+    --border-light: #21262d;
+    --text: #c9d1d9;
+    --text-muted: #8b949e;
+    --text-heading: #ffffff;
+    --blue: #58a6ff;
+    --green: #3fb950;
+    --orange: #f0883e;
+    --purple: #bc8cff;
+    --red: #f85149;
+    --yellow: #d29922;
+    --teal: #39d2c0;
+    --font: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 16px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ===== NAVIGATION ===== */
+  .top-nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: rgba(13, 17, 23, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    padding: 0.6em 2em;
+    display: flex;
+    align-items: center;
+    gap: 2em;
+  }
+  .top-nav .logo {
+    font-weight: 700;
+    color: var(--text-heading);
+    font-size: 1.1em;
+    white-space: nowrap;
+  }
+  .top-nav .logo span { color: var(--blue); }
+  .top-nav .nav-links {
+    display: flex; gap: 0.3em; flex-wrap: wrap;
+  }
+  .top-nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.3em 0.7em;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .top-nav a:hover, .top-nav a.active {
+    color: var(--blue);
+    background: rgba(88, 166, 255, 0.1);
+  }
+
+  /* ===== MAIN LAYOUT ===== */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5em 2em 4em;
+  }
+
+  /* ===== HERO SECTION ===== */
+  .hero {
+    text-align: center;
+    padding: 3em 0 2em;
+  }
+  .hero h1 {
+    font-size: 2.8em;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin-bottom: 0.3em;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 span { color: var(--blue); }
+  .hero .subtitle {
+    font-size: 1.2em;
+    color: var(--text-muted);
+    margin-bottom: 1.5em;
+  }
+
+  /* ===== PIPELINE OVERVIEW ===== */
+  .pipeline {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    align-items: center;
+    gap: 0.8em;
+    margin: 2em 0 3em;
+    padding: 1.5em;
+    background: var(--bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .pipeline-step {
+    text-align: center;
+    padding: 1em;
+    border-radius: 8px;
+    background: var(--bg-highlight);
+    border: 1px solid var(--border);
+    transition: transform 0.2s, border-color 0.2s;
+    cursor: pointer;
+  }
+  .pipeline-step:hover {
+    transform: translateY(-2px);
+    border-color: var(--blue);
+  }
+  .pipeline-step .step-num {
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3em;
+    font-weight: 600;
+  }
+  .pipeline-step .step-name {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: var(--text-heading);
+    font-family: var(--mono);
+  }
+  .pipeline-step .step-desc {
+    font-size: 0.7em;
+    color: var(--text-muted);
+    margin-top: 0.3em;
+  }
+  .pipeline-arrow {
+    color: var(--text-muted);
+    font-size: 1.5em;
+    text-align: center;
+  }
+  .step-faq .step-num { color: var(--teal); }
+  .step-planner .step-num { color: var(--blue); }
+  .step-generator .step-num { color: var(--orange); }
+  .step-interpreter .step-num { color: var(--green); }
+
+  /* ===== SKILL SECTIONS ===== */
+  .skill-section {
+    margin: 4em 0;
+    scroll-margin-top: 4em;
+  }
+  .skill-header {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    margin-bottom: 1.5em;
+    padding-bottom: 1em;
+    border-bottom: 2px solid var(--border);
+  }
+  .skill-icon {
+    width: 56px; height: 56px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6em;
+    flex-shrink: 0;
+  }
+  .skill-header h2 {
+    font-size: 1.8em;
+    color: var(--text-heading);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .skill-header h2 code {
+    font-family: var(--mono);
+    font-weight: 600;
+  }
+  .skill-header .time-badge {
+    margin-left: auto;
+    background: var(--bg-highlight);
+    border: 1px solid var(--border);
+    padding: 0.3em 0.8em;
+    border-radius: 20px;
+    font-size: 0.75em;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  /* Sub-sections */
+  .sub-section {
+    margin: 1.5em 0;
+  }
+  .sub-section h3 {
+    font-size: 1.15em;
+    color: var(--blue);
+    font-weight: 600;
+    margin-bottom: 0.6em;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+  .sub-section h3::before {
+    content: '';
+    width: 4px; height: 1em;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  /* ===== CARDS ===== */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2em 1.5em;
+    margin: 0.8em 0;
+  }
+  .card-title {
+    font-weight: 600;
+    margin-bottom: 0.4em;
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  /* ===== GRID LAYOUTS ===== */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1em; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1em; }
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .pipeline { grid-template-columns: 1fr; }
+    .pipeline-arrow { transform: rotate(90deg); }
+  }
+
+  /* ===== CODE BLOCKS ===== */
+  code {
+    font-family: var(--mono);
+    background: var(--bg-code);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.88em;
+    color: var(--blue);
+  }
+  pre {
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2em 1.5em;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.85em;
+    line-height: 1.6;
+    margin: 0.8em 0;
+    color: var(--text);
+  }
+  pre .comment { color: var(--text-muted); }
+  pre .keyword { color: var(--purple); }
+  pre .string { color: var(--green); }
+  pre .cmd { color: var(--orange); }
+
+  /* ===== TABLES ===== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9em;
+    margin: 0.8em 0;
+  }
+  th {
+    text-align: left;
+    padding: 0.6em 0.8em;
+    color: var(--blue);
+    font-weight: 600;
+    border-bottom: 2px solid var(--border);
+    font-size: 0.9em;
+  }
+  td {
+    padding: 0.5em 0.8em;
+    border-bottom: 1px solid var(--border-light);
+    vertical-align: top;
+  }
+  tr:hover td { background: rgba(88, 166, 255, 0.03); }
+
+  /* ===== BADGES ===== */
+  .badge {
+    display: inline-block;
+    padding: 0.15em 0.55em;
+    border-radius: 5px;
+    font-size: 0.78em;
+    font-weight: 600;
+    font-family: var(--mono);
+  }
+  .badge-blue { background: rgba(88, 166, 255, 0.15); color: var(--blue); }
+  .badge-green { background: rgba(63, 185, 80, 0.15); color: var(--green); }
+  .badge-orange { background: rgba(240, 136, 62, 0.15); color: var(--orange); }
+  .badge-purple { background: rgba(188, 140, 255, 0.15); color: var(--purple); }
+  .badge-teal { background: rgba(57, 210, 192, 0.15); color: var(--teal); }
+  .badge-red { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+  .badge-yellow { background: rgba(210, 153, 34, 0.15); color: var(--yellow); }
+
+  /* ===== COLLAPSIBLE ===== */
+  details {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 0.8em 0;
+    overflow: hidden;
+  }
+  summary {
+    padding: 0.8em 1.2em;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-heading);
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    user-select: none;
+  }
+  summary:hover { background: var(--bg-highlight); }
+  summary::marker { color: var(--blue); }
+  details[open] summary { border-bottom: 1px solid var(--border); }
+  details .detail-content {
+    padding: 1.2em 1.5em;
+  }
+
+  /* ===== FLOW DIAGRAM ===== */
+  .flow-diagram {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5em;
+    margin: 1em 0;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 0.85em;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    margin: 0.4em 0;
+    flex-wrap: wrap;
+  }
+  .flow-box {
+    padding: 0.4em 0.8em;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--bg-highlight);
+  }
+  .flow-arrow-right { color: var(--text-muted); }
+
+  /* ===== CALLOUT BOXES ===== */
+  .callout {
+    border-left: 4px solid;
+    padding: 0.8em 1.2em;
+    margin: 1em 0;
+    border-radius: 0 8px 8px 0;
+    background: var(--bg-card);
+  }
+  .callout-blue { border-color: var(--blue); }
+  .callout-green { border-color: var(--green); }
+  .callout-orange { border-color: var(--orange); }
+  .callout-red { border-color: var(--red); }
+  .callout-title {
+    font-weight: 600;
+    margin-bottom: 0.3em;
+  }
+
+  /* ===== HIGHLIGHT TEXT ===== */
+  .blue { color: var(--blue); }
+  .green { color: var(--green); }
+  .orange { color: var(--orange); }
+  .purple { color: var(--purple); }
+  .red { color: var(--red); }
+  .teal { color: var(--teal); }
+  .muted { color: var(--text-muted); }
+  .white { color: var(--text-heading); }
+  .bold { font-weight: 700; }
+
+  /* ===== SEPARATOR ===== */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 3em 0;
+  }
+
+  /* ===== LIST STYLING ===== */
+  ul, ol {
+    padding-left: 1.4em;
+    margin: 0.5em 0;
+  }
+  li {
+    margin: 0.3em 0;
+  }
+  li::marker { color: var(--blue); }
+
+  /* ===== EXAMPLE BOX ===== */
+  .example-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 1em 0;
+  }
+  .example-header {
+    background: var(--bg-highlight);
+    padding: 0.5em 1em;
+    font-size: 0.8em;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+  }
+  .example-body {
+    padding: 1em 1.2em;
+  }
+
+  /* ===== SKILL ANATOMY ===== */
+  .anatomy-block {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 0.5em 1.2em;
+    align-items: start;
+    margin: 0.8em 0;
+  }
+  .anatomy-label {
+    font-family: var(--mono);
+    font-size: 0.85em;
+    font-weight: 600;
+    text-align: right;
+    padding-top: 0.2em;
+  }
+  .anatomy-value {
+    font-size: 0.95em;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    text-align: center;
+    padding: 2em;
+    color: var(--text-muted);
+    font-size: 0.85em;
+    border-top: 1px solid var(--border);
+    margin-top: 3em;
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== TOP NAVIGATION ===== -->
+<nav class="top-nav">
+  <div class="logo">Camp <span>AIR</span> &mdash; Skill Deep Dive</div>
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <a href="#eval-faq">eval-faq</a>
+    <a href="#eval-suite-planner">eval-suite-planner</a>
+    <a href="#eval-generator">eval-generator</a>
+    <a href="#eval-result-interpreter">eval-result-interpreter</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ============================================================ -->
+<!-- HERO -->
+<!-- ============================================================ -->
+<section class="hero" id="overview">
+  <h1>The Four <span>Eval Skills</span></h1>
+  <p class="subtitle">What each skill does, how the SKILL.md works under the hood, and what to expect when you run them</p>
+</section>
+
+<!-- ===== PIPELINE OVERVIEW ===== -->
+<div class="pipeline">
+  <a href="#eval-faq" class="pipeline-step step-faq" style="text-decoration:none; color:inherit;">
+    <div class="step-num teal">Step 0</div>
+    <div class="step-name">/eval-faq</div>
+    <div class="step-desc">Learn &amp; explore</div>
+  </a>
+  <div class="pipeline-arrow">&rarr;</div>
+  <a href="#eval-suite-planner" class="pipeline-step step-planner" style="text-decoration:none; color:inherit;">
+    <div class="step-num blue">Step 1</div>
+    <div class="step-name">/eval-suite-planner</div>
+    <div class="step-desc">Design the plan</div>
+  </a>
+  <div class="pipeline-arrow">&rarr;</div>
+  <a href="#eval-generator" class="pipeline-step step-generator" style="text-decoration:none; color:inherit;">
+    <div class="step-num orange">Step 2</div>
+    <div class="step-name">/eval-generator</div>
+    <div class="step-desc">Generate test cases</div>
+  </a>
+  <div class="pipeline-arrow">&rarr;</div>
+  <a href="#eval-result-interpreter" class="pipeline-step step-interpreter" style="text-decoration:none; color:inherit;">
+    <div class="step-num green">Step 3</div>
+    <div class="step-name">/eval-result-interpreter</div>
+    <div class="step-desc">Interpret results</div>
+  </a>
+</div>
+
+<div class="callout callout-blue">
+  <div class="callout-title">How Skills Work in Claude Code</div>
+  <p>A <strong>skill</strong> is a <code>SKILL.md</code> file placed in <code>~/.claude/skills/</code>. When you type a slash command like <code>/eval-faq</code>, Claude Code reads the corresponding SKILL.md and follows its instructions &mdash; including what sources to fetch, what output format to use, and what rules to follow. The skill <em>is</em> the prompt that shapes Claude's behavior. Each skill below is a carefully designed prompt with knowledge bases, routing tables, and output templates.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- SKILL 1: /eval-faq -->
+<!-- ============================================================ -->
+<section class="skill-section" id="eval-faq">
+  <div class="skill-header">
+    <div class="skill-icon" style="background: rgba(57, 210, 192, 0.15); color: var(--teal);">?</div>
+    <div>
+      <h2><code>/eval-faq</code></h2>
+      <p class="muted" style="font-size: 0.85em;">Your AI evaluation knowledge expert</p>
+    </div>
+    <div class="time-badge">~5 min</div>
+  </div>
+
+  <!-- What it does -->
+  <div class="sub-section">
+    <h3>What It Does</h3>
+    <p>This skill turns Claude into an <strong>AI agent evaluation expert</strong> that answers any question about eval methodology. Ask it about grader types, dataset design, non-determinism, scoring, red-teaming &mdash; it gives you a direct, opinionated 3&ndash;5 sentence answer grounded in authoritative Microsoft sources.</p>
+
+    <div class="grid-2" style="margin-top: 1em;">
+      <div class="card">
+        <div class="card-title teal">Inputs</div>
+        <p>Any natural language question about AI evaluation</p>
+        <pre style="font-size: 0.8em;">/eval-faq What makes a good adversarial test case?
+/eval-faq How many test cases do I need?
+/eval-faq My eval passes 100% &mdash; is that good?</pre>
+      </div>
+      <div class="card">
+        <div class="card-title teal">Outputs</div>
+        <p>A concise 3&ndash;5 sentence answer with specific numbers and source citations</p>
+        <p class="muted" style="font-size: 0.85em; margin-top: 0.5em;">No fluff, no "it depends." Always resolves to a concrete recommendation.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- How the SKILL.md works -->
+  <div class="sub-section">
+    <h3>Inside the SKILL.md &mdash; How It Works</h3>
+    <p>The skill file is structured in three layers:</p>
+
+    <div class="card" style="margin-top: 1em;">
+      <div class="card-title blue">Layer 1: Topic-to-URL Routing Table</div>
+      <p>A 25+ row lookup table that maps question topics to specific URLs. When you ask a question, Claude identifies the topic and <strong>fetches the live source</strong> before answering.</p>
+      <table style="margin-top: 0.8em;">
+        <thead><tr><th>Question Topic</th><th>Source Fetched</th></tr></thead>
+        <tbody>
+          <tr><td>Scenario types, business-problem vs capability</td><td><code>github.com/microsoft/ai-agent-eval-scenario-library</code></td></tr>
+          <tr><td>Score interpretation, SHIP/ITERATE/BLOCK</td><td><code>github.com/microsoft/triage-and-improvement-playbook</code></td></tr>
+          <tr><td>7 test methods in Copilot Studio</td><td><code>learn.microsoft.com/.../analytics-agent-evaluation-overview</code></td></tr>
+          <tr><td>4-stage iterative framework</td><td><code>learn.microsoft.com/.../evaluation-iterative-framework</code></td></tr>
+          <tr><td>Red-teaming, adversarial testing</td><td><code>github.com/microsoft/ai-agent-eval-scenario-library</code></td></tr>
+          <tr><td>pass@k vs pass^k, non-determinism</td><td><code>anthropic.com/engineering/demystifying-evals-for-ai-agents</code></td></tr>
+          <tr><td>LLM-as-judge calibration, biases</td><td><code>eugeneyan.com/writing/llm-evaluators/</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title blue">Layer 2: Built-in Knowledge Base (~4,000 words)</div>
+      <p>For offline or fallback scenarios, the SKILL.md contains a comprehensive knowledge base organized into 20+ topic sections covering:</p>
+      <div class="grid-3" style="margin-top: 0.5em;">
+        <div><span class="badge badge-blue">4-Stage Framework</span></div>
+        <div><span class="badge badge-blue">14 Scenario Types</span></div>
+        <div><span class="badge badge-blue">5 Quality Signals</span></div>
+        <div><span class="badge badge-blue">7 Test Methods</span></div>
+        <div><span class="badge badge-blue">3 Grader Types</span></div>
+        <div><span class="badge badge-blue">3 Root Cause Types</span></div>
+        <div><span class="badge badge-blue">Dataset Design</span></div>
+        <div><span class="badge badge-blue">Criteria Writing</span></div>
+        <div><span class="badge badge-blue">Red-teaming</span></div>
+        <div><span class="badge badge-blue">Non-determinism</span></div>
+        <div><span class="badge badge-blue">LLM Judge Bias</span></div>
+        <div><span class="badge badge-blue">Production Continuity</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title blue">Layer 3: Answer Style Rules</div>
+      <p>Strict formatting constraints ensure every answer is useful:</p>
+      <ul>
+        <li><strong>3&ndash;5 sentences maximum</strong> &mdash; no padding, no preamble</li>
+        <li><strong>Opinionated and direct</strong> &mdash; never "it depends" without immediately resolving</li>
+        <li><strong>Specific numbers</strong> &mdash; "start with 20-50 cases", "run 3 trials per case"</li>
+        <li><strong>Microsoft sources take priority</strong> over external sources</li>
+        <li><strong>Citations at the end</strong> &mdash; "Per Microsoft's Eval Scenario Library:" / "Per the Triage Playbook:"</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Key concepts it teaches -->
+  <div class="sub-section">
+    <h3>Key Concepts You Can Ask About</h3>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title white">Microsoft's 4-Stage Framework</div>
+        <p><span class="blue bold">Define</span> &rarr; <span class="orange bold">Set Baseline &amp; Iterate</span> &rarr; <span class="purple bold">Systematic Expansion</span> &rarr; <span class="green bold">Operationalize</span></p>
+        <p class="muted" style="font-size:0.85em; margin-top:0.3em;">Targets: Overall &ge;85%, Core business &ge;90%, Safety &ge;95%, Edge cases &ge;70-80%</p>
+      </div>
+      <div class="card">
+        <div class="card-title white">SHIP / ITERATE / BLOCK</div>
+        <p><span class="green bold">SHIP</span> &ge;85% &nbsp;|&nbsp; <span class="orange bold">ITERATE</span> 60&ndash;84% &nbsp;|&nbsp; <span class="red bold">BLOCK</span> &lt;60%</p>
+        <p class="muted" style="font-size:0.85em; margin-top:0.3em;">Safety failures = automatic BLOCK, regardless of overall score</p>
+      </div>
+      <div class="card">
+        <div class="card-title white">3 Root Cause Types</div>
+        <ol>
+          <li><span class="yellow">Eval Setup Issue</span> &mdash; the test itself is wrong (~20% of failures!)</li>
+          <li><span class="orange">Agent Config Issue</span> &mdash; the agent needs fixing</li>
+          <li><span class="red">Platform Limitation</span> &mdash; outside your control</li>
+        </ol>
+      </div>
+      <div class="card">
+        <div class="card-title white">100% Pass Rate = Red Flag</div>
+        <p>If all your tests pass on the first run, your tests are too easy. Add harder edge cases and adversarial scenarios immediately.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Try it -->
+  <div class="sub-section">
+    <h3>Try It Yourself</h3>
+    <div class="example-box">
+      <div class="example-header">Example Prompts to Try</div>
+      <div class="example-body">
+<pre style="border: none; margin: 0; padding: 0; background: transparent;">/eval-faq What is eval?
+/eval-faq What are the 5 quality signals I should evaluate?
+/eval-faq How do I decide between SHIP, ITERATE, and BLOCK?
+/eval-faq Should I use pass/fail or a 1-5 scale for my grader?
+/eval-faq My eval passes 100% on first run &mdash; is that good?
+/eval-faq What is the Probe-Measure-Harden red-teaming framework?</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SKILL 2: /eval-suite-planner -->
+<!-- ============================================================ -->
+<section class="skill-section" id="eval-suite-planner">
+  <div class="skill-header">
+    <div class="skill-icon" style="background: rgba(88, 166, 255, 0.15); color: var(--blue);">&#9634;</div>
+    <div>
+      <h2><code>/eval-suite-planner</code></h2>
+      <p class="muted" style="font-size: 0.85em;">Design your evaluation plan before writing any test cases</p>
+    </div>
+    <div class="time-badge">~5 min</div>
+  </div>
+
+  <!-- What it does -->
+  <div class="sub-section">
+    <h3>What It Does</h3>
+    <p>Give it a plain-English description of your AI agent, and it produces a <strong>complete eval suite plan</strong>: which scenarios to test, which evaluation methods to use for each, what quality signals matter, and what pass/fail thresholds to target. This is <strong>Stage 1 (Define)</strong> of Microsoft's 4-stage evaluation framework &mdash; the critical step that most teams skip.</p>
+
+    <div class="grid-2" style="margin-top: 1em;">
+      <div class="card">
+        <div class="card-title blue">Input</div>
+        <p>A description of your AI agent in plain English:</p>
+        <pre style="font-size: 0.8em;">/eval-suite-planner I am building an
+email triage agent that reads incoming
+emails and labels them urgent, not-urgent,
+or spam. It should never label a real
+customer email as spam.</pre>
+      </div>
+      <div class="card">
+        <div class="card-title blue">Outputs (3 artifacts)</div>
+        <ol style="margin-top: 0.3em;">
+          <li><strong>In-conversation plan</strong> &mdash; scenario table, quality signals, thresholds, priority order</li>
+          <li><strong>.docx report</strong> &mdash; formatted document for stakeholder review</li>
+          <li><strong>.xlsx spreadsheet</strong> &mdash; 3 sheets (Scenarios, Quality Signals, Thresholds)</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- How the SKILL.md works -->
+  <div class="sub-section">
+    <h3>Inside the SKILL.md &mdash; How It Works</h3>
+
+    <div class="card">
+      <div class="card-title blue">Step 0: Agent-to-Scenario Routing Table</div>
+      <p>The skill contains a decision table that maps agent behaviors to Microsoft's scenario types:</p>
+      <table style="margin-top: 0.5em;">
+        <thead><tr><th>If the agent...</th><th>Business-Problem Scenarios</th><th>Capability Scenarios</th></tr></thead>
+        <tbody>
+          <tr><td>Answers questions from knowledge sources</td><td>Information Retrieval</td><td>Knowledge Grounding + Compliance</td></tr>
+          <tr><td>Executes tasks via APIs/connectors</td><td>Request Submission</td><td>Tool Invocations + Safety</td></tr>
+          <tr><td>Walks users through troubleshooting</td><td>Troubleshooting</td><td>Knowledge Grounding + Graceful Failure</td></tr>
+          <tr><td>Guides through multi-step processes</td><td>Process Navigation</td><td>Trigger Routing + Tone &amp; Quality</td></tr>
+          <tr><td>Routes conversations to teams</td><td>Triage &amp; Routing</td><td>Trigger Routing + Graceful Failure</td></tr>
+          <tr><td>Handles sensitive data</td><td>(add to whichever applies)</td><td>Safety + Compliance</td></tr>
+          <tr><td><em>All agents</em></td><td>&mdash;</td><td>Red-Teaming (always include)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title blue">Output Structure (6 sections)</div>
+      <p>The SKILL.md specifies an exact output format with six numbered sections:</p>
+      <div class="anatomy-block">
+        <div class="anatomy-label blue">1. Summary</div>
+        <div class="anatomy-value">One-line restatement of the agent's task + matched scenario types</div>
+        <div class="anatomy-label blue">2. Scenario Table</div>
+        <div class="anatomy-value">Primary handoff artifact: <code>#</code>, <code>Scenario Name</code>, <code>Category</code>, <code>Tag</code>, <code>Evaluation Methods</code><br><span class="muted">10&ndash;15 rows for a full suite, 6&ndash;8 minimum for a workshop exercise</span></div>
+        <div class="anatomy-label blue">3. Quality Signals</div>
+        <div class="anatomy-value">Which of the 5 quality signals apply, mapped to specific scenarios</div>
+        <div class="anatomy-label blue">4. Thresholds</div>
+        <div class="anatomy-value">Risk-based pass rates: Overall &ge;85%, Core &ge;90%, Safety &ge;95%, Edge &ge;70%</div>
+        <div class="anatomy-label blue">5. Priority Order</div>
+        <div class="anatomy-value">Which categories to build first (core business &rarr; safety &rarr; capability &rarr; edge)</div>
+        <div class="anatomy-label blue">6. Workshop Shortcut</div>
+        <div class="anatomy-value">The 6&ndash;8 best-signal scenarios for a 15-minute exercise</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title blue">Evaluation Method Selection Guide</div>
+      <p>The skill includes a built-in mapping from "what you're testing" to "which Copilot Studio method to use":</p>
+      <table style="margin-top: 0.5em;">
+        <thead><tr><th>What You're Testing</th><th>Primary Method</th><th>Secondary Method</th></tr></thead>
+        <tbody>
+          <tr><td>Factual accuracy (specific facts, numbers)</td><td><span class="badge badge-green">Keyword Match (All)</span></td><td>Compare Meaning</td></tr>
+          <tr><td>Factual accuracy (flexible phrasing)</td><td><span class="badge badge-blue">Compare Meaning</span></td><td>Keyword Match (Any)</td></tr>
+          <tr><td>Policy compliance (mandatory language)</td><td><span class="badge badge-green">Keyword Match (All)</span></td><td>General Quality</td></tr>
+          <tr><td>Tool invocation correctness</td><td><span class="badge badge-purple">Tool Use</span></td><td>Keyword Match (Any)</td></tr>
+          <tr><td>Response quality, tone, empathy</td><td><span class="badge badge-orange">General Quality</span></td><td>Compare Meaning</td></tr>
+          <tr><td>Hallucination prevention</td><td><span class="badge badge-blue">Compare Meaning</span></td><td>General Quality</td></tr>
+          <tr><td>Negative tests (must NOT do X)</td><td><span class="badge badge-red">Keyword Match &mdash; negative</span></td><td>Tool Use &mdash; negative</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title blue">Category Distribution Rules</div>
+      <p>The skill enforces a balanced test set to avoid the "all happy-path" anti-pattern:</p>
+      <div style="display: flex; gap: 0.5em; flex-wrap: wrap; margin-top: 0.5em;">
+        <div style="flex: 1; min-width: 120px; text-align: center; padding: 0.6em; background: rgba(88, 166, 255, 0.1); border-radius: 6px;">
+          <div class="bold white" style="font-size: 1.4em;">30&ndash;40%</div>
+          <div class="muted" style="font-size: 0.8em;">Core Business</div>
+        </div>
+        <div style="flex: 1; min-width: 120px; text-align: center; padding: 0.6em; background: rgba(188, 140, 255, 0.1); border-radius: 6px;">
+          <div class="bold white" style="font-size: 1.4em;">20&ndash;30%</div>
+          <div class="muted" style="font-size: 0.8em;">Capability</div>
+        </div>
+        <div style="flex: 1; min-width: 120px; text-align: center; padding: 0.6em; background: rgba(240, 136, 62, 0.1); border-radius: 6px;">
+          <div class="bold white" style="font-size: 1.4em;">10&ndash;20%</div>
+          <div class="muted" style="font-size: 0.8em;">Edge &amp; Safety</div>
+        </div>
+        <div style="flex: 1; min-width: 120px; text-align: center; padding: 0.6em; background: rgba(57, 210, 192, 0.1); border-radius: 6px;">
+          <div class="bold white" style="font-size: 1.4em;">10&ndash;20%</div>
+          <div class="muted" style="font-size: 0.8em;">Variations</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connection to next skill -->
+  <div class="callout callout-blue">
+    <div class="callout-title">Handoff to /eval-generator</div>
+    <p>The scenario plan table is the <strong>primary handoff artifact</strong>. Stay in the same Claude Code session &mdash; when you run <code>/eval-generator</code> next, it detects the plan in conversation history and generates exactly one test case per scenario row. No copy-paste needed.</p>
+  </div>
+
+  <div class="sub-section">
+    <h3>Try It Yourself</h3>
+    <div class="example-box">
+      <div class="example-header">Example Prompts to Try</div>
+      <div class="example-body">
+<pre style="border: none; margin: 0; padding: 0; background: transparent;">/eval-suite-planner I am building an email triage agent that reads incoming emails and labels them urgent, not-urgent, or spam. It should never label a real customer email as spam.
+
+/eval-suite-planner I am building a RAG agent that answers questions about our internal HR policy documents. It should only answer questions covered in the documents.
+
+/eval-suite-planner I am building a customer support agent that handles refund requests. It should be polite, follow the refund policy, and not make promises the policy does not allow.</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SKILL 3: /eval-generator -->
+<!-- ============================================================ -->
+<section class="skill-section" id="eval-generator">
+  <div class="skill-header">
+    <div class="skill-icon" style="background: rgba(240, 136, 62, 0.15); color: var(--orange);">&#9998;</div>
+    <div>
+      <h2><code>/eval-generator</code></h2>
+      <p class="muted" style="font-size: 0.85em;">Generate concrete test cases ready for Copilot Studio</p>
+    </div>
+    <div class="time-badge">~5 min</div>
+  </div>
+
+  <!-- What it does -->
+  <div class="sub-section">
+    <h3>What It Does</h3>
+    <p>Takes the eval suite plan from <code>/eval-suite-planner</code> (or a standalone agent description) and generates <strong>concrete, realistic test cases</strong> with specific user inputs, expected outputs, and evaluation method configurations. The output is a table you can review and a <strong>CSV file ready to import directly into Copilot Studio</strong>.</p>
+
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-box" style="border-color: var(--blue);">Scenario Plan Table<br><span class="muted" style="font-size:0.8em;">from /eval-suite-planner</span></div>
+        <div class="flow-arrow-right">&rarr;</div>
+        <div class="flow-box" style="border-color: var(--orange); background: rgba(240, 136, 62, 0.1);"><strong>/eval-generator</strong></div>
+        <div class="flow-arrow-right">&rarr;</div>
+        <div style="display: flex; flex-direction: column; gap: 0.4em;">
+          <div class="flow-box" style="border-color: var(--green);">Copilot Studio Table</div>
+          <div class="flow-box" style="border-color: var(--green);">Import CSV</div>
+          <div class="flow-box" style="border-color: var(--green);">.docx Report</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="sub-section">
+    <h3>Inside the SKILL.md &mdash; How It Works</h3>
+
+    <div class="card">
+      <div class="card-title orange">Step 1: Input Detection (Two Modes)</div>
+      <p>The skill automatically detects which mode to use:</p>
+      <div class="grid-2" style="margin-top: 0.5em;">
+        <div style="padding: 0.8em; background: var(--bg-highlight); border-radius: 6px; border-left: 3px solid var(--green);">
+          <div class="bold white">Primary Mode</div>
+          <p class="muted" style="font-size: 0.85em;">Detects a scenario plan table in the conversation history. Generates one test case per row.</p>
+        </div>
+        <div style="padding: 0.8em; background: var(--bg-highlight); border-radius: 6px; border-left: 3px solid var(--yellow);">
+          <div class="bold white">Fallback Mode</div>
+          <p class="muted" style="font-size: 0.85em;">No plan found. Accepts a plain-English agent description and generates 6&ndash;8 cases from scratch.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title orange">Step 2: Test Case Generation Rules</div>
+      <p>The SKILL.md contains strict rules for generating realistic test cases:</p>
+      <ul>
+        <li><strong>Every "Question" must be realistic</strong> &mdash; specific, not a placeholder. Uses names, dates, product references.</li>
+        <li><strong>Every "Expected Response" must be testable</strong> &mdash; never vague.</li>
+        <li><strong>For General Quality tests</strong> &mdash; Expected Response is left blank (LLM judge evaluates without one)</li>
+        <li><strong>For Keyword Match tests</strong> &mdash; Expected Response contains the required keywords</li>
+        <li><strong>For adversarial cases</strong> &mdash; Expected Response describes what the agent should NOT do</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title orange">Copilot Studio Test Set Table Format</div>
+      <p>The primary output is a markdown table matching Copilot Studio's format:</p>
+      <table style="margin-top: 0.5em;">
+        <thead><tr><th>#</th><th>Question</th><th>Expected Response</th><th>Test Method</th><th>Pass Score</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><em>Realistic user input</em></td><td><em>Expected answer</em></td><td><span class="badge badge-orange">General Quality</span></td><td>&mdash;</td></tr>
+          <tr><td>2</td><td><em>Realistic user input</em></td><td><em>Expected for comparison</em></td><td><span class="badge badge-blue">Compare Meaning</span></td><td>50</td></tr>
+          <tr><td>3</td><td><em>Realistic user input</em></td><td><em>Keywords to check</em></td><td><span class="badge badge-green">Keyword Match</span></td><td>&mdash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title orange">7 Test Methods Mapped</div>
+      <p>The skill knows all 7 Copilot Studio test methods and when to use each:</p>
+      <div class="grid-2" style="margin-top: 0.5em; gap: 0.5em;">
+        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-orange">General Quality</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; overall response quality (no expected response needed)</span>
+        </div>
+        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-blue">Compare Meaning</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; semantic similarity (pass score, default 50)</span>
+        </div>
+        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-purple">Tool Use</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; correct tool invocation</span>
+        </div>
+        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-green">Keyword Match</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; must-include / must-not-include</span>
+        </div>
+        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-teal">Text Similarity</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; phrasing-sensitive comparison</span>
+        </div>
+        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-yellow">Exact Match</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; classification labels, structured outputs</span>
+        </div>
+        <div style="padding: 0.5em 0.8em; background: var(--bg-highlight); border-radius: 6px; grid-column: span 2;">
+          <span class="badge badge-red">Custom</span>
+          <span class="muted" style="font-size: 0.82em;"> &mdash; your own evaluation logic when none of the above fit</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title orange">Step 3: Reviewer Notes (always 3 items)</div>
+      <ol>
+        <li><strong>Most likely to fail</strong> &mdash; names the hardest test case and explains why</li>
+        <li><strong>One more scenario to consider</strong> &mdash; a realistic scenario worth adding manually</li>
+        <li><strong>Mandatory reminder</strong> &mdash; "Review every generated scenario. AI-generated test cases need human review."</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <div class="card-title orange">Output Files</div>
+      <div class="grid-2" style="margin-top: 0.5em;">
+        <div style="padding: 0.8em; background: var(--bg-highlight); border-radius: 6px;">
+          <div class="bold white">CSV for Copilot Studio Import</div>
+          <p class="muted" style="font-size: 0.82em;">Two columns: <code>question</code> and <code>expectedResponse</code>. Ready for direct import &mdash; no manual editing needed.</p>
+        </div>
+        <div style="padding: 0.8em; background: var(--bg-highlight); border-radius: 6px;">
+          <div class="bold white">.docx Report for Human Review</div>
+          <p class="muted" style="font-size: 0.82em;">Formatted Word document with all test cases, methods, pass scores, and reviewer notes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-orange">
+    <div class="callout-title">Critical: Stay in the Same Session</div>
+    <p>The generator detects the planner's output in your <strong>conversation history</strong>. If you close Claude Code between running <code>/eval-suite-planner</code> and <code>/eval-generator</code>, the plan is lost. Run them in the same session, one after the other.</p>
+  </div>
+
+  <div class="sub-section">
+    <h3>Try It Yourself</h3>
+    <div class="example-box">
+      <div class="example-header">Example: Run After the Planner</div>
+      <div class="example-body">
+<pre style="border: none; margin: 0; padding: 0; background: transparent;"><span class="comment"># Step 1: Run the planner first</span>
+<span class="cmd">/eval-suite-planner</span> I am building an email triage agent that labels
+emails as urgent, not-urgent, or spam.
+
+<span class="comment"># Step 2: Wait for the plan table, then immediately run:</span>
+<span class="cmd">/eval-generator</span>
+
+<span class="comment"># Or, generate from scratch without a plan:</span>
+<span class="cmd">/eval-generator</span> I am building a meeting notes agent that takes
+a raw transcript and produces a structured summary with action items.</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SKILL 4: /eval-result-interpreter -->
+<!-- ============================================================ -->
+<section class="skill-section" id="eval-result-interpreter">
+  <div class="skill-header">
+    <div class="skill-icon" style="background: rgba(63, 185, 80, 0.15); color: var(--green);">&#10003;</div>
+    <div>
+      <h2><code>/eval-result-interpreter</code></h2>
+      <p class="muted" style="font-size: 0.85em;">Triage eval results and get a SHIP/ITERATE/BLOCK verdict</p>
+    </div>
+    <div class="time-badge">~5 min</div>
+  </div>
+
+  <!-- What it does -->
+  <div class="sub-section">
+    <h3>What It Does</h3>
+    <p>Takes Copilot Studio evaluation results &mdash; a CSV export, a pasted summary, or even a verbal description &mdash; and produces a <strong>structured triage report</strong> using Microsoft's Triage &amp; Improvement Playbook. It tells you whether to <span class="green bold">SHIP</span>, <span class="orange bold">ITERATE</span>, or <span class="red bold">BLOCK</span>, classifies every failure by root cause, and gives you exactly 3 prioritized actions.</p>
+
+    <div class="flow-diagram">
+      <div class="flow-row">
+        <div class="flow-box" style="border-color: var(--text-muted);">Copilot Studio<br>CSV Export</div>
+        <div class="flow-arrow-right">&rarr;</div>
+        <div class="flow-box" style="border-color: var(--green); background: rgba(63, 185, 80, 0.1);"><strong>/eval-result-interpreter</strong></div>
+        <div class="flow-arrow-right">&rarr;</div>
+        <div style="display: flex; flex-direction: column; gap: 0.4em;">
+          <div class="flow-box" style="border-color: var(--green);">SHIP / ITERATE / BLOCK</div>
+          <div class="flow-box" style="border-color: var(--green);">Root Cause Triage</div>
+          <div class="flow-box" style="border-color: var(--green);">3 Prioritized Actions</div>
+          <div class="flow-box" style="border-color: var(--green);">.docx Report</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- How it works -->
+  <div class="sub-section">
+    <h3>Inside the SKILL.md &mdash; How It Works</h3>
+
+    <div class="card">
+      <div class="card-title green">Input Formats (3 options)</div>
+      <div class="grid-3" style="margin-top: 0.5em;">
+        <div style="padding: 0.8em; background: var(--bg-highlight); border-radius: 6px; border-top: 3px solid var(--green);">
+          <div class="bold white">Format 1: CSV File</div>
+          <p class="muted" style="font-size: 0.82em;">A file path to a Copilot Studio CSV export with columns: question, expectedResponse, actualResponse, testMethodType_1, result_1, passingScore_1, explanation_1</p>
+        </div>
+        <div style="padding: 0.8em; background: var(--bg-highlight); border-radius: 6px; border-top: 3px solid var(--yellow);">
+          <div class="bold white">Format 2: Plain Text</div>
+          <p class="muted" style="font-size: 0.82em;">Pasted pass/fail counts, list of failures, or verbal description of results</p>
+        </div>
+        <div style="padding: 0.8em; background: var(--bg-highlight); border-radius: 6px; border-top: 3px solid var(--blue);">
+          <div class="bold white">Format 3: + Scenario Plan</div>
+          <p class="muted" style="font-size: 0.82em;">Optionally provide the plan from /eval-suite-planner for more accurate category mapping</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title green">The 7-Section Output Structure</div>
+      <p>The SKILL.md enforces a strict 7-section output, each grounded in a specific layer of the Triage Playbook:</p>
+
+      <div style="margin-top: 0.8em;">
+        <div style="display: flex; gap: 0.8em; align-items: start; margin: 0.6em 0; padding: 0.6em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-purple" style="min-width: 30px; text-align: center;">0</span>
+          <div>
+            <div class="bold white">Pre-triage Infrastructure Check</div>
+            <p class="muted" style="font-size: 0.85em;">Were knowledge sources accessible? Any API errors? Auth tokens valid? If infrastructure was unhealthy, failures are marked infrastructure-blocked, not agent-failed.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.8em; align-items: start; margin: 0.6em 0; padding: 0.6em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-blue" style="min-width: 30px; text-align: center;">1</span>
+          <div>
+            <div class="bold white">Score Summary</div>
+            <p class="muted" style="font-size: 0.85em;">Total cases, passed, failed, pass rate, test methods used, per-method breakdown.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.8em; align-items: start; margin: 0.6em 0; padding: 0.6em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-green" style="min-width: 30px; text-align: center;">2</span>
+          <div>
+            <div class="bold white">Verdict &mdash; SHIP / ITERATE / BLOCK</div>
+            <p class="muted" style="font-size: 0.85em;">Applied via the Triage Playbook's decision tree with risk-adjusted thresholds.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.8em; align-items: start; margin: 0.6em 0; padding: 0.6em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-orange" style="min-width: 30px; text-align: center;">3</span>
+          <div>
+            <div class="bold white">Failure Triage</div>
+            <p class="muted" style="font-size: 0.85em;">Each failure gets the 5-question eval verification first (is the TEST wrong?), then classification into 3 root cause types.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.8em; align-items: start; margin: 0.6em 0; padding: 0.6em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-yellow" style="min-width: 30px; text-align: center;">4</span>
+          <div>
+            <div class="bold white">Explanation Analysis</div>
+            <p class="muted" style="font-size: 0.85em;">Parses Copilot Studio's explanation fields and maps patterns to Playbook diagnostic areas.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.8em; align-items: start; margin: 0.6em 0; padding: 0.6em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-red" style="min-width: 30px; text-align: center;">5</span>
+          <div>
+            <div class="bold white">Top 3 Actions</div>
+            <p class="muted" style="font-size: 0.85em;">Each follows the pattern: <strong>Change X &rarr; Re-run Y &rarr; Expect Z</strong>. Prioritized: safety first, then core business, then lowest-scoring.</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.8em; align-items: start; margin: 0.6em 0; padding: 0.6em; background: var(--bg-highlight); border-radius: 6px;">
+          <span class="badge badge-teal" style="min-width: 30px; text-align: center;">6</span>
+          <div>
+            <div class="bold white">Pattern Analysis</div>
+            <p class="muted" style="font-size: 0.85em;">Checks for 7 cross-signal patterns: concentration, instruction conflicts, over-constraint, etc.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title green">The Decision Tree (embedded in the skill)</div>
+      <div class="flow-diagram" style="text-align: left; font-family: var(--mono); font-size: 0.82em; line-height: 1.8;">
+        <div>ALL safety/compliance cases above &ge;95%?</div>
+        <div style="padding-left: 2em;"><span class="red bold">NO</span> &rarr; <span class="badge badge-red">BLOCK</span> Fix safety issues first.</div>
+        <div style="padding-left: 2em;"><span class="green bold">YES</span> &rarr; ALL core business cases above &ge;80%?</div>
+        <div style="padding-left: 4em;"><span class="red bold">NO</span> &rarr; <span class="badge badge-orange">ITERATE</span> Focus on lowest-scoring area.</div>
+        <div style="padding-left: 4em;"><span class="green bold">YES</span> &rarr; Capability cases above threshold?</div>
+        <div style="padding-left: 6em;"><span class="red bold">NO</span> &rarr; <span class="badge badge-yellow">SHIP WITH KNOWN GAPS</span></div>
+        <div style="padding-left: 6em;"><span class="green bold">YES</span> &rarr; <span class="badge badge-green">SHIP</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title green">Risk-Adjusted Thresholds (built into the skill)</div>
+      <table style="margin-top: 0.5em;">
+        <thead><tr><th>Risk Profile</th><th>Safety/Compliance</th><th>Core Business</th><th>Capabilities</th></tr></thead>
+        <tbody>
+          <tr><td>Low-risk internal tool</td><td>90%+</td><td>75%+</td><td>65%+</td></tr>
+          <tr><td style="font-weight: 600;">Medium-risk customer-facing</td><td style="font-weight: 600;">95%+</td><td style="font-weight: 600;">85%+</td><td style="font-weight: 600;">75%+</td></tr>
+          <tr><td>High-risk regulated</td><td>98%+</td><td>92%+</td><td>85%+</td></tr>
+          <tr><td>Safety-critical</td><td>99%+</td><td>95%+</td><td>90%+</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title green">The 5-Question Eval Verification</div>
+      <p>Before blaming the agent for any failure, the skill checks if <em>the test itself</em> is wrong:</p>
+      <table style="margin-top: 0.5em;">
+        <thead><tr><th>#</th><th>Diagnostic Question</th><th>If YES &rarr;</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Is the agent's actual response acceptable?</td><td><span class="badge badge-yellow">Eval Setup Issue</span> &mdash; grader or expected value is wrong</td></tr>
+          <tr><td>2</td><td>Is the expected answer still current?</td><td><span class="badge badge-yellow">Eval Setup Issue</span> &mdash; outdated expected answer</td></tr>
+          <tr><td>3</td><td>Is the test case realistic?</td><td><span class="badge badge-yellow">Eval Setup Issue</span> &mdash; unrealistic test case</td></tr>
+          <tr><td>4</td><td>Could an alternative response also be correct?</td><td><span class="badge badge-yellow">Eval Setup Issue</span> &mdash; grader too rigid</td></tr>
+          <tr><td>5</td><td>Is the test method appropriate?</td><td><span class="badge badge-yellow">Eval Setup Issue</span> &mdash; wrong method</td></tr>
+        </tbody>
+      </table>
+      <div class="callout callout-red" style="margin-top: 0.8em;">
+        <p><strong>At least 20% of failures in a new eval are eval setup issues, not agent issues.</strong> Always rule out the test being wrong before blaming the agent.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title green">Cross-Signal Patterns (7 patterns)</div>
+      <table style="margin-top: 0.5em;">
+        <thead><tr><th>Pattern</th><th>Likely Indicates</th></tr></thead>
+        <tbody>
+          <tr><td>All failures share "Question not answered"</td><td>Knowledge source gap or scope issue</td></tr>
+          <tr><td>Accuracy AND grounding both failing</td><td>Knowledge source issue (wrong docs retrieved)</td></tr>
+          <tr><td>Accuracy passing but tone failing</td><td>Right answer, poor delivery &mdash; style instruction needed</td></tr>
+          <tr><td>Safety passing but accuracy failing</td><td>Agent over-constrained &mdash; review safety restrictions</td></tr>
+          <tr><td>All failures in one question type</td><td>Systemic gap &mdash; fix the category, not individual cases</td></tr>
+          <tr><td>80%+ failures are eval setup issues</td><td>Pause agent work &mdash; fix the evals first</td></tr>
+          <tr><td>One signal improving, another degrading</td><td>Instruction conflict (instruction budget problem)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sub-section">
+    <h3>Try It Yourself</h3>
+    <div class="example-box">
+      <div class="example-header">Example Prompts to Try</div>
+      <div class="example-body">
+<pre style="border: none; margin: 0; padding: 0; background: transparent;"><span class="comment"># Point it at a CSV file:</span>
+<span class="cmd">/eval-result-interpreter</span> Review the results in docs/synthetic-eval-results.csv
+
+<span class="comment"># Or paste a quick summary:</span>
+<span class="cmd">/eval-result-interpreter</span> 7/12 passed. Failed: case 4 (over-classification),
+case 6 (missed churn risk), case 8 (phishing miss), case 10 (prompt injection),
+case 11 (real email classified as spam).
+
+<span class="comment"># Or after running evals in Copilot Studio:</span>
+<span class="cmd">/eval-result-interpreter</span> C:\Users\me\Downloads\Evaluate Agent 260323.csv</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr>
+
+<!-- ============================================================ -->
+<!-- SUMMARY: CONNECTING THE SKILLS -->
+<!-- ============================================================ -->
+<section class="skill-section" id="connecting">
+  <div class="skill-header">
+    <div class="skill-icon" style="background: rgba(188, 140, 255, 0.15); color: var(--purple);">&#8644;</div>
+    <div>
+      <h2>Connecting the Skills</h2>
+      <p class="muted" style="font-size: 0.85em;">The complete eval lifecycle in one Claude Code session</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 1em;">
+    <div class="card-title purple">The Full Pipeline</div>
+    <table style="margin-top: 0.5em;">
+      <thead><tr><th>Step</th><th>Skill</th><th>Input</th><th>Output</th><th>Time</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-teal">0</span></td>
+          <td><code>/eval-faq</code></td>
+          <td>Any question about eval</td>
+          <td>3&ndash;5 sentence expert answer</td>
+          <td>~30 sec</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">1</span></td>
+          <td><code>/eval-suite-planner</code></td>
+          <td>Agent description</td>
+          <td>Scenario plan + .docx + .xlsx</td>
+          <td>~2 min</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-orange">2</span></td>
+          <td><code>/eval-generator</code></td>
+          <td>Plan in conversation (or description)</td>
+          <td>Test case table + CSV + .docx</td>
+          <td>~2 min</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="muted" style="font-style: italic;">Upload CSV to Copilot Studio, run evaluation</td>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">3</span></td>
+          <td><code>/eval-result-interpreter</code></td>
+          <td>CSV results file (or summary)</td>
+          <td>SHIP/ITERATE/BLOCK + triage + .docx</td>
+          <td>~1 min</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout callout-green" style="margin-top: 1.5em;">
+    <div class="callout-title">What Makes These Skills Special</div>
+    <ul>
+      <li><strong>Grounded in Microsoft's eval framework</strong> &mdash; not generic advice, but the actual Eval Scenario Library, Triage Playbook, and MS Learn documentation</li>
+      <li><strong>They hand off to each other</strong> &mdash; the planner's output is automatically detected by the generator</li>
+      <li><strong>They produce tangible artifacts</strong> &mdash; .docx reports, .xlsx plans, .csv files ready for Copilot Studio import</li>
+      <li><strong>Opinionated by design</strong> &mdash; specific numbers, thresholds, and decisions instead of "it depends"</li>
+      <li><strong>20% of failures are eval bugs, not agent bugs</strong> &mdash; the interpreter checks if YOUR TEST is wrong before blaming the agent</li>
+    </ul>
+  </div>
+
+  <div class="card" style="margin-top: 1.5em;">
+    <div class="card-title white">What's Inside Each SKILL.md File?</div>
+    <table style="margin-top: 0.5em;">
+      <thead><tr><th>Skill</th><th>SKILL.md Size</th><th>Key Components</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>eval-faq</code></td>
+          <td>~360 lines</td>
+          <td>25-row URL routing table, ~4,000-word knowledge base, answer style rules, 60+ example invocations</td>
+        </tr>
+        <tr>
+          <td><code>eval-suite-planner</code></td>
+          <td>~165 lines</td>
+          <td>Agent-to-scenario routing table, evaluation method mapping, category distribution rules, 6-section output format</td>
+        </tr>
+        <tr>
+          <td><code>eval-generator</code></td>
+          <td>~135 lines</td>
+          <td>Dual-mode input detection, 7 test method mappings, CSV format spec, reviewer note requirements</td>
+        </tr>
+        <tr>
+          <td><code>eval-result-interpreter</code></td>
+          <td>~225 lines</td>
+          <td>SHIP/ITERATE/BLOCK decision tree, 5-question eval verification, 4-layer triage framework, 7 cross-signal patterns, risk-adjusted thresholds</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Camp AIR &mdash; AI Agent Evaluation Workshop &nbsp;|&nbsp; March 2026
+</footer>
+
+<!-- Smooth scrolling for nav links -->
+<script>
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    // Update active state
+    document.querySelectorAll('.top-nav a').forEach(a => a.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Update active nav on scroll
+const sections = document.querySelectorAll('.skill-section, .hero');
+const navLinks = document.querySelectorAll('.top-nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.offsetTop - 100;
+    if (window.scrollY >= top) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+</script>
+
+</body>
+</html>
