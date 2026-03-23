@@ -189,6 +189,172 @@
   <p class="muted" style="margin-top:0.6em">Let me show you each one.</p>
 </section>
 
+<!-- ============ SLIDE 6a: SKILL — /eval-faq ============ -->
+<section>
+  <h2><span class="blue">/eval-faq</span></h2>
+  <p class="muted small">Your always-on eval methodology expert</p>
+  <div class="grid-2" style="margin-top:0.8em">
+    <div>
+      <div class="card">
+        <div class="card-title">What it does</div>
+        <p class="small">Answers any eval methodology question with opinionated, source-cited guidance. Grounded primarily in <strong>Microsoft&rsquo;s eval ecosystem</strong> &mdash; MS Learn, Eval Scenario Library, Triage Playbook &mdash; supplemented by select industry sources.</p>
+      </div>
+      <div class="card">
+        <div class="card-title">Primary sources</div>
+        <p class="small"><span class="blue">&bull;</span> <strong>MS Learn</strong> &mdash; 4-stage framework, 7 test methods<br>
+        <span class="blue">&bull;</span> <strong>Eval Scenario Library</strong> &mdash; 80 scenarios, quality signals<br>
+        <span class="blue">&bull;</span> <strong>Triage Playbook</strong> &mdash; SHIP/ITERATE/BLOCK, root causes<br>
+        <span class="blue">&bull;</span> <strong>Camp AIR harness</strong> &mdash; CLI flags, fields, thresholds</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title orange">Example prompts</div>
+        <pre style="font-size:0.6em"><code>/eval-faq What's the difference between
+deterministic and model-graded scorers?
+
+/eval-faq How many eval cases do I need
+for a workshop?
+
+/eval-faq My scorer gives false failures
+on case-003, how do I debug it?</code></pre>
+      </div>
+      <div class="card">
+        <div class="card-title green">Key behavior</div>
+        <p class="small">3&ndash;5 sentence answers. Specific numbers. No &ldquo;it depends&rdquo; without a concrete recommendation. Cites sources at the end.</p>
+      </div>
+    </div>
+  </div>
+  <div class="banner muted small">Available throughout the entire session &mdash; use it whenever you have a question about eval methodology</div>
+</section>
+
+<!-- ============ SLIDE 6b: SKILL — /eval-suite-planner ============ -->
+<section>
+  <h2><span class="orange">/eval-suite-planner</span></h2>
+  <p class="muted small">Plan your eval suite before writing a single test case &mdash; grounded in Microsoft&rsquo;s Eval Scenario Library + MS Learn</p>
+  <div class="grid-2" style="margin-top:0.8em">
+    <div>
+      <div class="card">
+        <div class="card-title">What it does</div>
+        <p class="small">Takes a plain-English agent description and uses <strong>Entry Path A</strong> from the Eval Scenario Library to match your agent to the right business-problem (BP-IR, BP-TS, BP-RS, BP-PN, BP-TR) and capability (CAP-KG through CAP-RA) scenario types. Outputs a scenario plan table that feeds directly into <code>/eval-generator</code>.</p>
+      </div>
+      <div class="card">
+        <div class="card-title blue">Output &rarr; handoff to /eval-generator</div>
+        <table style="font-size:0.65em">
+          <thead><tr><th>Section</th><th>Content</th></tr></thead>
+          <tbody>
+            <tr><td>Scenario plan table</td><td>Named scenarios with IDs (BP-IR-01, CAP-SB-05), tags, evaluation methods</td></tr>
+            <tr><td>Quality signals</td><td>Policy Accuracy, Source Attribution, Personalization, Action Enablement, Privacy</td></tr>
+            <tr><td>Thresholds</td><td>Risk-based: &ge;90% core, &ge;95% safety, &ge;70% edge</td></tr>
+            <tr><td>Workshop shortcut</td><td>6&ndash;8 highest-signal cases for a 15-minute exercise</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title orange">Example</div>
+        <pre style="font-size:0.6em"><code>/eval-suite-planner I am building an
+email triage agent that reads incoming
+emails and labels them urgent,
+not-urgent, or spam. It should never
+label a real customer email as spam.</code></pre>
+      </div>
+      <div class="card">
+        <div class="card-title green">Key behavior</div>
+        <p class="small"><strong>Specific, not generic.</strong> Names actual scenarios with Eval Scenario Library IDs. Maps each to evaluation methods (Keyword Match, Compare Meaning, Tool Use, General Quality). The scenario plan table is the blueprint for <code>/eval-generator</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6c: SKILL — /eval-generator ============ -->
+<section>
+  <h2><span class="green">/eval-generator</span></h2>
+  <p class="muted small">Generate test cases from your plan &mdash; or from scratch</p>
+  <div class="grid-2" style="margin-top:0.8em">
+    <div>
+      <div class="card">
+        <div class="card-title">Two modes</div>
+        <p class="small"><span class="green"><strong>Plan mode:</strong></span> Reads the scenario plan table from <code>/eval-suite-planner</code> in the conversation. Generates one test case per scenario &mdash; preserving Scenario IDs, tags, and evaluation methods.</p>
+        <p class="small" style="margin-top:0.3em"><span class="orange"><strong>Standalone:</strong></span> Accepts a plain-English agent description and generates 6&ndash;8 cases from scratch.</p>
+      </div>
+      <div class="card">
+        <div class="card-title blue">Two output formats</div>
+        <p class="small"><span class="blue">&bull;</span> <strong>Copilot Studio table</strong> (primary) &mdash; Question, Expected Response, Test Method, Pass Score</p>
+        <p class="small"><span class="green">&bull;</span> <strong>Camp AIR harness JSON</strong> (secondary) &mdash; <code>id</code>, <code>input.text</code>, <code>expected</code>, <code>tags</code></p>
+      </div>
+      <div class="card">
+        <div class="card-title purple">Smart guard</div>
+        <p class="small">Vague description (&lt;2 sentences)? Asks <strong>exactly one</strong> clarifying question. No plan in conversation? Asks you to run <code>/eval-suite-planner</code> first.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title orange">Example &mdash; plan mode</div>
+        <pre style="font-size:0.6em"><code>/eval-suite-planner I'm building a
+customer support agent...
+[planner outputs scenario plan table]
+
+/eval-generator
+&rarr; generates from plan, one case per row</code></pre>
+      </div>
+      <div class="card">
+        <div class="card-title">Output includes</div>
+        <p class="small"><span class="green">&bull;</span> Copilot Studio test set table (copy-paste ready)</p>
+        <p class="small"><span class="green">&bull;</span> Camp AIR JSON with Scenario IDs as case IDs</p>
+        <p class="small"><span class="green">&bull;</span> Reviewer notes: hardest case, one more to add, human review reminder</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6d: SKILL — /eval-result-interpreter ============ -->
+<section>
+  <h2><span class="purple">/eval-result-interpreter</span></h2>
+  <p class="muted small">Triage eval results using Microsoft&rsquo;s Triage &amp; Improvement Playbook</p>
+  <div class="grid-2" style="margin-top:0.8em">
+    <div>
+      <div class="card">
+        <div class="card-title">What it does</div>
+        <p class="small">Reads a <strong>Copilot Studio CSV export</strong> (or pasted results) and produces a structured triage report grounded in the Triage Playbook&rsquo;s 4-layer framework: score interpretation, failure triage, remediation mapping, and pattern analysis.</p>
+      </div>
+      <div class="card">
+        <div class="card-title blue">SHIP / ITERATE / BLOCK decision tree</div>
+        <table style="font-size:0.65em">
+          <thead><tr><th>Verdict</th><th>Condition (Triage Playbook)</th></tr></thead>
+          <tbody>
+            <tr><td><span class="green"><strong>SHIP</strong></span></td><td>All signals above risk-based thresholds</td></tr>
+            <tr><td><span class="green"><strong>SHIP WITH GAPS</strong></span></td><td>Core passing, capability gaps documented</td></tr>
+            <tr><td><span class="orange"><strong>ITERATE</strong></span></td><td>Core business below threshold, targeted fixes needed</td></tr>
+            <tr><td><span style="color:#f85149"><strong>BLOCK</strong></span></td><td>Safety/compliance failure OR &lt;60% overall</td></tr>
+          </tbody>
+        </table>
+        <p class="small muted" style="margin-top:0.3em">100% on first run = red flag. Add harder cases.</p>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title orange">Example &mdash; CSV input</div>
+        <pre style="font-size:0.6em"><code>/eval-result-interpreter
+C:\Downloads\Evaluate Agent.csv
+
+&rarr; Reads CSV: 5/9 passed (55.6%)
+&rarr; Verdict: BLOCK
+&rarr; Pattern: 3 failures share
+  "Question not answered"</code></pre>
+      </div>
+      <div class="card">
+        <div class="card-title green">3 root cause types (Triage Playbook)</div>
+        <p class="small">Every failure classified as one of:</p>
+        <p class="small"><span class="orange">&bull; Eval Setup Issue</span> &mdash; test/grader is wrong, not the agent (20%+ of new eval failures)</p>
+        <p class="small"><span class="blue">&bull; Agent Config Issue</span> &mdash; agent produced a bad response, fix prompt/tools/knowledge</p>
+        <p class="small"><span class="muted">&bull; Platform Limitation</span> &mdash; can&rsquo;t fix via config, document and work around</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ SLIDE 7: LIVE DEMO ============ -->
 <section>
   <h2>Live Demo</h2>
@@ -201,21 +367,21 @@ triage agent that labels emails as
 urgent, not-urgent, or spam</code></pre>
     </div>
     <div class="card">
-      <div class="card-title green">2. Generate</div>
-      <pre><code>/eval-generator I'm building an email
-triage agent that labels emails as
-urgent, not-urgent, or spam</code></pre>
+      <div class="card-title green">2. Generate (reads from plan)</div>
+      <pre><code>/eval-generator
+&rarr; detects plan in conversation
+&rarr; generates one test case per scenario</code></pre>
     </div>
     <div class="card">
-      <div class="card-title blue">3. Run</div>
-      <pre><code>npm run eval -- --file my-evals/my-agent-eval.ts</code></pre>
+      <div class="card-title blue">3. Run in Copilot Studio</div>
+      <pre><code>Copy Copilot Studio table &rarr; Create test set
+Run evaluation &rarr; Export CSV results</code></pre>
     </div>
     <div class="card">
-      <div class="card-title purple">4. Interpret</div>
-      <pre><code>/eval-result-interpreter 5/8 passed.
-Failed: case-003 (topic missing),
-case-006 (length 520/400),
-case-008 (adversarial safety failed)</code></pre>
+      <div class="card-title purple">4. Interpret CSV</div>
+      <pre><code>/eval-result-interpreter
+C:\Downloads\Evaluate Agent.csv
+&rarr; SHIP / ITERATE / BLOCK verdict</code></pre>
     </div>
   </div>
 </section>
@@ -236,16 +402,16 @@ case-008 (adversarial safety failed)</code></pre>
       <div class="card-title green" style="font-size:1.1em">Part 2: Generate</div>
       <span class="badge badge-green">15 min</span>
     </div>
-    <p class="small" style="margin-top:0.4em">Run <code>/eval-generator</code> &rarr; Review scenarios &rarr; Edit/delete weak ones &rarr; Add one of your own &rarr; Save to harness</p>
-    <p class="muted small">Save to datasets/my-eval-dataset.json, edit my-evals/my-agent-eval.ts</p>
+    <p class="small" style="margin-top:0.4em">Run <code>/eval-generator</code> (reads from plan) &rarr; Review scenarios &rarr; Edit/delete weak ones &rarr; Copy to Copilot Studio or save to harness</p>
+    <p class="muted small">Copilot Studio: copy test set table. Camp AIR harness: save JSON to datasets/my-eval-dataset.json</p>
   </div>
   <div class="card">
     <div style="display:flex; justify-content:space-between; align-items:center">
       <div class="card-title blue" style="font-size:1.1em">Part 3: Run + Triage</div>
       <span class="badge badge-blue">15 min</span>
     </div>
-    <p class="small" style="margin-top:0.4em"><code>npm run eval</code> &rarr; Read results &rarr; Run <code>/eval-result-interpreter</code> &rarr; Get verdict + actions</p>
-    <p class="muted small">Answer 3 debrief Qs: What passed? Is the failure real? What would you change?</p>
+    <p class="small" style="margin-top:0.4em">Run eval in Copilot Studio &rarr; Export CSV &rarr; <code>/eval-result-interpreter [CSV path]</code> &rarr; Get verdict + actions</p>
+    <p class="muted small">Answer 3 debrief Qs: What passed? Is the failure an eval setup issue or agent issue? What would you change?</p>
   </div>
 </section>
 

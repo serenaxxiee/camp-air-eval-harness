@@ -1,93 +1,144 @@
 ---
 name: eval-suite-planner
-description: Produces a concrete eval suite plan for an agent — scenario categories, counts, graders, thresholds, and priority order — before any scenarios are generated or code is written.
+description: Produces a concrete eval suite plan grounded in Microsoft's Eval Scenario Library and MS Learn agent evaluation guidance — scenario types, evaluation methods, quality signals, thresholds, and priority order — before any test cases are generated or evals are run.
 ---
 
 ## Purpose
 
-This skill takes a plain-English description of an agent and produces a structured eval suite plan for it. It is the "Plan" step in the eval lifecycle — use it before writing any scenario files or running the harness. The output tells you exactly what to build, in what order, and how to know when you're done.
+This skill takes a plain-English description of an agent and produces a structured eval suite plan. It is the first step in the eval lifecycle — use it before generating test cases or running any evals. The output tells you exactly what scenarios to build, which evaluation methods to use, and how to know when you're done.
+
+This skill covers **Stage 1 (Define)** of the MS Learn 4-stage evaluation framework. After planning, use `/eval-generator` for Stage 2 (Set Baseline & Iterate), then expand coverage (Stage 3) and operationalize into CI/CD (Stage 4).
+
+**Knowledge sources:** This skill's guidance is grounded in two Microsoft sources:
+- **Eval Scenario Library** (github.com/microsoft/ai-agent-eval-scenario-library) — 5 business-problem scenario types with 29 sub-scenarios, 9 capability scenario types with 49 sub-scenarios, quality signals, and evaluation method selection
+- **MS Learn agent evaluation documentation** — the 4-stage iterative evaluation framework (Define, Set Baseline & Iterate, Systematic Expansion, Operationalize), 7 test methods, acceptance criteria design, and evaluation categories
 
 ## Instructions
 
-When invoked as `/eval-suite-planner <agent description>`, read the description, infer the agent's primary task, key capabilities, and failure modes, then produce the following output in this exact order. Follow these rules exactly — do not ask clarifying questions, do not pad responses, do not hedge.
+When invoked as `/eval-suite-planner <agent description>`, read the description, infer the agent's primary task, key capabilities, and failure modes, then produce the following output in this exact order. Do not ask clarifying questions, do not pad responses, do not hedge.
 
 ---
+
+### Step 0 — Match the agent to scenario types
+
+Use this routing table (from the Eval Scenario Library's Entry Path A) to identify which business-problem and capability scenario types apply to the described agent:
+
+| If the agent... | Business-problem scenarios | Capability scenarios |
+|---|---|---|
+| Answers questions from knowledge sources | Information Retrieval (BP-IR, 6 sub-scenarios) | Knowledge Grounding (CAP-KG) + Compliance (CAP-CV) |
+| Executes tasks via APIs/connectors | Request Submission (BP-RS, 6 sub-scenarios) | Tool Invocations (CAP-TI) + Safety (CAP-SB) |
+| Walks users through troubleshooting | Troubleshooting (BP-TS, 6 sub-scenarios) | Knowledge Grounding (CAP-KG) + Graceful Failure (CAP-GF) |
+| Guides through multi-step processes | Process Navigation (BP-PN, 6 sub-scenarios) | Trigger Routing (CAP-TR) + Tone & Quality (CAP-TQ) |
+| Routes conversations to teams/departments | Triage & Routing (BP-TR, 5 sub-scenarios) | Trigger Routing (CAP-TR) + Graceful Failure (CAP-GF) |
+| Handles sensitive data (PII, financial, health) | (add to whichever applies) | Safety (CAP-SB) + Compliance (CAP-CV) |
+| Serves external customers | (add to whichever applies) | Tone & Quality (CAP-TQ) + Safety (CAP-SB) |
+| Is about to be updated or republished | (add to whichever applies) | Regression (CAP-RT) — re-run existing tests after changes |
+| All agents (always include) | — | Red-Teaming (CAP-RA) — adversarial robustness testing |
+
+Most agents match 1-2 business-problem types and 3-4 capability types. Select the ones that fit and name them explicitly.
 
 ### Output structure
 
 **1. One-line summary**
 
-Restate the agent's task in one sentence, starting with "Agent task:". This confirms your interpretation before the user reads the rest.
+Restate the agent's task in one sentence, starting with "Agent task:". Name the matched business-problem and capability scenario types by their IDs.
 
-**2. Scenario category breakdown**
+**2. Scenario plan table**
 
-Produce a table with four columns: Category, Count, Tag, Rationale.
+This table is the primary handoff artifact to `/eval-generator` — the generator will produce one test case per row. Make it complete enough that the generator needs no additional context.
 
-Always include these four rows, in this order:
+Produce a table with these columns:
 
-| Category | Count | Tag | Rationale |
-|---|---|---|---|
-| Business-problem | 4–6 | `happy-path` | End-to-end task completion; the most important category. Covers the agent's primary job. |
-| Capability | 3–5 | `capability` | Isolated ability tests (e.g., classification accuracy, retrieval precision, format compliance). |
-| Edge case | 2–4 | `edge-case` | Empty input, max-length input, ambiguous phrasing, malformed structure. |
-| Adversarial | 1–3 | `adversarial` | Prompt injection, out-of-scope requests, contradictions, policy violations. Always include at least 1. |
+| # | Scenario Name | Scenario ID | Category | Tag | Evaluation Methods |
+|---|---|---|---|---|---|
 
-Adjust counts based on the agent description. A focused single-task agent warrants fewer capability scenarios; a multi-step pipeline warrants more. Always keep the total between 12–20 for a complete suite and note a 6–8 case workshop minimum.
+Use scenario IDs from the Eval Scenario Library (e.g., BP-IR-01, BP-IR-05, CAP-KG-04, CAP-SB-05). Be specific: name the actual scenario based on the agent description, not just the category.
 
-Be specific: name the actual scenarios, not just the category. For example, for an email triage agent, the business-problem row should name cases like "urgent customer complaint," "routine billing inquiry," and "newsletter unsubscribe request" — not just "end-to-end task."
+Use this category distribution (from the Eval Scenario Library's eval-set-template):
+- Core business scenarios: 30-40% of test cases
+- Capability scenarios: 20-30%
+- Edge cases & safety: 10-20%
+- Variations (different phrasings of core): 10-20%
 
-**3. Recommended graders**
+For evaluation methods, use the Scenario Library's quality-signal-to-method mapping:
 
-List which harness graders to use, in this format:
+| What you're testing | Primary method | Secondary method |
+|---|---|---|
+| Factual accuracy (specific facts, numbers) | Keyword Match (All) | Compare Meaning |
+| Factual accuracy (flexible phrasing) | Compare Meaning | Keyword Match (Any) |
+| Policy compliance (mandatory language) | Keyword Match (All) | General Quality |
+| Tool invocation correctness | Tool Use | Keyword Match (Any) |
+| Knowledge source selection | Tool Use | Compare Meaning |
+| Topic routing accuracy | Tool Use | — |
+| Response quality, tone, empathy | General Quality | Compare Meaning |
+| Hallucination prevention | Compare Meaning | General Quality |
+| Edge case handling | Keyword Match (Any) | General Quality |
+| Negative tests (must NOT do X) | Keyword Match — negative | Tool Use — negative |
 
-- `graderName()` — which cases to apply it to, and why
-- For `modelGradedGrader()`, always write out the exact criteria string to pass in (e.g., `modelGradedGrader("The response correctly classifies the email as urgent, not-urgent, or spam, and does not label a real customer email as spam.")`)
+Always recommend two methods per scenario where possible.
 
-Apply this layering rule: always start with a deterministic grader (`lengthAndTopicGrader`, `keywordPresenceGrader`, `jsonOutputGrader`) when the criterion is checkable without a model. Add `modelGradedGrader` only when the criterion requires judgment (tone, relevance, completeness, absence of hallucination). Never use `modelGradedGrader` as the only grader on a case that could be checked deterministically.
+Total count: 10-15 for a complete suite; 6-8 minimum for a workshop exercise.
+
+**3. Quality signals**
+
+List the quality signals relevant to this agent (from the Eval Scenario Library's five quality signals). Only include signals that apply:
+
+- **Policy Accuracy** — Does the agent follow business rules correctly?
+- **Source Attribution** — Does the agent ground claims in retrieved documents and cite them?
+- **Personalization** — Does the agent adapt responses to user context (role, department, history)?
+- **Action Enablement** — Does the agent empower users to take the next step?
+- **Privacy Protection** — Does the agent avoid exposing sensitive information?
+
+Map each signal to the scenarios that test it.
 
 **4. Pass/fail thresholds**
 
-State an overall pass rate target for the first run. For a new eval, recommend 75–85%. If the agent has safety or policy requirements (e.g., "never label a real email as spam," "never reveal PII"), state that those cases require 100% pass rate and should trigger BLOCK if any fail. Note per-category guidance:
+Use risk-based thresholds (from the Eval Scenario Library's eval-set-template and the Triage Playbook's Layer 1):
 
-- Business-problem: aim for ≥80% before shipping
-- Capability: aim for ≥80%
-- Edge case: aim for ≥70% (these are hard by design)
-- Adversarial: 100% on safety/policy checks; no exceptions
+| Category | Target pass rate | Blocking threshold |
+|---|---|---|
+| Overall | ≥85% | <60% → BLOCK |
+| Core business scenarios | ≥90% | <80% → BLOCK |
+| Capability scenarios | ≥90% | <80% → BLOCK |
+| Safety & compliance | ≥95% | <95% → BLOCK |
+| Edge cases | ≥70% | (hard by design — iterate, don't block) |
+
+Adjust based on risk profile: low-risk internal tool (lower by 10%), customer-facing (standard), regulated or safety-critical (raise by 5-10%).
 
 **5. Priority order**
 
-State which category to write first, second, third, fourth, and explain why in one sentence each. The default priority is:
+State which categories to write first. Default priority (from MS Learn Stage 2):
 
-1. Business-problem — proves the agent does its job
-2. Capability — isolates what breaks when business-problem cases fail
-3. Edge case — stress-tests the happy path
-4. Adversarial — confirms safety before shipping
+1. Core business scenarios — proves the agent does its job
+2. Safety & compliance — catches deal-breaker failures early
+3. Capability scenarios — isolates component-level problems
+4. Edge cases & variations — stress-tests robustness
 
-Deviate from this order only when the agent description implies a safety-critical use case (e.g., medical, financial, legal), in which case adversarial moves to second.
+Deviate only when the agent description implies safety-critical use (move safety to first).
 
 **6. Workshop shortcut**
 
-Always end with a clearly labeled "Workshop shortcut" paragraph. Name the 5–8 specific cases from the plan above that a participant should write in a 15-minute exercise. Pick the cases that give the best signal-to-effort ratio: 3–4 business-problem cases, 1–2 capability cases, 1 edge case, 1 adversarial case minimum.
+Name 6-8 specific scenarios from the plan table that give the best signal in a 15-minute exercise: 3-4 core business, 1-2 capability, 1 edge case, 1 adversarial/safety minimum. Reference the scenario numbers from the table.
 
 ---
 
 ### Behavior rules
 
-- Never give generic advice. Every scenario name, grader criteria string, and threshold note must be specific to the agent described.
-- Always recommend at least 1 adversarial scenario, even if the user does not mention safety.
-- If the agent description is vague, make a reasonable assumption about the most important failure mode and say what assumption you made in the one-line summary.
-- Keep total response length practical — this is a planning artifact, not an essay. Use the table and bullet structure above to stay concise.
+- Every scenario name, evaluation method, and threshold must be specific to the described agent — no generic advice.
+- Always include at least 1 adversarial/safety scenario (CAP-SB-05 prompt injection resistance or CAP-RA-01 attack surface), even if the user does not mention safety.
+- If the description is vague, state the assumption you made in the one-line summary.
+- When the agent matches multiple business-problem types (e.g., both Information Retrieval and Request Submission), include scenarios from each.
 
 ---
 
 ## Example invocations
 
 ```
-/eval-suite-planner I am building an email triage agent that reads incoming emails and labels them urgent, not-urgent, or spam. It should never label a real customer email as spam.
+/eval-suite-planner I am building a customer support agent that handles refund requests. It should be polite, follow the refund policy, and not make promises the policy does not allow.
 
 /eval-suite-planner I am building a RAG agent that answers questions about our internal HR policy documents. It should only answer questions covered in the documents and decline gracefully otherwise.
 
-/eval-suite-planner I am building a code review agent that reads Python pull requests and flags bugs, style violations, and missing tests.
+/eval-suite-planner I am building an email triage agent that reads incoming emails and labels them urgent, not-urgent, or spam. It should never label a real customer email as spam.
 
-/eval-suite-planner I am building a meeting notes agent that takes a raw transcript and produces a structured summary with action items listed separately from decisions.
+/eval-suite-planner I am building a code review agent that reviews Python pull requests and flags potential bugs, style violations, and missing tests.
 ```
